@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SST毎日チャレンジ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+    background: #fff8f5;
+    color: #333;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #ff8fab, #ffb347);
+    color: white;
+    padding: 16px 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 1.3rem; }
+  header p { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid #ffe0e0;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #999;
+    border: none;
+    background: none;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    color: #ff8fab;
+    border-bottom: 3px solid #ff8fab;
+    font-weight: bold;
+    margin-bottom: -2px;
+  }
+
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* チェックリストページ */
+  .date-label {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .progress-wrap {
+    background: #ffe8e8;
+    border-radius: 20px;
+    height: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, #ff8fab, #ffb347);
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #ff8fab;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .task-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    border: 2px solid transparent;
+  }
+  .task-card:active { transform: scale(0.98); }
+  .task-card.done {
+    border-color: #ffb347;
+    background: #fffbf0;
+  }
+  .check-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .task-card.done .check-circle {
+    background: #ffb347;
+    border-color: #ffb347;
+    color: white;
+  }
+  .task-info { flex: 1; }
+  .task-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 4px;
+  }
+  .task-card.done .task-name { color: #999; text-decoration: line-through; }
+  .task-desc {
+    font-size: 0.78rem;
+    color: #888;
+    line-height: 1.4;
+  }
+  .task-tip {
+    font-size: 0.75rem;
+    color: #ff8fab;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .complete-msg {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff0f5, #fff8e0);
+    border-radius: 16px;
+    margin-top: 16px;
+    display: none;
+  }
+  .complete-msg .star { font-size: 2rem; }
+  .complete-msg p { color: #ff8fab; font-weight: bold; margin-top: 8px; }
+
+  /* マニュアルページ */
+  .manual-section {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .manual-section h3 {
+    font-size: 1rem;
+    color: #ff8fab;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .manual-section p, .manual-section li {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.7;
+  }
+  .manual-section ul { padding-left: 16px; }
+  .manual-section .point {
+    background: #fff8e0;
+    border-left: 3px solid #ffb347;
+    padding: 8px 12px;
+    border-radius: 0 8px 8px 0;
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: #664;
+  }
+
+  /* カレンダーページ */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .calendar-header h3 { font-size: 1rem; color: #555; }
+  .cal-nav {
+    background: #ff8fab;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .cal-day-header {
+    font-size: 0.7rem;
+    color: #999;
+    padding: 4px 0;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #555;
+  }
+  .cal-day.today { font-weight: bold; color: #ff8fab; }
+  .cal-day.full { background: #ffb347; color: white; }
+  .cal-day.partial { background: #ffe0a0; color: #664; }
+  .cal-day.empty-day { color: #ddd; }
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: #888;
+    justify-content: center;
+  }
+  .cal-legend span { display: flex; align-items: center; gap: 4px; }
+  .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.full { background: #ffb347; }
+  .dot.partial { background: #ffe0a0; }
+
+  .stats-wrap {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  .stats-wrap h3 { font-size: 0.9rem; color: #888; margin-bottom: 12px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-item { background: #fff8f5; border-radius: 12px; padding: 12px 8px; }
+  .stat-num { font-size: 1.8rem; font-weight: bold; color: #ff8fab; }
+  .stat-label { font-size: 0.75rem; color: #999; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌟 SST毎日チャレンジ 🌟</h1>
+  <p>ソーシャルスキルトレーニング 家庭版</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPage('checklist')">📋 今日のチェック</button>
+  <button class="tab" onclick="showPage('manual')">📖 マニュアル</button>
+  <button class="tab" onclick="showPage('calendar')">📅 カレンダー</button>
+</div>
+
+<!-- チェックリストページ -->
+<div id="page-checklist" class="page active">
+  <p class="date-label" id="today-label"></p>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+  <p class="progress-text" id="progress-text">0 / 5 完了</p>
+
+  <div id="task-list"></div>
+
+  <div class="complete-msg" id="complete-msg">
+    <div class="star">🎉</div>
+    <p>今日のSST全部クリア！<br>えらい！すごい！！</p>
+  </div>
+</div>
+
+<!-- マニュアルページ -->
+<div id="page-manual" class="page">
+  <div class="manual-section">
+    <h3>🧠 SSTってなに？</h3>
+    <p>ソーシャルスキルトレーニングの略。<br>友達との上手な関わり方・気持ちのコントロール方法を<b>練習</b>で学ぶトレーニングです。</p>
+    <div class="point">叩いてしまうのは「悪い子」だからじゃなく、気持ちの伝え方をまだ知らないだけ。練習で必ず変わります！</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>① 気持ちに名前をつける練習</h3>
+    <ul>
+      <li>毎日「今どんな気持ち？」と聞く</li>
+      <li>「むかつく」→「悔しかったんだね」と言葉を広げる</li>
+      <li>感情カード（絵カード）を見せながらでもOK</li>
+    </ul>
+    <div class="point">💡 感情の言語化ができると、衝動的な行動が減ります</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>② ロールプレイ練習</h3>
+    <ul>
+      <li>お母さんが友達役になる</li>
+      <li>「もしおもちゃ取られたらどうする？」と聞く</li>
+      <li>叩く以外の選択肢を一緒に考える<br>→「やめて、と言う」「先生に言う」など</li>
+    </ul>
+    <div class="point">💡 1回3〜5分でOK。短くてもOK！</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>③ できたら大げさに褒める</h3>
+    <ul>
+      <li>言葉で伝えられたら「すごい！言えた！」と即座に褒める</li>
+      <li>ハグ・シール・好きな食べ物など小さなご褒美もOK</li>
+    </ul>
+    <div class="point">💡 褒めるタイミングは「その場で」が一番効果的！</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>④ 振り返りの声かけ</h3>
+    <ul>
+      <li>怒らず落ち着いてから「どうすればよかったと思う？」と聞く</li>
+      <li>説教はNG。一問だけでOK</li>
+    </ul>
+    <div class="point">💡 子どもが自分で考えた答えが一番脳に入ります</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>⑤ 感情カードの使い方</h3>
+    <ul>
+      <li>😊うれしい / 😡おこってる / 😢かなしい / 😰こわい / 😤くやしい</li>
+      <li>朝・帰宅時・寝る前に「今これ？」と指差しで確認</li>
+    </ul>
+    <div class="point">💡 自分の感情がわからない子に特に効果的！</div>
+  </div>
+
+  <div class="manual-section">
+    <h3>🌟 続けるコツ</h3>
+    <ul>
+      <li>毎日できなくてもOK。週4〜5日でも十分</li>
+      <li>完璧を求めない。「今日も頑張ったね」でOK</li>
+      <li>お母さん自身も褒めて！本当に大変な作業です</li>
+    </ul>
+  </div>
+</div>
+
+<!-- カレンダーページ -->
+<div id="page-calendar" class="page">
+  <div class="calendar-header">
+    <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+    <h3 id="cal-title"></h3>
+    <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+  </div>
+  <div class="calendar-grid" id="calendar-grid"></div>
+  <div class="cal-legend">
+    <span><span class="dot full"></span>全完了</span>
+    <span><span class="dot partial"></span>一部完了</span>
+  </div>
+
+  <div class="stats-wrap">
+    <h3>📊 これまでの記録</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-total-days">0</div>
+        <div class="stat-label">チャレンジした日数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-full-days">0</div>
+        <div class="stat-label">全完了した日数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-total-tasks">0</div>
+        <div class="stat-label">合計できた項目数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-streak">0</div>
+        <div class="stat-label">連続チャレンジ日数</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {
+    id: 'emotion',
+    name: '😊 気持ちに名前をつける',
+    desc: '「今どんな気持ち？」と聞いて、一緒に言葉を探す',
+    tip: '「むかつく」→「悔しかったんだね」と言い換えてあげよう'
+  },
+  {
+    id: 'roleplay',
+    name: '🎭 ロールプレイ練習',
+    desc: 'お母さんが友達役。嫌なことをされた時の練習をする',
+    tip: '「叩く以外にどうする？」一緒に考えよう（3分でOK）'
+  },
+  {
+    id: 'praise',
+    name: '🌟 できたことを褒める',
+    desc: '今日うまくできたこと、言葉で伝えられたことを即座に大げさに褒める',
+    tip: 'ハグや「すごい！」の声かけが一番の報酬！'
+  },
+  {
+    id: 'reflect',
+    name: '🤔 振り返りの声かけ',
+    desc: '「今日、どうすればよかったと思う？」と一問だけ聞く',
+    tip: '怒らず、落ち着いた時に。答えを押しつけないこと'
+  },
+  {
+    id: 'emotion_card',
+    name: '🃏 感情カード確認',
+    desc: '今の気持ちを絵や言葉で確認する（朝・帰宅・就寝前）',
+    tip: 'LINE等のスタンプを見せながらでもOK！'
+  }
+];
+
+const TOTAL = TASKS.length;
+const today = new Date();
+const todayKey = dateKey(today);
+let calYear = today.getFullYear();
+let calMonth = today.getMonth();
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadData() {
+  return JSON.parse(localStorage.getItem('sst_data') || '{}');
+}
+function saveData(data) {
+  localStorage.setItem('sst_data', JSON.stringify(data));
+}
+
+function getTodayDone() {
+  const data = loadData();
+  return data[todayKey] || [];
+}
+
+function toggleTask(taskId) {
+  const data = loadData();
+  if (!data[todayKey]) data[todayKey] = [];
+  const idx = data[todayKey].indexOf(taskId);
+  if (idx >= 0) data[todayKey].splice(idx, 1);
+  else data[todayKey].push(taskId);
+  saveData(data);
+  renderChecklist();
+}
+
+function renderChecklist() {
+  const done = getTodayDone();
+  const count = done.length;
+  const pct = Math.round(count / TOTAL * 100);
+
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${count} / ${TOTAL} 完了`;
+
+  const dateStr = today.toLocaleDateString('ja-JP', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  document.getElementById('today-label').textContent = dateStr;
+
+  const list = document.getElementById('task-list');
+  list.innerHTML = '';
+  TASKS.forEach(task => {
+    const isDone = done.includes(task.id);
+    const card = document.createElement('div');
+    card.className = 'task-card' + (isDone ? ' done' : '');
+    card.onclick = () => toggleTask(task.id);
+    card.innerHTML = `
+      <div class="check-circle">${isDone ? '✓' : ''}</div>
+      <div class="task-info">
+        <div class="task-name">${task.name}</div>
+        <div class="task-desc">${task.desc}</div>
+        ${!isDone ? `<div class="task-tip">💡 ${task.tip}</div>` : ''}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  const msg = document.getElementById('complete-msg');
+  msg.style.display = count === TOTAL ? 'block' : 'none';
+}
+
+function renderCalendar() {
+  const data = loadData();
+  const title = `${calYear}年${calMonth+1}月`;
+  document.getElementById('cal-title').textContent = title;
+
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+
+  ['日','月','火','水','木','金','土'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-header';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const done = (data[key] || []).length;
+    const el = document.createElement('div');
+    el.textContent = d;
+    let cls = 'cal-day';
+    if (key === todayKey) cls += ' today';
+    if (done === TOTAL) cls += ' full';
+    else if (done > 0) cls += ' partial';
+    el.className = cls;
+    grid.appendChild(el);
+  }
+
+  // 統計
+  const allKeys = Object.keys(data);
+  const totalDays = allKeys.filter(k => (data[k]||[]).length > 0).length;
+  const fullDays = allKeys.filter(k => (data[k]||[]).length === TOTAL).length;
+  const totalTasks = allKeys.reduce((sum,k) => sum + (data[k]||[]).length, 0);
+
+  // 連続日数
+  let streak = 0;
+  let checkDate = new Date(today);
+  while(true) {
+    const k = dateKey(checkDate);
+    if ((data[k]||[]).length > 0) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else break;
+    if (streak > 365) break;
+  }
+
+  document.getElementById('stat-total-days').textContent = totalDays;
+  document.getElementById('stat-full-days').textContent = fullDays;
+  document.getElementById('stat-total-tasks').textContent = totalTasks;
+  document.getElementById('stat-streak').textContent = streak;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'calendar') renderCalendar();
+}
+
+// 初期化
+renderChecklist();
+</script>
+</body>
+</html>
