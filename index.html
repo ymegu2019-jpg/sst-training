@@ -26,6 +26,9 @@
     display: flex;
     background: white;
     border-bottom: 2px solid #ffe0e0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
   .tab {
     flex: 1;
@@ -48,7 +51,7 @@
   .page { display: none; padding: 16px; }
   .page.active { display: block; }
 
-  /* チェックリストページ */
+  /* 進捗エリア */
   .date-label {
     text-align: center;
     font-size: 0.9rem;
@@ -59,7 +62,7 @@
     background: #ffe8e8;
     border-radius: 20px;
     height: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     overflow: hidden;
   }
   .progress-bar {
@@ -76,35 +79,34 @@
     font-weight: bold;
   }
 
+  /* タスクカード */
   .task-card {
     background: white;
     border-radius: 16px;
-    padding: 16px;
     margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
     border: 2px solid transparent;
+    overflow: hidden;
+    transition: border-color 0.3s;
   }
-  .task-card:active { transform: scale(0.98); }
-  .task-card.done {
-    border-color: #ffb347;
-    background: #fffbf0;
-  }
-  .check-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid #ddd;
+  .task-card.done { border-color: #ffb347; background: #fffbf0; }
+
+  .task-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+  .check-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
     flex-shrink: 0;
     transition: all 0.3s;
+    cursor: pointer;
   }
   .task-card.done .check-circle {
     background: #ffb347;
@@ -113,24 +115,124 @@
   }
   .task-info { flex: 1; }
   .task-name {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: bold;
     color: #444;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
-  .task-card.done .task-name { color: #999; text-decoration: line-through; }
-  .task-desc {
-    font-size: 0.78rem;
-    color: #888;
-    line-height: 1.4;
-  }
-  .task-tip {
+  .task-card.done .task-name { color: #bbb; text-decoration: line-through; }
+  .task-desc { font-size: 0.78rem; color: #888; line-height: 1.4; }
+  .task-card.done .task-desc { color: #ccc; }
+
+  .expand-btn {
     font-size: 0.75rem;
     color: #ff8fab;
-    margin-top: 6px;
-    font-style: italic;
+    background: #fff0f5;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .expand-btn.open { transform: rotate(180deg); }
+
+  /* 展開エリア */
+  .task-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid #f5f5f5;
+  }
+  .task-body.open { display: block; }
+
+  .task-tip-box {
+    background: #fff8e0;
+    border-left: 3px solid #ffb347;
+    border-radius: 0 8px 8px 0;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: #665;
+    margin-bottom: 12px;
+    margin-top: 12px;
+    line-height: 1.6;
   }
 
+  /* 感情カード */
+  .today-cards-label {
+    font-size: 0.8rem;
+    color: #999;
+    text-align: center;
+    margin: 10px 0 8px;
+  }
+  .emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .emotion-card {
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 3px solid transparent;
+    position: relative;
+  }
+  .emotion-card:active { transform: scale(0.96); }
+  .emotion-card.selected {
+    border-color: white;
+    box-shadow: 0 0 0 3px #ff8fab;
+    transform: scale(1.03);
+  }
+  .emotion-card .e-emoji { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+  .emotion-card .e-name { font-size: 1rem; font-weight: bold; color: #333; }
+  .emotion-card .e-when { font-size: 0.7rem; color: #666; margin-top: 3px; line-height: 1.3; }
+  .selected-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: #ff8fab;
+    color: white;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* できた！ボタン */
+  .done-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .done-btn.undone {
+    background: linear-gradient(135deg, #ff8fab, #ffb347);
+    color: white;
+  }
+  .done-btn.undone:active { opacity: 0.8; transform: scale(0.98); }
+  .done-btn.already {
+    background: #f0f0f0;
+    color: #bbb;
+  }
+
+  /* ロールプレイシナリオ */
+  .scenario-box {
+    background: #f0f8ff;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 10px 0 12px;
+  }
+  .scenario-box .s-title { font-size: 0.75rem; color: #88a; margin-bottom: 6px; font-weight: bold; }
+  .scenario-box .s-text { font-size: 0.88rem; color: #334; line-height: 1.6; }
+  .scenario-box .s-ans { margin-top: 8px; font-size: 0.78rem; color: #779; }
+  .scenario-box .s-ans span { background: #e0f0ff; border-radius: 6px; padding: 2px 8px; margin: 2px; display: inline-block; }
+
+  /* 全完了メッセージ */
   .complete-msg {
     text-align: center;
     padding: 20px;
@@ -138,9 +240,14 @@
     border-radius: 16px;
     margin-top: 16px;
     display: none;
+    animation: pop 0.4s ease;
   }
-  .complete-msg .star { font-size: 2rem; }
-  .complete-msg p { color: #ff8fab; font-weight: bold; margin-top: 8px; }
+  @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .complete-msg .big { font-size: 2.5rem; }
+  .complete-msg p { color: #ff8fab; font-weight: bold; margin-top: 8px; font-size: 1.05rem; }
 
   /* マニュアルページ */
   .manual-section {
@@ -151,17 +258,12 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
   .manual-section h3 {
-    font-size: 1rem;
-    color: #ff8fab;
+    font-size: 1rem; color: #ff8fab;
     margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
   .manual-section p, .manual-section li {
-    font-size: 0.85rem;
-    color: #555;
-    line-height: 1.7;
+    font-size: 0.85rem; color: #555; line-height: 1.7;
   }
   .manual-section ul { padding-left: 16px; }
   .manual-section .point {
@@ -170,74 +272,61 @@
     padding: 8px 12px;
     border-radius: 0 8px 8px 0;
     margin-top: 8px;
-    font-size: 0.82rem;
-    color: #664;
+    font-size: 0.82rem; color: #664;
   }
+
+  /* 全感情カード一覧 */
+  .all-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .mini-emotion-card {
+    border-radius: 12px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .mini-emotion-card .e-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .mini-emotion-card .e-name { font-size: 0.78rem; font-weight: bold; color: #333; }
 
   /* カレンダーページ */
   .calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12px;
   }
   .calendar-header h3 { font-size: 1rem; color: #555; }
   .cal-nav {
-    background: #ff8fab;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 0.85rem;
+    background: #ff8fab; color: white;
+    border: none; border-radius: 8px;
+    padding: 6px 12px; cursor: pointer; font-size: 0.85rem;
   }
   .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    text-align: center;
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; text-align: center;
   }
-  .cal-day-header {
-    font-size: 0.7rem;
-    color: #999;
-    padding: 4px 0;
-  }
+  .cal-day-header { font-size: 0.7rem; color: #999; padding: 4px 0; }
   .cal-day {
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    color: #555;
+    aspect-ratio: 1; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; color: #555;
   }
   .cal-day.today { font-weight: bold; color: #ff8fab; }
   .cal-day.full { background: #ffb347; color: white; }
   .cal-day.partial { background: #ffe0a0; color: #664; }
-  .cal-day.empty-day { color: #ddd; }
   .cal-legend {
-    display: flex;
-    gap: 12px;
-    margin-top: 12px;
-    font-size: 0.75rem;
-    color: #888;
-    justify-content: center;
+    display: flex; gap: 12px; margin-top: 12px;
+    font-size: 0.75rem; color: #888; justify-content: center;
   }
   .cal-legend span { display: flex; align-items: center; gap: 4px; }
-  .dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    display: inline-block;
-  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
   .dot.full { background: #ffb347; }
   .dot.partial { background: #ffe0a0; }
 
   .stats-wrap {
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    margin-top: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    text-align: center;
+    background: white; border-radius: 16px;
+    padding: 16px; margin-top: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
   }
   .stats-wrap h3 { font-size: 0.9rem; color: #888; margin-bottom: 12px; }
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -254,55 +343,64 @@
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="showPage('checklist')">📋 今日のチェック</button>
-  <button class="tab" onclick="showPage('manual')">📖 マニュアル</button>
-  <button class="tab" onclick="showPage('calendar')">📅 カレンダー</button>
+  <button class="tab active" onclick="showPage('checklist', this)">📋 今日</button>
+  <button class="tab" onclick="showPage('cards', this)">🃏 カード</button>
+  <button class="tab" onclick="showPage('manual', this)">📖 マニュアル</button>
+  <button class="tab" onclick="showPage('calendar', this)">📅 記録</button>
 </div>
 
-<!-- チェックリストページ -->
+<!-- ===== チェックリストページ ===== -->
 <div id="page-checklist" class="page active">
   <p class="date-label" id="today-label"></p>
   <div class="progress-wrap">
     <div class="progress-bar" id="progress-bar" style="width:0%"></div>
   </div>
   <p class="progress-text" id="progress-text">0 / 5 完了</p>
-
   <div id="task-list"></div>
-
   <div class="complete-msg" id="complete-msg">
-    <div class="star">🎉</div>
-    <p>今日のSST全部クリア！<br>えらい！すごい！！</p>
+    <div class="big">🎉✨🎉</div>
+    <p>今日のSST全部クリア！<br>えらい！最高！！</p>
   </div>
 </div>
 
-<!-- マニュアルページ -->
+<!-- ===== カードページ ===== -->
+<div id="page-cards" class="page">
+  <div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:8px;">🃏 今日の感情カード</h3>
+    <p style="font-size:0.8rem;color:#888;margin-bottom:12px;">「今どんな気持ち？」子どもに見せて指差ししてもらおう。毎日4枚ローテーションで変わります。</p>
+    <div class="emotion-grid" id="today-cards-big"></div>
+  </div>
+  <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:12px;">📚 全部のカード一覧</h3>
+    <div class="all-cards-grid" id="all-cards-grid"></div>
+  </div>
+</div>
+
+<!-- ===== マニュアルページ ===== -->
 <div id="page-manual" class="page">
   <div class="manual-section">
     <h3>🧠 SSTってなに？</h3>
-    <p>ソーシャルスキルトレーニングの略。<br>友達との上手な関わり方・気持ちのコントロール方法を<b>練習</b>で学ぶトレーニングです。</p>
+    <p>ソーシャルスキルトレーニングの略。友達との上手な関わり方・気持ちのコントロール方法を<b>練習</b>で学ぶトレーニングです。</p>
     <div class="point">叩いてしまうのは「悪い子」だからじゃなく、気持ちの伝え方をまだ知らないだけ。練習で必ず変わります！</div>
   </div>
-
   <div class="manual-section">
     <h3>① 気持ちに名前をつける練習</h3>
     <ul>
       <li>毎日「今どんな気持ち？」と聞く</li>
       <li>「むかつく」→「悔しかったんだね」と言葉を広げる</li>
-      <li>感情カード（絵カード）を見せながらでもOK</li>
+      <li>感情カードを見せながらでもOK</li>
     </ul>
     <div class="point">💡 感情の言語化ができると、衝動的な行動が減ります</div>
   </div>
-
   <div class="manual-section">
     <h3>② ロールプレイ練習</h3>
     <ul>
       <li>お母さんが友達役になる</li>
       <li>「もしおもちゃ取られたらどうする？」と聞く</li>
-      <li>叩く以外の選択肢を一緒に考える<br>→「やめて、と言う」「先生に言う」など</li>
+      <li>叩く以外の選択肢を一緒に考える → 「やめて、と言う」「先生に言う」など</li>
     </ul>
-    <div class="point">💡 1回3〜5分でOK。短くてもOK！</div>
+    <div class="point">💡 1回3〜5分でOK！</div>
   </div>
-
   <div class="manual-section">
     <h3>③ できたら大げさに褒める</h3>
     <ul>
@@ -311,7 +409,6 @@
     </ul>
     <div class="point">💡 褒めるタイミングは「その場で」が一番効果的！</div>
   </div>
-
   <div class="manual-section">
     <h3>④ 振り返りの声かけ</h3>
     <ul>
@@ -320,16 +417,14 @@
     </ul>
     <div class="point">💡 子どもが自分で考えた答えが一番脳に入ります</div>
   </div>
-
   <div class="manual-section">
     <h3>⑤ 感情カードの使い方</h3>
     <ul>
-      <li>😊うれしい / 😡おこってる / 😢かなしい / 😰こわい / 😤くやしい</li>
       <li>朝・帰宅時・寝る前に「今これ？」と指差しで確認</li>
+      <li>毎日違う4枚が表示されます（全12種ローテーション）</li>
     </ul>
     <div class="point">💡 自分の感情がわからない子に特に効果的！</div>
   </div>
-
   <div class="manual-section">
     <h3>🌟 続けるコツ</h3>
     <ul>
@@ -340,7 +435,7 @@
   </div>
 </div>
 
-<!-- カレンダーページ -->
+<!-- ===== カレンダーページ ===== -->
 <div id="page-calendar" class="page">
   <div class="calendar-header">
     <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
@@ -352,7 +447,6 @@
     <span><span class="dot full"></span>全完了</span>
     <span><span class="dot partial"></span>一部完了</span>
   </div>
-
   <div class="stats-wrap">
     <h3>📊 これまでの記録</h3>
     <div class="stats-grid">
@@ -377,36 +471,72 @@
 </div>
 
 <script>
+// ===== 感情カード全12種 =====
+const ALL_EMOTION_CARDS = [
+  { id:'happy',     emoji:'😊', name:'うれしい',   color:'#fff9c4', when:'褒められた時\n好きなことができた時' },
+  { id:'angry',     emoji:'😡', name:'おこってる',  color:'#ffcdd2', when:'取られた時\nじゃまされた時' },
+  { id:'sad',       emoji:'😢', name:'かなしい',    color:'#bbdefb', when:'負けた時\n失くした時' },
+  { id:'frustrated',emoji:'😤', name:'くやしい',    color:'#e1bee7', when:'うまくいかない時\n負けそうな時' },
+  { id:'scared',    emoji:'😰', name:'こわい',      color:'#b2ebf2', when:'怒られそうな時\n知らない場所' },
+  { id:'embarrassed',emoji:'😳',name:'はずかしい',  color:'#f8bbd0', when:'みんなに見られてる時\n失敗した時' },
+  { id:'lonely',    emoji:'🥺', name:'さびしい',    color:'#cfd8dc', when:'一人の時\n無視された時' },
+  { id:'surprised', emoji:'😲', name:'びっくり',    color:'#fff3e0', when:'急に大きい音\n予想外のこと' },
+  { id:'relieved',  emoji:'😌', name:'あんしん',    color:'#c8e6c9', when:'助けてもらった時\n終わった時' },
+  { id:'tired',     emoji:'😴', name:'つかれた',    color:'#eeeeee', when:'いっぱい遊んだ後\n眠い時' },
+  { id:'uneasy',    emoji:'😕', name:'もやもや',    color:'#d1c4e9', when:'なんかへんな感じ\n不安な時' },
+  { id:'excited',   emoji:'🤩', name:'わくわく',    color:'#ffe082', when:'楽しいことの前\n好きなものを見た時' },
+];
+
+// 今日の4枚をローテーション（日付ベース）
+function getTodayCards() {
+  const d = new Date();
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+  const rotations = [
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,2,4,6], [1,3,5,7], [2,4,8,10],
+    [0,3,6,9], [1,5,7,11], [0,4,8,10],
+    [2,5,9,11],[1,4,7,10],[3,6,8,11]
+  ];
+  const idx = dayOfYear % rotations.length;
+  return rotations[idx].map(i => ALL_EMOTION_CARDS[i]);
+}
+
+// ===== タスク定義 =====
 const TASKS = [
   {
     id: 'emotion',
     name: '😊 気持ちに名前をつける',
-    desc: '「今どんな気持ち？」と聞いて、一緒に言葉を探す',
-    tip: '「むかつく」→「悔しかったんだね」と言い換えてあげよう'
+    desc: '「今どんな気持ち？」と聞いて言葉を一緒に探す',
+    tip: '「むかつく」→「悔しかったんだね」と言い換えてあげよう。カードを使って指差しでもOK！',
+    type: 'emotion_check'
   },
   {
     id: 'roleplay',
     name: '🎭 ロールプレイ練習',
-    desc: 'お母さんが友達役。嫌なことをされた時の練習をする',
-    tip: '「叩く以外にどうする？」一緒に考えよう（3分でOK）'
+    desc: 'お母さんが友達役。嫌なことをされた時の練習',
+    tip: null,
+    type: 'roleplay'
   },
   {
     id: 'praise',
     name: '🌟 できたことを褒める',
-    desc: '今日うまくできたこと、言葉で伝えられたことを即座に大げさに褒める',
-    tip: 'ハグや「すごい！」の声かけが一番の報酬！'
+    desc: '今日うまくできたこと・言葉で伝えられたことを褒める',
+    tip: '褒めるタイミングは「その場で」が一番効果的！ハグや「すごい！」の声かけを惜しまずに。',
+    type: 'tip'
   },
   {
     id: 'reflect',
     name: '🤔 振り返りの声かけ',
     desc: '「今日、どうすればよかったと思う？」と一問だけ聞く',
-    tip: '怒らず、落ち着いた時に。答えを押しつけないこと'
+    tip: '怒らず落ち着いた時に。説教はNG、一問だけ。子どもが自分で考えた答えが一番脳に入ります。',
+    type: 'tip'
   },
   {
     id: 'emotion_card',
     name: '🃏 感情カード確認',
-    desc: '今の気持ちを絵や言葉で確認する（朝・帰宅・就寝前）',
-    tip: 'LINE等のスタンプを見せながらでもOK！'
+    desc: '今日の感情カードを見せて「今これ？」と確認する',
+    tip: null,
+    type: 'cards'
   }
 ];
 
@@ -415,22 +545,31 @@ const today = new Date();
 const todayKey = dateKey(today);
 let calYear = today.getFullYear();
 let calMonth = today.getMonth();
+const todayCards = getTodayCards();
+
+// ロールプレイシナリオ（日付でローテ）
+const SCENARIOS = [
+  { text:'友達がブロックを横から取っていった。', answers:['「返して」と言う', '先生に言う', '別のブロックで遊ぶ'] },
+  { text:'遊んでいたら「入れてあげない」と言われた。', answers:['「いーれーて」と言う', '別の友達を探す', '先生に相談する'] },
+  { text:'順番を抜かされてしまった。', answers:['「順番だよ」と伝える', '先生に言う', '深呼吸して待つ'] },
+  { text:'友達に悪口を言われた気がする。', answers:['「それは嫌だよ」と伝える', 'その場を離れる', '先生に話す'] },
+  { text:'負けたらわざと泣き真似された。', answers:['無視する', '「やめて」と言う', '先生に相談する'] },
+  { text:'一緒に遊ぼうと思ったら断られた。', answers:['「なんで？」と聞く', '別の遊びを提案する', '一人で遊ぶ'] },
+  { text:'自分のおもちゃを壊された。', answers:['「弁償して」と伝える', '先生に言う', '気持ちを言葉にする'] },
+];
+
+function getTodayScenario() {
+  const d = new Date();
+  const idx = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000) % SCENARIOS.length;
+  return SCENARIOS[idx];
+}
 
 function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
-function loadData() {
-  return JSON.parse(localStorage.getItem('sst_data') || '{}');
-}
-function saveData(data) {
-  localStorage.setItem('sst_data', JSON.stringify(data));
-}
-
-function getTodayDone() {
-  const data = loadData();
-  return data[todayKey] || [];
-}
+function loadData() { return JSON.parse(localStorage.getItem('sst_data') || '{}'); }
+function saveData(data) { localStorage.setItem('sst_data', JSON.stringify(data)); }
+function getTodayDone() { return loadData()[todayKey] || []; }
 
 function toggleTask(taskId) {
   const data = loadData();
@@ -442,117 +581,201 @@ function toggleTask(taskId) {
   renderChecklist();
 }
 
+function selectEmotion(cardId, taskId) {
+  const key = 'sst_emotion_' + todayKey;
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  if (saved[taskId] === cardId) {
+    delete saved[taskId];
+  } else {
+    saved[taskId] = cardId;
+  }
+  localStorage.setItem(key, JSON.stringify(saved));
+  renderChecklist();
+}
+
+function getSelectedEmotions() {
+  return JSON.parse(localStorage.getItem('sst_emotion_' + todayKey) || '{}');
+}
+
+let openTasks = {};
+
+function toggleExpand(taskId) {
+  openTasks[taskId] = !openTasks[taskId];
+  renderChecklist();
+}
+
 function renderChecklist() {
   const done = getTodayDone();
   const count = done.length;
   const pct = Math.round(count / TOTAL * 100);
-
   document.getElementById('progress-bar').style.width = pct + '%';
   document.getElementById('progress-text').textContent = `${count} / ${TOTAL} 完了`;
-
   const dateStr = today.toLocaleDateString('ja-JP', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
   document.getElementById('today-label').textContent = dateStr;
 
   const list = document.getElementById('task-list');
   list.innerHTML = '';
+  const selectedEmotions = getSelectedEmotions();
+  const scenario = getTodayScenario();
+
   TASKS.forEach(task => {
     const isDone = done.includes(task.id);
+    const isOpen = !!openTasks[task.id];
+
     const card = document.createElement('div');
     card.className = 'task-card' + (isDone ? ' done' : '');
-    card.onclick = () => toggleTask(task.id);
-    card.innerHTML = `
-      <div class="check-circle">${isDone ? '✓' : ''}</div>
-      <div class="task-info">
-        <div class="task-name">${task.name}</div>
-        <div class="task-desc">${task.desc}</div>
-        ${!isDone ? `<div class="task-tip">💡 ${task.tip}</div>` : ''}
+
+    // ヘッダー
+    let headerHTML = `
+      <div class="task-header" onclick="toggleExpand('${task.id}')">
+        <div class="check-circle" onclick="event.stopPropagation(); toggleTask('${task.id}')">${isDone ? '✓' : ''}</div>
+        <div class="task-info">
+          <div class="task-name">${task.name}</div>
+          <div class="task-desc">${task.desc}</div>
+        </div>
+        <button class="expand-btn ${isOpen ? 'open' : ''}">▼</button>
       </div>
     `;
+
+    // 展開エリア
+    let bodyHTML = '';
+    if (task.type === 'cards' || task.type === 'emotion_check') {
+      // 感情カード表示
+      const cardsHTML = todayCards.map(c => {
+        const sel = selectedEmotions[task.id] === c.id;
+        return `
+          <div class="emotion-card ${sel ? 'selected' : ''}"
+               style="background:${c.color};"
+               onclick="selectEmotion('${c.id}','${task.id}')">
+            ${sel ? '<span class="selected-badge">✓</span>' : ''}
+            <span class="e-emoji">${c.emoji}</span>
+            <div class="e-name">${c.name}</div>
+            <div class="e-when">${c.when.replace('\n','<br>')}</div>
+          </div>`;
+      }).join('');
+      bodyHTML = `
+        <div class="task-tip-box">💡 カードを見せて「今どれ？」と指差ししてもらおう！</div>
+        <div class="today-cards-label">📅 今日の4枚（毎日ローテーション）</div>
+        <div class="emotion-grid">${cardsHTML}</div>
+        <button class="done-btn ${isDone ? 'already' : 'undone'}" onclick="toggleTask('${task.id}')">
+          ${isDone ? '✓ 完了済み！' : '✓ できた！'}
+        </button>`;
+    } else if (task.type === 'roleplay') {
+      bodyHTML = `
+        <div class="scenario-box">
+          <div class="s-title">📝 今日のシナリオ（毎日変わります）</div>
+          <div class="s-text">「${scenario.text}」<br>どうする？</div>
+          <div class="s-ans">
+            ${scenario.answers.map(a => `<span>${a}</span>`).join('')}
+          </div>
+        </div>
+        <div class="task-tip-box">💡 お母さんが友達役になって実際にやってみよう！正解はないよ。</div>
+        <button class="done-btn ${isDone ? 'already' : 'undone'}" onclick="toggleTask('${task.id}')">
+          ${isDone ? '✓ 完了済み！' : '✓ できた！'}
+        </button>`;
+    } else {
+      bodyHTML = `
+        <div class="task-tip-box">💡 ${task.tip}</div>
+        <button class="done-btn ${isDone ? 'already' : 'undone'}" onclick="toggleTask('${task.id}')">
+          ${isDone ? '✓ 完了済み！' : '✓ できた！'}
+        </button>`;
+    }
+
+    card.innerHTML = headerHTML + `<div class="task-body ${isOpen ? 'open' : ''}">${bodyHTML}</div>`;
     list.appendChild(card);
   });
 
-  const msg = document.getElementById('complete-msg');
-  msg.style.display = count === TOTAL ? 'block' : 'none';
+  document.getElementById('complete-msg').style.display = count === TOTAL ? 'block' : 'none';
 }
 
+// ===== カードページ =====
+function renderCardsPage() {
+  // 今日の4枚（大きく）
+  const big = document.getElementById('today-cards-big');
+  if (big) {
+    big.innerHTML = todayCards.map(c => `
+      <div class="emotion-card" style="background:${c.color}; cursor:default;">
+        <span class="e-emoji">${c.emoji}</span>
+        <div class="e-name">${c.name}</div>
+        <div class="e-when">${c.when.replace('\n','<br>')}</div>
+      </div>`).join('');
+  }
+  // 全カード一覧
+  const all = document.getElementById('all-cards-grid');
+  if (all) {
+    all.innerHTML = ALL_EMOTION_CARDS.map(c => `
+      <div class="mini-emotion-card" style="background:${c.color};">
+        <span class="e-emoji">${c.emoji}</span>
+        <div class="e-name">${c.name}</div>
+      </div>`).join('');
+  }
+}
+
+// ===== カレンダー =====
 function renderCalendar() {
   const data = loadData();
-  const title = `${calYear}年${calMonth+1}月`;
-  document.getElementById('cal-title').textContent = title;
-
+  document.getElementById('cal-title').textContent = `${calYear}年${calMonth+1}月`;
   const grid = document.getElementById('calendar-grid');
   grid.innerHTML = '';
-
   ['日','月','火','水','木','金','土'].forEach(d => {
     const el = document.createElement('div');
     el.className = 'cal-day-header';
     el.textContent = d;
     grid.appendChild(el);
   });
-
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-
   for (let i = 0; i < firstDay; i++) {
-    const el = document.createElement('div');
-    el.className = 'cal-day';
-    grid.appendChild(el);
+    grid.appendChild(Object.assign(document.createElement('div'), {className:'cal-day'}));
   }
-
   for (let d = 1; d <= daysInMonth; d++) {
     const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const done = (data[key] || []).length;
+    const doneCount = (data[key]||[]).length;
     const el = document.createElement('div');
     el.textContent = d;
     let cls = 'cal-day';
     if (key === todayKey) cls += ' today';
-    if (done === TOTAL) cls += ' full';
-    else if (done > 0) cls += ' partial';
+    if (doneCount === TOTAL) cls += ' full';
+    else if (doneCount > 0) cls += ' partial';
     el.className = cls;
     grid.appendChild(el);
   }
-
-  // 統計
   const allKeys = Object.keys(data);
   const totalDays = allKeys.filter(k => (data[k]||[]).length > 0).length;
-  const fullDays = allKeys.filter(k => (data[k]||[]).length === TOTAL).length;
-  const totalTasks = allKeys.reduce((sum,k) => sum + (data[k]||[]).length, 0);
-
-  // 連続日数
-  let streak = 0;
-  let checkDate = new Date(today);
+  const fullDays  = allKeys.filter(k => (data[k]||[]).length === TOTAL).length;
+  const totalTasks = allKeys.reduce((s,k) => s + (data[k]||[]).length, 0);
+  let streak = 0, checkDate = new Date(today);
   while(true) {
     const k = dateKey(checkDate);
-    if ((data[k]||[]).length > 0) {
-      streak++;
-      checkDate.setDate(checkDate.getDate() - 1);
-    } else break;
+    if ((data[k]||[]).length > 0) { streak++; checkDate.setDate(checkDate.getDate()-1); }
+    else break;
     if (streak > 365) break;
   }
-
   document.getElementById('stat-total-days').textContent = totalDays;
-  document.getElementById('stat-full-days').textContent = fullDays;
+  document.getElementById('stat-full-days').textContent  = fullDays;
   document.getElementById('stat-total-tasks').textContent = totalTasks;
   document.getElementById('stat-streak').textContent = streak;
 }
 
 function changeMonth(dir) {
   calMonth += dir;
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0;  calYear++; }
   renderCalendar();
 }
 
-function showPage(name) {
+function showPage(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   if (name === 'calendar') renderCalendar();
+  if (name === 'cards') renderCardsPage();
 }
 
 // 初期化
 renderChecklist();
+renderCardsPage();
 </script>
 </body>
 </html>
