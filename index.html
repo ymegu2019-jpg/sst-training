@@ -5,81 +5,137 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SST毎日チャレンジ</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Hiragino Kaku Gothic ProN','メイリオ',sans-serif; background:#fff8f5; color:#333; min-height:100vh; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Hiragino Kaku Gothic ProN','メイリオ',sans-serif; background:#fff8f5; color:#333; min-height:100vh; }
   header { background:linear-gradient(135deg,#ff8fab,#ffb347); color:white; padding:16px 20px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
   header h1 { font-size:1.3rem; }
-  header p { font-size:0.8rem; opacity:0.9; margin-top:4px; }
+  header p  { font-size:0.8rem; opacity:0.9; margin-top:4px; }
 
   .tabs { display:flex; background:white; border-bottom:2px solid #ffe0e0; position:sticky; top:0; z-index:10; }
-  .tab { flex:1; padding:12px 8px; text-align:center; font-size:0.82rem; cursor:pointer; color:#999; border:none; background:none; transition:all 0.2s; }
+  .tab  { flex:1; padding:12px 4px; text-align:center; font-size:0.78rem; cursor:pointer; color:#999; border:none; background:none; transition:all 0.2s; }
   .tab.active { color:#ff8fab; border-bottom:3px solid #ff8fab; font-weight:bold; margin-bottom:-2px; }
 
   .page { display:none; padding:16px; }
   .page.active { display:block; }
 
-  .date-label { text-align:center; font-size:0.9rem; color:#888; margin-bottom:12px; }
-  .progress-wrap { background:#ffe8e8; border-radius:20px; height:10px; margin-bottom:8px; overflow:hidden; }
+  /* 進捗 */
+  .date-label   { text-align:center; font-size:0.9rem; color:#888; margin-bottom:12px; }
+  .progress-wrap{ background:#ffe8e8; border-radius:20px; height:10px; margin-bottom:8px; overflow:hidden; }
   .progress-bar { background:linear-gradient(90deg,#ff8fab,#ffb347); height:100%; border-radius:20px; transition:width 0.4s ease; }
-  .progress-text { text-align:center; font-size:0.85rem; color:#ff8fab; margin-bottom:20px; font-weight:bold; }
+  .progress-text{ text-align:center; font-size:0.85rem; color:#ff8fab; margin-bottom:20px; font-weight:bold; }
 
+  /* タスクカード */
   .task-card { background:white; border-radius:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:2px solid transparent; overflow:hidden; transition:border-color 0.3s; }
   .task-card.done { border-color:#ffb347; background:#fffbf0; }
   .task-header { display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; }
   .check-circle { width:36px; height:36px; border-radius:50%; border:2px solid #ddd; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; transition:all 0.3s; cursor:pointer; }
   .task-card.done .check-circle { background:#ffb347; border-color:#ffb347; color:white; }
   .task-info { flex:1; }
-  .task-name { font-size:0.95rem; font-weight:bold; color:#444; margin-bottom:3px; }
+  .task-name  { font-size:0.95rem; font-weight:bold; color:#444; margin-bottom:3px; }
   .task-card.done .task-name { color:#bbb; text-decoration:line-through; }
-  .task-desc { font-size:0.78rem; color:#888; line-height:1.4; }
+  .task-desc  { font-size:0.78rem; color:#888; line-height:1.4; }
   .task-card.done .task-desc { color:#ccc; }
   .expand-btn { font-size:0.75rem; color:#ff8fab; background:#fff0f5; border:none; border-radius:20px; padding:4px 10px; cursor:pointer; flex-shrink:0; transition:transform 0.2s; }
   .expand-btn.open { transform:rotate(180deg); }
-  .task-body { display:none; padding:0 16px 16px; border-top:1px solid #f5f5f5; }
+  .task-body  { display:none; padding:0 16px 16px; border-top:1px solid #f5f5f5; }
   .task-body.open { display:block; }
   .task-tip-box { background:#fff8e0; border-left:3px solid #ffb347; border-radius:0 8px 8px 0; padding:8px 12px; font-size:0.8rem; color:#665; margin-bottom:12px; margin-top:12px; line-height:1.6; }
 
+  /* 感情カード */
   .today-cards-label { font-size:0.8rem; color:#999; text-align:center; margin:10px 0 8px; }
   .emotion-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
   .emotion-card { border-radius:14px; padding:14px 10px; text-align:center; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; border:3px solid transparent; position:relative; }
   .emotion-card:active { transform:scale(0.96); }
   .emotion-card.selected { border-color:white; box-shadow:0 0 0 3px #ff8fab; transform:scale(1.03); }
   .emotion-card .e-emoji { font-size:2.2rem; display:block; margin-bottom:6px; }
-  .emotion-card .e-name { font-size:1rem; font-weight:bold; color:#333; }
-  .emotion-card .e-when { font-size:0.7rem; color:#666; margin-top:3px; line-height:1.3; }
+  .emotion-card .e-name  { font-size:1rem; font-weight:bold; color:#333; }
+  .emotion-card .e-when  { font-size:0.7rem; color:#666; margin-top:3px; line-height:1.3; }
   .selected-badge { position:absolute; top:-6px; right:-6px; background:#ff8fab; color:white; border-radius:50%; width:22px; height:22px; font-size:0.75rem; display:flex; align-items:center; justify-content:center; }
 
+  /* できた！ボタン */
   .done-btn { width:100%; padding:12px; border-radius:12px; border:none; font-size:1rem; font-weight:bold; cursor:pointer; transition:all 0.2s; }
   .done-btn.undone { background:linear-gradient(135deg,#ff8fab,#ffb347); color:white; }
   .done-btn.undone:active { opacity:0.8; transform:scale(0.98); }
   .done-btn.already { background:#f0f0f0; color:#bbb; }
 
-  .scenario-box { background:#f0f8ff; border-radius:12px; padding:12px; margin:10px 0 12px; }
-  .scenario-box .s-title { font-size:0.75rem; color:#88a; margin-bottom:6px; font-weight:bold; }
-  .scenario-box .s-text { font-size:0.88rem; color:#334; line-height:1.6; }
-  .scenario-box .s-ans { margin-top:8px; font-size:0.78rem; color:#779; }
-  .scenario-box .s-ans span { background:#e0f0ff; border-radius:6px; padding:2px 8px; margin:2px; display:inline-block; }
+  /* ===== シチュエーションカード ===== */
+  .situ-card {
+    background:white; border-radius:20px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.1);
+    overflow:hidden; margin-bottom:12px;
+  }
+  .situ-scene {
+    padding:20px 16px 16px;
+    text-align:center;
+  }
+  .situ-scene-emoji { font-size:3.5rem; display:block; margin-bottom:10px; }
+  .situ-scene-tag {
+    display:inline-block; font-size:0.7rem;
+    background:#fff0f5; color:#ff8fab;
+    border-radius:20px; padding:3px 12px;
+    margin-bottom:10px; font-weight:bold;
+  }
+  .situ-scene-text {
+    font-size:1rem; font-weight:bold; color:#333;
+    line-height:1.6; margin-bottom:6px;
+  }
+  .situ-scene-sub { font-size:0.8rem; color:#888; line-height:1.5; }
 
+  .situ-choices { padding:0 16px 16px; }
+  .situ-choice-label { font-size:0.75rem; color:#aaa; margin-bottom:8px; text-align:center; }
+  .situ-choice-btn {
+    width:100%; margin-bottom:8px; padding:12px 14px;
+    border-radius:12px; border:2px solid #f0f0f0;
+    background:white; font-size:0.9rem; color:#444;
+    text-align:left; cursor:pointer;
+    transition:all 0.2s; line-height:1.4;
+    display:flex; align-items:center; gap:10px;
+  }
+  .situ-choice-btn:active { transform:scale(0.98); }
+  .situ-choice-btn.best   { border-color:#4caf50; background:#f1f8f1; color:#2e7d32; }
+  .situ-choice-btn.good   { border-color:#ff9800; background:#fff8f0; color:#e65100; }
+  .situ-choice-btn.ng     { border-color:#f44336; background:#fff5f5; color:#c62828; }
+  .situ-choice-btn .c-num { font-weight:bold; font-size:1.1rem; flex-shrink:0; }
+  .situ-feedback {
+    margin:0 16px 16px;
+    border-radius:12px; padding:12px 14px;
+    font-size:0.85rem; line-height:1.6; display:none;
+  }
+  .situ-feedback.show { display:block; }
+  .situ-feedback.best { background:#e8f5e9; color:#2e7d32; border-left:4px solid #4caf50; }
+  .situ-feedback.good { background:#fff3e0; color:#e65100; border-left:4px solid #ff9800; }
+  .situ-feedback.ng   { background:#ffebee; color:#c62828; border-left:4px solid #f44336; }
+
+  .situ-nav { display:flex; align-items:center; justify-content:space-between; padding:0 16px 16px; }
+  .situ-nav-btn { background:#fff0f5; color:#ff8fab; border:none; border-radius:20px; padding:8px 16px; cursor:pointer; font-size:0.85rem; font-weight:bold; }
+  .situ-nav-btn:disabled { background:#f5f5f5; color:#ddd; cursor:default; }
+  .situ-counter { font-size:0.8rem; color:#bbb; }
+
+  /* カードタブ：トグル */
+  .card-type-toggle { display:flex; background:#f5f5f5; border-radius:12px; padding:4px; margin-bottom:16px; }
+  .card-type-btn { flex:1; padding:8px; border:none; border-radius:8px; font-size:0.85rem; cursor:pointer; color:#999; background:transparent; transition:all 0.2s; font-weight:bold; }
+  .card-type-btn.active { background:white; color:#ff8fab; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+
+  /* 全完了 */
   .complete-msg { text-align:center; padding:20px; background:linear-gradient(135deg,#fff0f5,#fff8e0); border-radius:16px; margin-top:16px; display:none; animation:pop 0.4s ease; }
   @keyframes pop { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
   .complete-msg .big { font-size:2.5rem; }
   .complete-msg p { color:#ff8fab; font-weight:bold; margin-top:8px; font-size:1.05rem; }
 
-  /* ===== メモエリア ===== */
+  /* メモ */
   .memo-wrap { background:white; border-radius:16px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .memo-wrap h3 { font-size:0.95rem; color:#ff8fab; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .memo-wrap h3 { font-size:0.95rem; color:#ff8fab; margin-bottom:10px; }
   .memo-textarea { width:100%; min-height:100px; border:1.5px solid #ffe0e0; border-radius:10px; padding:10px 12px; font-size:0.9rem; font-family:inherit; color:#444; resize:vertical; outline:none; line-height:1.6; transition:border-color 0.2s; }
   .memo-textarea:focus { border-color:#ff8fab; }
   .memo-textarea::placeholder { color:#ccc; }
-  .memo-save-status { font-size:0.75rem; color:#bbb; text-align:right; margin-top:6px; height:16px; transition:color 0.3s; }
+  .memo-save-status { font-size:0.75rem; color:#bbb; text-align:right; margin-top:6px; height:16px; }
   .memo-save-status.saved { color:#88cc88; }
 
-  /* ===== メモ一覧 ===== */
+  /* メモ一覧 */
   .memo-list-wrap { background:white; border-radius:16px; padding:16px; margin-top:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
   .memo-list-wrap h3 { font-size:0.95rem; color:#ff8fab; margin-bottom:12px; }
-  .memo-entry { border-bottom:1px solid #f5f5f5; padding:12px 0; cursor:pointer; transition:background 0.1s; }
+  .memo-entry { border-bottom:1px solid #f5f5f5; padding:12px 0; cursor:pointer; }
   .memo-entry:last-child { border-bottom:none; padding-bottom:0; }
-  .memo-entry:active { background:#fff8f5; }
   .memo-entry-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
   .memo-entry-date { font-size:0.82rem; font-weight:bold; color:#888; }
   .memo-entry-badge { font-size:0.7rem; border-radius:20px; padding:2px 10px; font-weight:bold; }
@@ -89,7 +145,43 @@
   .memo-entry-text { font-size:0.85rem; color:#555; line-height:1.6; white-space:pre-wrap; }
   .memo-empty { font-size:0.85rem; color:#ccc; text-align:center; padding:20px 0; }
 
-  /* ===== モーダル ===== */
+  /* マニュアル */
+  .manual-section { background:white; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+  .manual-section h3 { font-size:1rem; color:#ff8fab; margin-bottom:10px; }
+  .manual-section p, .manual-section li { font-size:0.85rem; color:#555; line-height:1.7; }
+  .manual-section ul { padding-left:16px; }
+  .manual-section .point { background:#fff8e0; border-left:3px solid #ffb347; padding:8px 12px; border-radius:0 8px 8px 0; margin-top:8px; font-size:0.82rem; color:#664; }
+
+  /* 感情カード全一覧 */
+  .all-cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .mini-emotion-card { border-radius:12px; padding:10px 6px; text-align:center; }
+  .mini-emotion-card .e-emoji { font-size:1.6rem; display:block; margin-bottom:4px; }
+  .mini-emotion-card .e-name  { font-size:0.78rem; font-weight:bold; color:#333; }
+
+  /* カレンダー */
+  .calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .calendar-header h3 { font-size:1rem; color:#555; }
+  .cal-nav { background:#ff8fab; color:white; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:0.85rem; }
+  .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
+  .cal-day-header { font-size:0.7rem; color:#999; padding:4px 0; }
+  .cal-day { aspect-ratio:1; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#555; cursor:pointer; position:relative; }
+  .cal-day.empty { cursor:default; }
+  .cal-day.today  { font-weight:bold; color:#ff8fab; }
+  .cal-day.full   { background:#ffb347; color:white; }
+  .cal-day.partial{ background:#ffe0a0; color:#664; }
+  .cal-legend { display:flex; gap:12px; margin-top:12px; font-size:0.75rem; color:#888; justify-content:center; }
+  .cal-legend span { display:flex; align-items:center; gap:4px; }
+  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .dot.full    { background:#ffb347; }
+  .dot.partial { background:#ffe0a0; }
+  .stats-wrap { background:white; border-radius:16px; padding:16px; margin-top:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; }
+  .stats-wrap h3 { font-size:0.9rem; color:#888; margin-bottom:12px; }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .stat-item  { background:#fff8f5; border-radius:12px; padding:12px 8px; }
+  .stat-num   { font-size:1.8rem; font-weight:bold; color:#ff8fab; }
+  .stat-label { font-size:0.75rem; color:#999; margin-top:4px; }
+
+  /* モーダル */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; align-items:center; justify-content:center; padding:20px; }
   .modal-overlay.open { display:flex; }
   .modal-box { background:white; border-radius:20px; padding:20px; width:100%; max-width:400px; max-height:80vh; overflow-y:auto; animation:pop 0.25s ease; }
@@ -102,43 +194,6 @@
   .modal-memo-label { font-size:0.78rem; color:#aaa; margin-bottom:8px; }
   .modal-memo-text { font-size:0.88rem; color:#444; line-height:1.6; white-space:pre-wrap; background:#fff8f5; border-radius:10px; padding:10px 12px; }
   .modal-no-memo { font-size:0.82rem; color:#ccc; font-style:italic; }
-
-  /* マニュアル */
-  .manual-section { background:white; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .manual-section h3 { font-size:1rem; color:#ff8fab; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
-  .manual-section p, .manual-section li { font-size:0.85rem; color:#555; line-height:1.7; }
-  .manual-section ul { padding-left:16px; }
-  .manual-section .point { background:#fff8e0; border-left:3px solid #ffb347; padding:8px 12px; border-radius:0 8px 8px 0; margin-top:8px; font-size:0.82rem; color:#664; }
-
-  .all-cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
-  .mini-emotion-card { border-radius:12px; padding:10px 6px; text-align:center; }
-  .mini-emotion-card .e-emoji { font-size:1.6rem; display:block; margin-bottom:4px; }
-  .mini-emotion-card .e-name { font-size:0.78rem; font-weight:bold; color:#333; }
-
-  /* カレンダー */
-  .calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .calendar-header h3 { font-size:1rem; color:#555; }
-  .cal-nav { background:#ff8fab; color:white; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:0.85rem; }
-  .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
-  .cal-day-header { font-size:0.7rem; color:#999; padding:4px 0; }
-  .cal-day { aspect-ratio:1; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#555; cursor:pointer; transition:opacity 0.1s; }
-  .cal-day:active { opacity:0.7; }
-  .cal-day.empty { cursor:default; }
-  .cal-day.today { font-weight:bold; color:#ff8fab; }
-  .cal-day.full { background:#ffb347; color:white; }
-  .cal-day.partial { background:#ffe0a0; color:#664; }
-  .cal-legend { display:flex; gap:12px; margin-top:12px; font-size:0.75rem; color:#888; justify-content:center; }
-  .cal-legend span { display:flex; align-items:center; gap:4px; }
-  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
-  .dot.full { background:#ffb347; }
-  .dot.partial { background:#ffe0a0; }
-
-  .stats-wrap { background:white; border-radius:16px; padding:16px; margin-top:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; }
-  .stats-wrap h3 { font-size:0.9rem; color:#888; margin-bottom:12px; }
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .stat-item { background:#fff8f5; border-radius:12px; padding:12px 8px; }
-  .stat-num { font-size:1.8rem; font-weight:bold; color:#ff8fab; }
-  .stat-label { font-size:0.75rem; color:#999; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -151,11 +206,11 @@
 <div class="tabs">
   <button class="tab active" onclick="showPage('checklist',this)">📋 今日</button>
   <button class="tab" onclick="showPage('cards',this)">🃏 カード</button>
-  <button class="tab" onclick="showPage('manual',this)">📖 マニュアル</button>
+  <button class="tab" onclick="showPage('manual',this)">📖 ガイド</button>
   <button class="tab" onclick="showPage('calendar',this)">📅 記録</button>
 </div>
 
-<!-- チェックリスト -->
+<!-- ===== 今日タブ ===== -->
 <div id="page-checklist" class="page active">
   <p class="date-label" id="today-label"></p>
   <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
@@ -165,30 +220,44 @@
     <div class="big">🎉✨🎉</div>
     <p>今日のSST全部クリア！<br>えらい！最高！！</p>
   </div>
-
-  <!-- 今日のメモ -->
   <div class="memo-wrap">
     <h3>📝 今日のメモ</h3>
     <textarea class="memo-textarea" id="today-memo"
-      placeholder="気になったこと、できたこと、息子くんの様子など自由に書いてね&#10;例）「今日は叩かずに言葉で言えた！」「カードでくやしいを選んでた」"></textarea>
+      placeholder="気になったこと、できたこと、息子くんの様子など&#10;例）「今日は叩かずに言葉で言えた！」&#10;「カードでくやしいを選んでた」"></textarea>
     <div class="memo-save-status" id="memo-status"></div>
   </div>
 </div>
 
-<!-- カード -->
+<!-- ===== カードタブ ===== -->
 <div id="page-cards" class="page">
-  <div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-    <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:8px;">🃏 今日の感情カード</h3>
-    <p style="font-size:0.8rem;color:#888;margin-bottom:12px;">「今どんな気持ち？」子どもに見せて指差ししてもらおう。毎日4枚ローテーションで変わります。</p>
-    <div class="emotion-grid" id="today-cards-big"></div>
+  <div class="card-type-toggle">
+    <button class="card-type-btn active" id="btn-emotion-tab" onclick="switchCardType('emotion')">😊 感情カード</button>
+    <button class="card-type-btn" id="btn-situ-tab" onclick="switchCardType('situ')">🎭 場面カード</button>
   </div>
-  <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-    <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:12px;">📚 全部のカード一覧</h3>
-    <div class="all-cards-grid" id="all-cards-grid"></div>
+
+  <!-- 感情カードエリア -->
+  <div id="area-emotion">
+    <div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:8px;">🃏 今日の感情カード</h3>
+      <p style="font-size:0.8rem;color:#888;margin-bottom:12px;">「今どんな気持ち？」子どもに見せて指差ししてもらおう。毎日4枚ローテーションで変わります。</p>
+      <div class="emotion-grid" id="today-cards-big"></div>
+    </div>
+    <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:12px;">📚 全部のカード（12種類）</h3>
+      <div class="all-cards-grid" id="all-cards-grid"></div>
+    </div>
+  </div>
+
+  <!-- 場面カードエリア -->
+  <div id="area-situ" style="display:none">
+    <div style="background:white;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <p style="font-size:0.8rem;color:#888;line-height:1.6;">🎭 <b>場面カード</b>は「こんな時どうする？」を一緒に考えるカードです。<br>3つの選択肢から選んでみよう！全15種ローテーション。</p>
+    </div>
+    <div id="situ-card-area"></div>
   </div>
 </div>
 
-<!-- マニュアル -->
+<!-- ===== ガイドタブ ===== -->
 <div id="page-manual" class="page">
   <div class="manual-section">
     <h3>🧠 SSTってなに？</h3>
@@ -196,29 +265,29 @@
     <div class="point">叩いてしまうのは「悪い子」だからじゃなく、気持ちの伝え方をまだ知らないだけ。練習で必ず変わります！</div>
   </div>
   <div class="manual-section">
+    <h3>😊 感情カードの使い方</h3>
+    <p>12種類の感情カードを見せて「今これ？」と確認します。毎日4枚がローテーション表示されます。</p>
+    <div class="point">💡 自分の感情を言葉にできると、衝動的な行動が減ります</div>
+  </div>
+  <div class="manual-section">
+    <h3>🎭 場面カードの使い方</h3>
+    <p>全15種類。「こんな場面になったらどうする？」を3択で考える練習です。正解を押しつけず、一緒に考えることが大切！</p>
+    <div class="point">💡 ベスト・まあいい・NGの3段階でフィードバックが表示されます</div>
+  </div>
+  <div class="manual-section">
     <h3>① 気持ちに名前をつける練習</h3>
-    <ul><li>毎日「今どんな気持ち？」と聞く</li><li>「むかつく」→「悔しかったんだね」と言葉を広げる</li><li>感情カードを見せながらでもOK</li></ul>
+    <ul><li>毎日「今どんな気持ち？」と聞く</li><li>「むかつく」→「悔しかったんだね」と言葉を広げる</li></ul>
     <div class="point">💡 感情の言語化ができると、衝動的な行動が減ります</div>
   </div>
   <div class="manual-section">
     <h3>② ロールプレイ練習</h3>
-    <ul><li>お母さんが友達役になる</li><li>「もしおもちゃ取られたらどうする？」と聞く</li><li>叩く以外の選択肢を一緒に考える → 「やめて、と言う」「先生に言う」など</li></ul>
+    <ul><li>お母さんが友達役になる</li><li>場面カードを使いながら練習するのがおすすめ！</li></ul>
     <div class="point">💡 1回3〜5分でOK！</div>
   </div>
   <div class="manual-section">
     <h3>③ できたら大げさに褒める</h3>
-    <ul><li>言葉で伝えられたら「すごい！言えた！」と即座に褒める</li><li>ハグ・シール・好きな食べ物など小さなご褒美もOK</li></ul>
+    <ul><li>言葉で伝えられたら即座に「すごい！言えた！」と褒める</li><li>ハグ・シール・好きな食べ物など小さなご褒美もOK</li></ul>
     <div class="point">💡 褒めるタイミングは「その場で」が一番効果的！</div>
-  </div>
-  <div class="manual-section">
-    <h3>④ 振り返りの声かけ</h3>
-    <ul><li>怒らず落ち着いてから「どうすればよかったと思う？」と聞く</li><li>説教はNG。一問だけでOK</li></ul>
-    <div class="point">💡 子どもが自分で考えた答えが一番脳に入ります</div>
-  </div>
-  <div class="manual-section">
-    <h3>⑤ 感情カードの使い方</h3>
-    <ul><li>朝・帰宅時・寝る前に「今これ？」と指差しで確認</li><li>毎日違う4枚が表示されます（全12種ローテーション）</li></ul>
-    <div class="point">💡 自分の感情がわからない子に特に効果的！</div>
   </div>
   <div class="manual-section">
     <h3>🌟 続けるコツ</h3>
@@ -226,7 +295,7 @@
   </div>
 </div>
 
-<!-- カレンダー＋記録 -->
+<!-- ===== 記録タブ ===== -->
 <div id="page-calendar" class="page">
   <div class="calendar-header">
     <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
@@ -239,7 +308,6 @@
     <span><span class="dot partial"></span>一部完了</span>
   </div>
   <p style="font-size:0.75rem;color:#bbb;text-align:center;margin-top:8px;">📌 日付をタップするとその日の記録が見れます</p>
-
   <div class="stats-wrap">
     <h3>📊 これまでの記録</h3>
     <div class="stats-grid">
@@ -249,15 +317,13 @@
       <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">連続チャレンジ日数</div></div>
     </div>
   </div>
-
-  <!-- メモ一覧 -->
   <div class="memo-list-wrap">
     <h3>📒 最近のメモ一覧</h3>
     <div id="memo-list-content"></div>
   </div>
 </div>
 
-<!-- モーダル（日付タップ時） -->
+<!-- モーダル -->
 <div class="modal-overlay" id="day-modal" onclick="closeModal(event)">
   <div class="modal-box">
     <div class="modal-header">
@@ -273,336 +339,453 @@
 </div>
 
 <script>
+// ===== 感情カード 12種 =====
 const ALL_EMOTION_CARDS = [
-  {id:'happy',    emoji:'😊',name:'うれしい',  color:'#fff9c4',when:'褒められた時\n好きなことができた時'},
-  {id:'angry',    emoji:'😡',name:'おこってる', color:'#ffcdd2',when:'取られた時\nじゃまされた時'},
-  {id:'sad',      emoji:'😢',name:'かなしい',   color:'#bbdefb',when:'負けた時\n失くした時'},
-  {id:'frustrated',emoji:'😤',name:'くやしい',  color:'#e1bee7',when:'うまくいかない時\n負けそうな時'},
-  {id:'scared',   emoji:'😰',name:'こわい',     color:'#b2ebf2',when:'怒られそうな時\n知らない場所'},
-  {id:'embarrassed',emoji:'😳',name:'はずかしい',color:'#f8bbd0',when:'みんなに見られてる時\n失敗した時'},
-  {id:'lonely',   emoji:'🥺',name:'さびしい',   color:'#cfd8dc',when:'一人の時\n無視された時'},
-  {id:'surprised',emoji:'😲',name:'びっくり',   color:'#fff3e0',when:'急に大きい音\n予想外のこと'},
-  {id:'relieved', emoji:'😌',name:'あんしん',   color:'#c8e6c9',when:'助けてもらった時\n終わった時'},
-  {id:'tired',    emoji:'😴',name:'つかれた',   color:'#eeeeee',when:'いっぱい遊んだ後\n眠い時'},
-  {id:'uneasy',   emoji:'😕',name:'もやもや',   color:'#d1c4e9',when:'なんかへんな感じ\n不安な時'},
-  {id:'excited',  emoji:'🤩',name:'わくわく',   color:'#ffe082',when:'楽しいことの前\n好きなものを見た時'},
+  {id:'happy',      emoji:'😊',name:'うれしい',  color:'#fff9c4',when:'褒められた時\n好きなことができた時'},
+  {id:'angry',      emoji:'😡',name:'おこってる', color:'#ffcdd2',when:'取られた時\nじゃまされた時'},
+  {id:'sad',        emoji:'😢',name:'かなしい',   color:'#bbdefb',when:'負けた時\n失くした時'},
+  {id:'frustrated', emoji:'😤',name:'くやしい',   color:'#e1bee7',when:'うまくいかない時\n負けそうな時'},
+  {id:'scared',     emoji:'😰',name:'こわい',     color:'#b2ebf2',when:'怒られそうな時\n知らない場所'},
+  {id:'embarrassed',emoji:'😳',name:'はずかしい', color:'#f8bbd0',when:'みんなに見られてる時\n失敗した時'},
+  {id:'lonely',     emoji:'🥺',name:'さびしい',   color:'#cfd8dc',when:'一人の時\n無視された時'},
+  {id:'surprised',  emoji:'😲',name:'びっくり',   color:'#fff3e0',when:'急に大きい音\n予想外のこと'},
+  {id:'relieved',   emoji:'😌',name:'あんしん',   color:'#c8e6c9',when:'助けてもらった時\n終わった時'},
+  {id:'tired',      emoji:'😴',name:'つかれた',   color:'#eeeeee',when:'いっぱい遊んだ後\n眠い時'},
+  {id:'uneasy',     emoji:'😕',name:'もやもや',   color:'#d1c4e9',when:'なんかへんな感じ\n不安な時'},
+  {id:'excited',    emoji:'🤩',name:'わくわく',   color:'#ffe082',when:'楽しいことの前\n好きなものを見た時'},
 ];
 
-function getTodayCards() {
-  const d = new Date();
-  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
-  const rotations = [
-    [0,1,2,3],[4,5,6,7],[8,9,10,11],
-    [0,2,4,6],[1,3,5,7],[2,4,8,10],
-    [0,3,6,9],[1,5,7,11],[0,4,8,10],
-    [2,5,9,11],[1,4,7,10],[3,6,8,11]
-  ];
-  return rotations[dayOfYear % rotations.length].map(i => ALL_EMOTION_CARDS[i]);
+// ===== 場面カード 15種 =====
+// type: 'best'=最善 'good'=まあいい 'ng'=よくない
+const SITU_CARDS = [
+  {
+    id:'s01', emoji:'🧸', tag:'おもちゃ・持ち物', scene:'友達がブロックを黙って取っていった。',
+    sub:'どうすればいいかな？',
+    choices:[
+      {text:'「返して」と言葉で伝える',      type:'best', fb:'✅ グッドチョイス！言葉で伝えるのが一番だよ。勇気を出して言えたらすごい！'},
+      {text:'先生に言う',                    type:'good', fb:'👍 それもOK！自分で言いにくい時は先生に相談しよう。'},
+      {text:'叩いて取り返す',               type:'ng',   fb:'❌ 叩いてしまうと自分が怒られてしまうよ。言葉で伝えてみよう！'},
+    ]
+  },
+  {
+    id:'s02', emoji:'👋', tag:'友達関係', scene:'仲良しの子たちが遊んでいる。入りたいな…。',
+    sub:'何て言う？',
+    choices:[
+      {text:'「いーれーて！」と声をかける',  type:'best', fb:'✅ 上手！「いーれーて」と言えたら、たいていOKしてもらえるよ！'},
+      {text:'じっと見て待つ',               type:'good', fb:'👍 声をかけるのが難しい時はじっと見るのもアリ。でも言えたらもっといいよ！'},
+      {text:'無理やり混ざる',               type:'ng',   fb:'❌ 無理に入ると「やめて」と言われてしまうかも。「入れて」と聞いてみよう！'},
+    ]
+  },
+  {
+    id:'s03', emoji:'😤', tag:'公平さ・順番', scene:'並んでいたら後ろから来た子に順番を抜かされた。',
+    sub:'どうする？',
+    choices:[
+      {text:'「順番だよ」と教えてあげる',    type:'best', fb:'✅ 上手！知らなかっただけかもしれないし、伝えるのが正解！'},
+      {text:'先生に言う',                    type:'good', fb:'👍 先生に言うのも全然OK。自分で言えない時は頼ろう！'},
+      {text:'押しのけて前に出る',            type:'ng',   fb:'❌ 押すと喧嘩になっちゃうよ。言葉で「順番だよ」と伝えてみよう！'},
+    ]
+  },
+  {
+    id:'s04', emoji:'👊', tag:'トラブル・暴力', scene:'遊んでいたら友達に突然叩かれてしまった。',
+    sub:'どうすればいい？',
+    choices:[
+      {text:'「やめて！痛い！」と言う',      type:'best', fb:'✅ 気持ちを言葉にできた！それがとっても大事だよ。'},
+      {text:'先生にすぐ言いに行く',          type:'good', fb:'👍 先生に言うのも正解！自分の安全を守るのが一番だよ。'},
+      {text:'叩き返す',                     type:'ng',   fb:'❌ 叩き返すと両方が悪くなってしまうよ。言葉か先生に頼ろう！'},
+    ]
+  },
+  {
+    id:'s05', emoji:'😢', tag:'思いやり', scene:'近くで友達が泣いている。',
+    sub:'何かしてあげられるかな？',
+    choices:[
+      {text:'「どうしたの？」と声をかける',  type:'best', fb:'✅ やさしい！声をかけてもらうだけで嬉しいんだよ。'},
+      {text:'先生を呼んであげる',            type:'good', fb:'👍 それもとても親切！先生を呼ぶのも立派な行動だよ。'},
+      {text:'気にせず遊び続ける',            type:'ng',   fb:'❌ 困っている人を見て見ぬふりはちょっと悲しいよ。一言声かけてみよう！'},
+    ]
+  },
+  {
+    id:'s06', emoji:'🎮', tag:'勝ち負け', scene:'ゲームで負けてしまった。悔しい！',
+    sub:'どうする？',
+    choices:[
+      {text:'「悔しい！」と言葉で気持ちを言う',type:'best',fb:'✅ 気持ちを言葉にできた！それだけでとっても偉い！'},
+      {text:'「もう一回やろう！」と言う',      type:'good',fb:'👍 前向き！「もう一回やりたい」という気持ちは大切にしていいよ。'},
+      {text:'おもちゃを投げる・泣き叫ぶ',     type:'ng',  fb:'❌ 気持ちはわかるけど、暴れると友達が怖がってしまうよ。「悔しい」と言葉で言おう！'},
+    ]
+  },
+  {
+    id:'s07', emoji:'🙅', tag:'友達関係', scene:'「一緒に遊ばない」と言われてしまった。',
+    sub:'どうする？',
+    choices:[
+      {text:'「なんで？」と聞いてみる',      type:'best', fb:'✅ 理由を聞くのは上手！もしかしたら誤解かもしれないよ。'},
+      {text:'別の友達を探す',               type:'good', fb:'👍 それも賢い！いつもと違う友達と遊んでみると新しい発見があるよ。'},
+      {text:'怒って無理やり遊ぼうとする',    type:'ng',   fb:'❌ 無理に入ると余計に嫌がられてしまうよ。「なんで？」と聞くか、別の子を探してみよう！'},
+    ]
+  },
+  {
+    id:'s08', emoji:'🏃', tag:'感情コントロール', scene:'友達のことがとても腹立たしくて追いかけたくなった。',
+    sub:'どうすればいい？',
+    choices:[
+      {text:'深呼吸して少し待つ',            type:'best', fb:'✅ 素晴らしい！頭が冷えると気持ちが落ち着いてくるよ。'},
+      {text:'先生に気持ちを話す',            type:'good', fb:'👍 先生に話すのも大正解！気持ちを聞いてもらおう。'},
+      {text:'怒鳴りながら追いかける',        type:'ng',   fb:'❌ 追いかけると怖がらせてしまうよ。まず深呼吸！'},
+    ]
+  },
+  {
+    id:'s09', emoji:'🎁', tag:'物・大切なもの', scene:'自分の大事なものを友達が壊してしまった。',
+    sub:'何て言う？',
+    choices:[
+      {text:'「壊れちゃって悲しい」と伝える', type:'best',fb:'✅ 気持ちを言葉で伝えられた！それはとても大切なことだよ。'},
+      {text:'先生に相談する',                type:'good', fb:'👍 先生に入ってもらうのもいい方法！一人で抱え込まなくていいよ。'},
+      {text:'同じように相手のものを壊す',     type:'ng',  fb:'❌ 壊し返すと両方悲しくなるよ。まず「悲しい」と気持ちを伝えよう！'},
+    ]
+  },
+  {
+    id:'s10', emoji:'😳', tag:'恥ずかしい・失敗', scene:'発表で間違えて、みんなに笑われてしまった。',
+    sub:'どうする？',
+    choices:[
+      {text:'「ドンマイ！」と自分に言い聞かせる',type:'best',fb:'✅ 自分を励ませるのはすごい力！失敗しても大丈夫、また挑戦しよう。'},
+      {text:'先生に「悲しかった」と話す',     type:'good', fb:'👍 気持ちを話すのはとても大事。先生はきっと聞いてくれるよ。'},
+      {text:'怒鳴って教室を飛び出す',         type:'ng',   fb:'❌ 気持ちはわかるけど飛び出すと後で大変になるよ。深呼吸してみよう！'},
+    ]
+  },
+  {
+    id:'s11', emoji:'🤝', tag:'意見の違い', scene:'友達と「何して遊ぶか」で意見が違って困っている。',
+    sub:'どうする？',
+    choices:[
+      {text:'「じゃあジャンケンで決めよう！」',type:'best',fb:'✅ ナイスアイデア！ジャンケンは公平だし仲良くできる最高の方法！'},
+      {text:'「どっちもやってみようよ」と提案', type:'good',fb:'👍 両方やるのも素敵な発想！お互いが嬉しくなれるよ。'},
+      {text:'自分の意見を押しつける',          type:'ng',  fb:'❌ 押しつけると友達が嫌な気持ちになるよ。一緒に決める方法を考えてみよう！'},
+    ]
+  },
+  {
+    id:'s12', emoji:'😡', tag:'先生・大人', scene:'先生に怒られた。でも自分は悪くないと思っている。',
+    sub:'どうすればいい？',
+    choices:[
+      {text:'落ち着いてから「話を聞いてほしい」と言う',type:'best',fb:'✅ 素晴らしい！落ち着いてから話すのが一番うまくいくよ。'},
+      {text:'黙って我慢する',               type:'good', fb:'👍 今は我慢するのも一つの方法。でも後で気持ちを話せると◎だよ。'},
+      {text:'その場で大声で口答えする',      type:'ng',   fb:'❌ 口答えすると余計に怒られてしまうよ。まず落ち着いて、後で話そう！'},
+    ]
+  },
+  {
+    id:'s13', emoji:'🙉', tag:'言葉・からかい', scene:'嫌なあだ名を付けられてからかわれた。',
+    sub:'どうする？',
+    choices:[
+      {text:'「そのあだ名は嫌だよ」とはっきり言う',type:'best',fb:'✅ 上手！はっきり「嫌だ」と伝えることが大切！'},
+      {text:'先生に相談する',               type:'good', fb:'👍 先生に話すのも大正解！一人で抱え込まないでね。'},
+      {text:'同じようにあだ名で呼び返す',    type:'ng',   fb:'❌ 言い返すと喧嘩が大きくなってしまうよ。「嫌だ」と言葉で伝えてみよう！'},
+    ]
+  },
+  {
+    id:'s14', emoji:'👀', tag:'思いやり', scene:'友達が重い荷物を持って困っていそうだ。',
+    sub:'どうする？',
+    choices:[
+      {text:'「手伝おうか？」と声をかける',  type:'best', fb:'✅ やさしい！声をかけてもらったら、とっても嬉しいよね。'},
+      {text:'先生に「困ってる人がいるよ」と言う',type:'good',fb:'👍 それも親切！先生に知らせるのも立派な行動だよ。'},
+      {text:'見て見ぬふりをする',            type:'ng',   fb:'❌ 困っているのを知っていて無視するのは悲しいよ。一言「手伝おうか？」と言ってみよう！'},
+    ]
+  },
+  {
+    id:'s15', emoji:'🙋', tag:'自分の気持ち', scene:'嫌なことをされて、すごく怒りたくなった。',
+    sub:'怒りを感じた時、どうする？',
+    choices:[
+      {text:'「やめて！嫌だ！」と言葉で伝える',type:'best',fb:'✅ 言葉で気持ちを伝えられた！それがSSTの目標だよ！すごい！'},
+      {text:'その場を離れて落ち着く',        type:'good', fb:'👍 その場を離れて冷静になるのも立派な対処法だよ！'},
+      {text:'叩いたり物を投げたりする',      type:'ng',   fb:'❌ 気持ちはわかるけど、体や物で表現すると誰かが傷つくよ。言葉か行動で試してみよう！'},
+    ]
+  },
+];
+
+// 今日の感情カード4枚
+function getTodayEmotionCards() {
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const rots = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,2,4,6],[1,3,5,7],[2,4,8,10],[0,3,6,9],[1,5,7,11],[0,4,8,10],[2,5,9,11],[1,4,7,10],[3,6,8,11]];
+  return rots[dayOfYear % rots.length].map(i => ALL_EMOTION_CARDS[i]);
+}
+
+// 今日の場面カード（日付で決まる）
+function getTodaySituIdx() {
+  return Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000) % SITU_CARDS.length;
 }
 
 const TASKS = [
-  {id:'emotion',     name:'😊 気持ちに名前をつける', desc:'「今どんな気持ち？」と聞いて言葉を一緒に探す',                   tip:'「むかつく」→「悔しかったんだね」と言い換えてあげよう。カードを使って指差しでもOK！', type:'emotion_check'},
-  {id:'roleplay',    name:'🎭 ロールプレイ練習',      desc:'お母さんが友達役。嫌なことをされた時の練習',                   tip:null, type:'roleplay'},
-  {id:'praise',      name:'🌟 できたことを褒める',    desc:'今日うまくできたこと・言葉で伝えられたことを褒める',           tip:'褒めるタイミングは「その場で」が一番効果的！ハグや「すごい！」の声かけを惜しまずに。', type:'tip'},
-  {id:'reflect',     name:'🤔 振り返りの声かけ',      desc:'「今日、どうすればよかったと思う？」と一問だけ聞く',         tip:'怒らず落ち着いた時に。説教はNG、一問だけ。子どもが自分で考えた答えが一番脳に入ります。', type:'tip'},
-  {id:'emotion_card',name:'🃏 感情カード確認',        desc:'今日の感情カードを見せて「今これ？」と確認する',             tip:null, type:'cards'},
-];
-
-const SCENARIOS = [
-  {text:'友達がブロックを横から取っていった。',         answers:['「返して」と言う','先生に言う','別のブロックで遊ぶ']},
-  {text:'遊んでいたら「入れてあげない」と言われた。',   answers:['「いーれーて」と言う','別の友達を探す','先生に相談する']},
-  {text:'順番を抜かされてしまった。',                   answers:['「順番だよ」と伝える','先生に言う','深呼吸して待つ']},
-  {text:'友達に悪口を言われた気がする。',               answers:['「それは嫌だよ」と伝える','その場を離れる','先生に話す']},
-  {text:'負けたらわざと泣き真似された。',               answers:['無視する','「やめて」と言う','先生に相談する']},
-  {text:'一緒に遊ぼうと思ったら断られた。',             answers:['「なんで？」と聞く','別の遊びを提案する','一人で遊ぶ']},
-  {text:'自分のおもちゃを壊された。',                   answers:['「弁償して」と伝える','先生に言う','気持ちを言葉にする']},
+  {id:'emotion',     name:'😊 気持ちに名前をつける',desc:'「今どんな気持ち？」と聞いて言葉を一緒に探す',                 tip:'「むかつく」→「悔しかったんだね」と言い換えてあげよう。感情カードを使って指差しでもOK！',type:'emotion_check'},
+  {id:'roleplay',    name:'🎭 場面カードで練習',    desc:'今日の場面カードを使ってロールプレイしてみよう',              tip:null,type:'roleplay'},
+  {id:'praise',      name:'🌟 できたことを褒める',  desc:'今日うまくできたこと・言葉で伝えられたことを褒める',          tip:'褒めるタイミングは「その場で」が一番効果的！ハグや「すごい！」を惜しまずに。',type:'tip'},
+  {id:'reflect',     name:'🤔 振り返りの声かけ',    desc:'「今日、どうすればよかったと思う？」と一問だけ聞く',        tip:'怒らず落ち着いた時に。説教はNG、一問だけ。子どもが自分で考えた答えが一番脳に入ります。',type:'tip'},
+  {id:'emotion_card',name:'🃏 感情カード確認',      desc:'今日の感情カードを見せて「今これ？」と確認する',             tip:null,type:'cards'},
 ];
 
 const TOTAL = TASKS.length;
 const today = new Date();
 const todayKey = dateKey(today);
-let calYear = today.getFullYear();
-let calMonth = today.getMonth();
-const todayCards = getTodayCards();
-let openTasks = {};
-let memoTimer = null;
+let calYear = today.getFullYear(), calMonth = today.getMonth();
+const todayEmotionCards = getTodayEmotionCards();
+let openTasks = {}, memoTimer = null;
+let currentCardType = 'emotion';
+let situIdx = getTodaySituIdx();
+let situAnswered = {}; // key: cardId, val: choiceIndex
 
-function dateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function loadData()  { return JSON.parse(localStorage.getItem('sst_data') || '{}'); }
-function saveData(d) { localStorage.setItem('sst_data', JSON.stringify(d)); }
-function loadMemos() { return JSON.parse(localStorage.getItem('sst_memos') || '{}'); }
-function saveMemos(m){ localStorage.setItem('sst_memos', JSON.stringify(m)); }
-function getTodayDone() { return loadData()[todayKey] || []; }
-function getTodayScenario() {
-  const idx = Math.floor((today - new Date(today.getFullYear(),0,0)) / 86400000) % SCENARIOS.length;
-  return SCENARIOS[idx];
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function loadData()  { return JSON.parse(localStorage.getItem('sst_data')||'{}'); }
+function saveData(d) { localStorage.setItem('sst_data',JSON.stringify(d)); }
+function loadMemos() { return JSON.parse(localStorage.getItem('sst_memos')||'{}'); }
+function saveMemos(m){ localStorage.setItem('sst_memos',JSON.stringify(m)); }
+function getTodayDone(){ return loadData()[todayKey]||[]; }
+
+function toggleTask(id){
+  const data=loadData(); if(!data[todayKey])data[todayKey]=[];
+  const i=data[todayKey].indexOf(id);
+  if(i>=0)data[todayKey].splice(i,1); else data[todayKey].push(id);
+  saveData(data); renderChecklist();
 }
-
-function toggleTask(taskId) {
-  const data = loadData();
-  if (!data[todayKey]) data[todayKey] = [];
-  const idx = data[todayKey].indexOf(taskId);
-  if (idx >= 0) data[todayKey].splice(idx, 1);
-  else data[todayKey].push(taskId);
-  saveData(data);
-  renderChecklist();
+function selectEmotion(cid,tid){
+  const key='sst_emotion_'+todayKey;
+  const s=JSON.parse(localStorage.getItem(key)||'{}');
+  s[tid]=s[tid]===cid?null:cid;
+  localStorage.setItem(key,JSON.stringify(s)); renderChecklist();
 }
+function getSelEmotions(){ return JSON.parse(localStorage.getItem('sst_emotion_'+todayKey)||'{}'); }
+function toggleExpand(id){ openTasks[id]=!openTasks[id]; renderChecklist(); }
 
-function selectEmotion(cardId, taskId) {
-  const key = 'sst_emotion_' + todayKey;
-  const saved = JSON.parse(localStorage.getItem(key) || '{}');
-  saved[taskId] = saved[taskId] === cardId ? null : cardId;
-  localStorage.setItem(key, JSON.stringify(saved));
-  renderChecklist();
-}
-function getSelectedEmotions() { return JSON.parse(localStorage.getItem('sst_emotion_' + todayKey) || '{}'); }
+// ===== チェックリスト =====
+function renderChecklist(){
+  const done=getTodayDone(), count=done.length;
+  document.getElementById('progress-bar').style.width=Math.round(count/TOTAL*100)+'%';
+  document.getElementById('progress-text').textContent=`${count} / ${TOTAL} 完了`;
+  document.getElementById('today-label').textContent=today.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const list=document.getElementById('task-list'); list.innerHTML='';
+  const selE=getSelEmotions();
+  const sitCard=SITU_CARDS[getTodaySituIdx()];
 
-function toggleExpand(taskId) {
-  openTasks[taskId] = !openTasks[taskId];
-  renderChecklist();
-}
+  TASKS.forEach(task=>{
+    const isDone=done.includes(task.id), isOpen=!!openTasks[task.id];
+    const card=document.createElement('div');
+    card.className='task-card'+(isDone?' done':'');
+    let bodyHTML='';
 
-// ===== チェックリスト描画 =====
-function renderChecklist() {
-  const done = getTodayDone();
-  const count = done.length;
-  document.getElementById('progress-bar').style.width = Math.round(count/TOTAL*100) + '%';
-  document.getElementById('progress-text').textContent = `${count} / ${TOTAL} 完了`;
-  document.getElementById('today-label').textContent = today.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-
-  const list = document.getElementById('task-list');
-  list.innerHTML = '';
-  const selEmotions = getSelectedEmotions();
-  const scenario = getTodayScenario();
-
-  TASKS.forEach(task => {
-    const isDone = done.includes(task.id);
-    const isOpen = !!openTasks[task.id];
-    const card = document.createElement('div');
-    card.className = 'task-card' + (isDone ? ' done' : '');
-
-    let bodyHTML = '';
-    if (task.type === 'cards' || task.type === 'emotion_check') {
-      const cardsHTML = todayCards.map(c => {
-        const sel = selEmotions[task.id] === c.id;
+    if(task.type==='cards'||task.type==='emotion_check'){
+      const ch=todayEmotionCards.map(c=>{
+        const sel=selE[task.id]===c.id;
         return `<div class="emotion-card ${sel?'selected':''}" style="background:${c.color}" onclick="selectEmotion('${c.id}','${task.id}')">
           ${sel?'<span class="selected-badge">✓</span>':''}
-          <span class="e-emoji">${c.emoji}</span>
-          <div class="e-name">${c.name}</div>
-          <div class="e-when">${c.when.replace('\n','<br>')}</div>
-        </div>`;
+          <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div>
+          <div class="e-when">${c.when.replace('\n','<br>')}</div></div>`;
       }).join('');
-      bodyHTML = `<div class="task-tip-box">💡 カードを見せて「今どれ？」と指差ししてもらおう！</div>
+      bodyHTML=`<div class="task-tip-box">💡 カードを見せて「今どれ？」と指差ししてもらおう！</div>
         <div class="today-cards-label">📅 今日の4枚（毎日ローテーション）</div>
-        <div class="emotion-grid">${cardsHTML}</div>
+        <div class="emotion-grid">${ch}</div>
         <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
-    } else if (task.type === 'roleplay') {
-      bodyHTML = `<div class="scenario-box">
-        <div class="s-title">📝 今日のシナリオ（毎日変わります）</div>
-        <div class="s-text">「${scenario.text}」<br>どうする？</div>
-        <div class="s-ans">${scenario.answers.map(a=>`<span>${a}</span>`).join('')}</div>
+
+    } else if(task.type==='roleplay'){
+      // 場面カードを使ったロールプレイ
+      const ans=situAnswered['task_'+sitCard.id];
+      const choicesHTML=sitCard.choices.map((c,i)=>{
+        let cls='situ-choice-btn';
+        if(ans!==undefined) cls+=' '+c.type;
+        return `<button class="situ-choice-btn${ans!==undefined?' '+c.type:''}" onclick="answerSituInTask('${sitCard.id}',${i})">
+          <span class="c-num">${['①','②','③'][i]}</span><span>${c.text}</span></button>`;
+      }).join('');
+      const fbHTML=ans!==undefined?`<div class="situ-feedback ${sitCard.choices[ans].type} show">${sitCard.choices[ans].fb}</div>`:'';
+      bodyHTML=`<div style="margin-top:12px">
+        <div class="situ-card">
+          <div class="situ-scene">
+            <span class="situ-scene-emoji">${sitCard.emoji}</span>
+            <span class="situ-scene-tag">${sitCard.tag}</span>
+            <div class="situ-scene-text">${sitCard.scene}</div>
+            <div class="situ-scene-sub">${sitCard.sub}</div>
+          </div>
+          <div class="situ-choices">
+            <div class="situ-choice-label">どれがいいと思う？一緒に考えてみよう👇</div>
+            ${choicesHTML}
+          </div>
+          ${fbHTML}
+        </div>
       </div>
-      <div class="task-tip-box">💡 お母さんが友達役になって実際にやってみよう！正解はないよ。</div>
+      <div class="task-tip-box">💡 お母さんが友達役になって実際に声に出してやってみよう！正解を押しつけず、一緒に考えてね。</div>
       <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
+
     } else {
-      bodyHTML = `<div class="task-tip-box">💡 ${task.tip}</div>
+      bodyHTML=`<div class="task-tip-box">💡 ${task.tip}</div>
         <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
     }
 
-    card.innerHTML = `
-      <div class="task-header" onclick="toggleExpand('${task.id}')">
+    card.innerHTML=`<div class="task-header" onclick="toggleExpand('${task.id}')">
         <div class="check-circle" onclick="event.stopPropagation();toggleTask('${task.id}')">${isDone?'✓':''}</div>
-        <div class="task-info">
-          <div class="task-name">${task.name}</div>
-          <div class="task-desc">${task.desc}</div>
-        </div>
+        <div class="task-info"><div class="task-name">${task.name}</div><div class="task-desc">${task.desc}</div></div>
         <button class="expand-btn ${isOpen?'open':''}">▼</button>
       </div>
       <div class="task-body ${isOpen?'open':''}">${bodyHTML}</div>`;
     list.appendChild(card);
   });
-
-  document.getElementById('complete-msg').style.display = count === TOTAL ? 'block' : 'none';
-
-  // メモ読み込み
-  const memos = loadMemos();
-  const ta = document.getElementById('today-memo');
-  if (ta && ta !== document.activeElement) ta.value = memos[todayKey] || '';
+  document.getElementById('complete-msg').style.display=count===TOTAL?'block':'none';
+  const ta=document.getElementById('today-memo');
+  if(ta&&ta!==document.activeElement){ ta.value=loadMemos()[todayKey]||''; }
 }
 
-// ===== メモ自動保存 =====
-function onMemoInput() {
-  const status = document.getElementById('memo-status');
-  status.textContent = '入力中...';
-  status.className = 'memo-save-status';
+function answerSituInTask(cardId, choiceIdx){
+  situAnswered['task_'+cardId]=choiceIdx;
+  renderChecklist();
+}
+
+// ===== メモ =====
+function onMemoInput(){
+  const st=document.getElementById('memo-status');
+  st.textContent='入力中...'; st.className='memo-save-status';
   clearTimeout(memoTimer);
-  memoTimer = setTimeout(() => {
-    const val = document.getElementById('today-memo').value;
-    const memos = loadMemos();
-    if (val.trim()) memos[todayKey] = val;
-    else delete memos[todayKey];
-    saveMemos(memos);
-    status.textContent = '✓ 保存しました';
-    status.className = 'memo-save-status saved';
-    setTimeout(() => { status.textContent = ''; status.className = 'memo-save-status'; }, 2000);
-  }, 800);
+  memoTimer=setTimeout(()=>{
+    const val=document.getElementById('today-memo').value;
+    const m=loadMemos();
+    if(val.trim())m[todayKey]=val; else delete m[todayKey];
+    saveMemos(m);
+    st.textContent='✓ 保存しました'; st.className='memo-save-status saved';
+    setTimeout(()=>{st.textContent='';st.className='memo-save-status';},2000);
+  },800);
 }
 
-// ===== カードページ =====
-function renderCardsPage() {
-  const big = document.getElementById('today-cards-big');
-  if (big) big.innerHTML = todayCards.map(c =>
-    `<div class="emotion-card" style="background:${c.color};cursor:default">
-      <span class="e-emoji">${c.emoji}</span>
-      <div class="e-name">${c.name}</div>
-      <div class="e-when">${c.when.replace('\n','<br>')}</div>
-    </div>`).join('');
-  const all = document.getElementById('all-cards-grid');
-  if (all) all.innerHTML = ALL_EMOTION_CARDS.map(c =>
-    `<div class="mini-emotion-card" style="background:${c.color}">
-      <span class="e-emoji">${c.emoji}</span>
-      <div class="e-name">${c.name}</div>
-    </div>`).join('');
+// ===== カードタブ =====
+function switchCardType(type){
+  currentCardType=type;
+  document.getElementById('area-emotion').style.display=type==='emotion'?'block':'none';
+  document.getElementById('area-situ').style.display=type==='situ'?'block':'none';
+  document.getElementById('btn-emotion-tab').className='card-type-btn'+(type==='emotion'?' active':'');
+  document.getElementById('btn-situ-tab').className='card-type-btn'+(type==='situ'?' active':'');
+  if(type==='situ') renderSituCards();
+}
+
+function renderCardsPage(){
+  // 感情カード
+  const big=document.getElementById('today-cards-big');
+  if(big) big.innerHTML=todayEmotionCards.map(c=>`<div class="emotion-card" style="background:${c.color};cursor:default">
+    <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div>
+    <div class="e-when">${c.when.replace('\n','<br>')}</div></div>`).join('');
+  const all=document.getElementById('all-cards-grid');
+  if(all) all.innerHTML=ALL_EMOTION_CARDS.map(c=>`<div class="mini-emotion-card" style="background:${c.color}">
+    <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div></div>`).join('');
+}
+
+function renderSituCards(){
+  const area=document.getElementById('situ-card-area');
+  if(!area)return;
+  const c=SITU_CARDS[situIdx];
+  const ans=situAnswered[c.id];
+  const choicesHTML=c.choices.map((ch,i)=>{
+    const sel=ans===i;
+    let cls='situ-choice-btn';
+    if(ans!==undefined) cls+=' '+ch.type;
+    return `<button class="${cls}" onclick="answerSitu(${i})" ${ans!==undefined?'disabled':''}>
+      <span class="c-num">${['①','②','③'][i]}</span><span>${ch.text}</span></button>`;
+  }).join('');
+  const fbHTML=ans!==undefined?`<div class="situ-feedback ${c.choices[ans].type} show">${c.choices[ans].fb}</div>`:'';
+  area.innerHTML=`<div class="situ-card">
+    <div class="situ-scene">
+      <span class="situ-scene-emoji">${c.emoji}</span>
+      <span class="situ-scene-tag">${c.tag}</span>
+      <div class="situ-scene-text">${c.scene}</div>
+      <div class="situ-scene-sub">${c.sub}</div>
+    </div>
+    <div class="situ-choices">
+      <div class="situ-choice-label">どれがいいと思う？一緒に考えてみよう👇</div>
+      ${choicesHTML}
+    </div>
+    ${fbHTML}
+    <div class="situ-nav">
+      <button class="situ-nav-btn" onclick="moveSitu(-1)" ${situIdx===0?'disabled':''}>◀ 前の場面</button>
+      <span class="situ-counter">${situIdx+1} / ${SITU_CARDS.length}</span>
+      <button class="situ-nav-btn" onclick="moveSitu(1)" ${situIdx===SITU_CARDS.length-1?'disabled':''}>次の場面 ▶</button>
+    </div>
+  </div>`;
+}
+
+function answerSitu(i){
+  const c=SITU_CARDS[situIdx];
+  situAnswered[c.id]=i;
+  renderSituCards();
+}
+function moveSitu(dir){
+  situIdx=Math.max(0,Math.min(SITU_CARDS.length-1,situIdx+dir));
+  renderSituCards();
 }
 
 // ===== カレンダー =====
-function renderCalendar() {
-  const data  = loadData();
-  const memos = loadMemos();
-  document.getElementById('cal-title').textContent = `${calYear}年${calMonth+1}月`;
-  const grid = document.getElementById('calendar-grid');
-  grid.innerHTML = '';
-  ['日','月','火','水','木','金','土'].forEach(d => {
-    const el = document.createElement('div');
-    el.className = 'cal-day-header'; el.textContent = d;
-    grid.appendChild(el);
-  });
-  const firstDay = new Date(calYear,calMonth,1).getDay();
-  const daysInMonth = new Date(calYear,calMonth+1,0).getDate();
-  for (let i=0;i<firstDay;i++) {
-    const el = document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el);
-  }
-  for (let d=1;d<=daysInMonth;d++) {
-    const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const doneCount = (data[key]||[]).length;
-    const hasMemo = !!(memos[key] && memos[key].trim());
-    const el = document.createElement('div');
-    el.textContent = d;
-    let cls = 'cal-day';
-    if (key===todayKey) cls+=' today';
-    if (doneCount===TOTAL) cls+=' full';
-    else if (doneCount>0) cls+=' partial';
-    el.className = cls;
-    el.onclick = () => openDayModal(key);
-    if (hasMemo) {
-      el.style.position = 'relative';
-      const dot = document.createElement('span');
-      dot.style.cssText = 'position:absolute;top:1px;right:1px;width:5px;height:5px;background:#ff8fab;border-radius:50%;display:block;';
+function renderCalendar(){
+  const data=loadData(), memos=loadMemos();
+  document.getElementById('cal-title').textContent=`${calYear}年${calMonth+1}月`;
+  const grid=document.getElementById('calendar-grid'); grid.innerHTML='';
+  ['日','月','火','水','木','金','土'].forEach(d=>{ const el=document.createElement('div'); el.className='cal-day-header'; el.textContent=d; grid.appendChild(el); });
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  for(let i=0;i<firstDay;i++){ const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
+  for(let d=1;d<=dim;d++){
+    const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dc=(data[key]||[]).length;
+    const el=document.createElement('div'); el.textContent=d;
+    let cls='cal-day'; if(key===todayKey)cls+=' today'; if(dc===TOTAL)cls+=' full'; else if(dc>0)cls+=' partial';
+    el.className=cls; el.onclick=()=>openDayModal(key);
+    if(memos[key]&&memos[key].trim()){
+      el.style.position='relative';
+      const dot=document.createElement('span');
+      dot.style.cssText='position:absolute;top:1px;right:1px;width:5px;height:5px;background:#ff8fab;border-radius:50%;';
       el.appendChild(dot);
-      el.style.overflow = 'visible';
     }
     grid.appendChild(el);
   }
-
-  // 統計
-  const allKeys = Object.keys(data);
-  const totalDays  = allKeys.filter(k=>(data[k]||[]).length>0).length;
-  const fullDays   = allKeys.filter(k=>(data[k]||[]).length===TOTAL).length;
-  const totalTasks = allKeys.reduce((s,k)=>s+(data[k]||[]).length,0);
-  let streak=0, cd=new Date(today);
-  while(true){const k=dateKey(cd);if((data[k]||[]).length>0){streak++;cd.setDate(cd.getDate()-1);}else break;if(streak>365)break;}
-  document.getElementById('stat-total-days').textContent = totalDays;
-  document.getElementById('stat-full-days').textContent  = fullDays;
-  document.getElementById('stat-total-tasks').textContent= totalTasks;
-  document.getElementById('stat-streak').textContent     = streak;
-
-  // メモ一覧
-  renderMemoList(memos, data);
+  const allK=Object.keys(data);
+  const td=allK.filter(k=>(data[k]||[]).length>0).length;
+  const fd=allK.filter(k=>(data[k]||[]).length===TOTAL).length;
+  const tt=allK.reduce((s,k)=>s+(data[k]||[]).length,0);
+  let streak=0,cd=new Date(today);
+  while(true){ const k=dateKey(cd); if((data[k]||[]).length>0){streak++;cd.setDate(cd.getDate()-1);}else break; if(streak>365)break; }
+  document.getElementById('stat-total-days').textContent=td;
+  document.getElementById('stat-full-days').textContent=fd;
+  document.getElementById('stat-total-tasks').textContent=tt;
+  document.getElementById('stat-streak').textContent=streak;
+  renderMemoList(memos,data);
 }
 
-function renderMemoList(memos, data) {
-  const el = document.getElementById('memo-list-content');
-  if (!el) return;
-  const keys = Object.keys(memos).filter(k=>memos[k]&&memos[k].trim()).sort((a,b)=>b.localeCompare(a)).slice(0,20);
-  if (keys.length === 0) {
-    el.innerHTML = '<div class="memo-empty">まだメモがありません。<br>今日のタブからメモを書いてみよう！</div>';
-    return;
-  }
-  el.innerHTML = keys.map(k => {
-    const doneCount = (data[k]||[]).length;
-    const d = new Date(k);
-    const label = d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-    let badge = '';
-    if (doneCount===TOTAL) badge = '<span class="memo-entry-badge badge-full">✓ 全完了</span>';
-    else if (doneCount>0)  badge = `<span class="memo-entry-badge badge-partial">${doneCount}/${TOTAL}</span>`;
-    else                   badge = '<span class="memo-entry-badge badge-none">記録なし</span>';
-    const text = memos[k].length > 80 ? memos[k].slice(0,80)+'…' : memos[k];
+function renderMemoList(memos,data){
+  const el=document.getElementById('memo-list-content'); if(!el)return;
+  const keys=Object.keys(memos).filter(k=>memos[k]&&memos[k].trim()).sort((a,b)=>b.localeCompare(a)).slice(0,20);
+  if(!keys.length){ el.innerHTML='<div class="memo-empty">まだメモがありません。<br>今日タブからメモを書いてみよう！</div>'; return; }
+  el.innerHTML=keys.map(k=>{
+    const dc=(data[k]||[]).length;
+    const d=new Date(k);
+    const label=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+    const badge=dc===TOTAL?'<span class="memo-entry-badge badge-full">✓ 全完了</span>':dc>0?`<span class="memo-entry-badge badge-partial">${dc}/${TOTAL}</span>`:'<span class="memo-entry-badge badge-none">記録なし</span>';
+    const text=memos[k].length>80?memos[k].slice(0,80)+'…':memos[k];
     return `<div class="memo-entry" onclick="openDayModal('${k}')">
       <div class="memo-entry-header"><span class="memo-entry-date">${label}</span>${badge}</div>
-      <div class="memo-entry-text">${text}</div>
-    </div>`;
+      <div class="memo-entry-text">${text}</div></div>`;
   }).join('');
 }
 
-function changeMonth(dir) {
-  calMonth += dir;
-  if (calMonth<0)  {calMonth=11;calYear--;}
-  if (calMonth>11) {calMonth=0; calYear++;}
-  renderCalendar();
-}
+function changeMonth(dir){ calMonth+=dir; if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCalendar(); }
 
-// ===== モーダル =====
-function openDayModal(key) {
-  const data  = loadData();
-  const memos = loadMemos();
-  const done  = data[key] || [];
-  const d = new Date(key);
-  document.getElementById('modal-date-title').textContent =
-    d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-
-  const taskHTML = TASKS.map(t => {
-    const isDone = done.includes(t.id);
-    return `<div class="modal-task-row">
-      <span class="modal-check">${isDone?'✅':'⬜'}</span>
-      <span>${t.name}</span>
-    </div>`;
-  }).join('');
-  document.getElementById('modal-tasks').innerHTML = taskHTML;
-
-  const memo = memos[key];
-  const memoEl = document.getElementById('modal-memo-content');
-  memoEl.innerHTML = memo && memo.trim()
-    ? `<div class="modal-memo-text">${memo}</div>`
-    : `<div class="modal-no-memo">メモなし</div>`;
-
+function openDayModal(key){
+  const data=loadData(),memos=loadMemos(),done=data[key]||[];
+  const d=new Date(key);
+  document.getElementById('modal-date-title').textContent=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  document.getElementById('modal-tasks').innerHTML=TASKS.map(t=>`<div class="modal-task-row"><span>${done.includes(t.id)?'✅':'⬜'}</span><span>${t.name}</span></div>`).join('');
+  const memo=memos[key];
+  document.getElementById('modal-memo-content').innerHTML=memo&&memo.trim()?`<div class="modal-memo-text">${memo}</div>`:'<div class="modal-no-memo">メモなし</div>';
   document.getElementById('day-modal').classList.add('open');
 }
+function closeModal(e){ if(e.target.id==='day-modal')closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('day-modal').classList.remove('open'); }
 
-function closeModal(e) {
-  if (e.target.id === 'day-modal') closeModalDirect();
-}
-function closeModalDirect() {
-  document.getElementById('day-modal').classList.remove('open');
-}
-
-function showPage(name, btn) {
+function showPage(name,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (name==='calendar') renderCalendar();
-  if (name==='cards') renderCardsPage();
+  if(btn)btn.classList.add('active');
+  if(name==='calendar')renderCalendar();
+  if(name==='cards')renderCardsPage();
 }
 
 // 初期化
 renderChecklist();
 renderCardsPage();
-const ta = document.getElementById('today-memo');
-if (ta) {
-  const memos = loadMemos();
-  ta.value = memos[todayKey] || '';
-  ta.addEventListener('input', onMemoInput);
-}
+const ta=document.getElementById('today-memo');
+if(ta){ ta.value=loadMemos()[todayKey]||''; ta.addEventListener('input',onMemoInput); }
 </script>
 </body>
 </html>
