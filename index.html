@@ -3,787 +3,1093 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SST毎日チャレンジ</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<title>SSTトレーニング 🦕</title>
 <style>
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:'Hiragino Kaku Gothic ProN','メイリオ',sans-serif; background:#fff8f5; color:#333; min-height:100vh; }
-  header { background:linear-gradient(135deg,#ff8fab,#ffb347); color:white; padding:16px 20px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-  header h1 { font-size:1.3rem; }
-  header p  { font-size:0.8rem; opacity:0.9; margin-top:4px; }
+:root {
+  --blue:#5bbde4; --blue-l:#e3f4fc; --blue-d:#3a9bbf;
+  --orange:#ff9500; --orange-l:#fff3e0; --orange-d:#e07800;
+  --green:#56c55e; --green-l:#e8f5e9; --green-d:#3da845;
+  --pink:#ff6b9d;  --pink-l:#fde8f0;
+  --yellow:#ffd43b;
+  --red-l:#ffe0e0;
+  --bg:#f0f9ff;
+  --white:#fff;
+  --text:#333;
+  --gray:#888;
+  --r:18px; --r-sm:10px;
+  --shadow:0 4px 16px rgba(0,0,0,0.10);
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.08);
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family:'M PLUS Rounded 1c','Hiragino Kaku Gothic ProN','メイリオ',sans-serif;
+  background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden;
+}
+button { font-family:inherit; cursor:pointer; }
 
-  .tabs { display:flex; background:white; border-bottom:2px solid #ffe0e0; position:sticky; top:0; z-index:10; }
-  .tab  { flex:1; padding:12px 4px; text-align:center; font-size:0.78rem; cursor:pointer; color:#999; border:none; background:none; transition:all 0.2s; }
-  .tab.active { color:#ff8fab; border-bottom:3px solid #ff8fab; font-weight:bold; margin-bottom:-2px; }
+/* ===== HEADER ===== */
+.app-header {
+  background:linear-gradient(135deg,#5bbde4,#7ecbee);
+  padding:10px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 3px 10px rgba(91,189,228,0.35);
+  position:sticky; top:0; z-index:20;
+}
+.header-title { display:flex; align-items:center; gap:8px; }
+.header-title .mascot { font-size:1.6rem; }
+.header-title h1 { font-size:1.05rem; font-weight:800; color:white; line-height:1.2; }
+.header-title h1 span { font-size:0.7rem; font-weight:400; display:block; opacity:0.9; }
+.star-display {
+  background:rgba(255,255,255,0.25); border-radius:30px;
+  padding:6px 14px; display:flex; align-items:center; gap:5px;
+  font-size:1.05rem; font-weight:800; color:white;
+}
+.star-display .s-icon { font-size:1.2rem; }
 
-  .page { display:none; padding:16px; }
-  .page.active { display:block; }
+/* ===== TABS ===== */
+.tabs {
+  display:flex; background:white;
+  border-bottom:3px solid var(--blue-l);
+  position:sticky; top:58px; z-index:19;
+  box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+.tab {
+  flex:1; padding:11px 4px; text-align:center;
+  font-size:0.72rem; font-weight:700; cursor:pointer;
+  color:#aaa; border:none; background:none; transition:all 0.2s;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.tab .t-icon { font-size:1.2rem; }
+.tab.active { color:var(--blue-d); border-bottom:3px solid var(--blue); margin-bottom:-3px; }
 
-  /* 進捗 */
-  .date-label   { text-align:center; font-size:0.9rem; color:#888; margin-bottom:12px; }
-  .progress-wrap{ background:#ffe8e8; border-radius:20px; height:10px; margin-bottom:8px; overflow:hidden; }
-  .progress-bar { background:linear-gradient(90deg,#ff8fab,#ffb347); height:100%; border-radius:20px; transition:width 0.4s ease; }
-  .progress-text{ text-align:center; font-size:0.85rem; color:#ff8fab; margin-bottom:20px; font-weight:bold; }
+/* ===== PAGE ===== */
+.page { display:none; padding:16px; padding-bottom:30px; }
+.page.active { display:block; }
 
-  /* タスクカード */
-  .task-card { background:white; border-radius:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:2px solid transparent; overflow:hidden; transition:border-color 0.3s; }
-  .task-card.done { border-color:#ffb347; background:#fffbf0; }
-  .task-header { display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; }
-  .check-circle { width:36px; height:36px; border-radius:50%; border:2px solid #ddd; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; transition:all 0.3s; cursor:pointer; }
-  .task-card.done .check-circle { background:#ffb347; border-color:#ffb347; color:white; }
-  .task-info { flex:1; }
-  .task-name  { font-size:0.95rem; font-weight:bold; color:#444; margin-bottom:3px; }
-  .task-card.done .task-name { color:#bbb; text-decoration:line-through; }
-  .task-desc  { font-size:0.78rem; color:#888; line-height:1.4; }
-  .task-card.done .task-desc { color:#ccc; }
-  .expand-btn { font-size:0.75rem; color:#ff8fab; background:#fff0f5; border:none; border-radius:20px; padding:4px 10px; cursor:pointer; flex-shrink:0; transition:transform 0.2s; }
-  .expand-btn.open { transform:rotate(180deg); }
-  .task-body  { display:none; padding:0 16px 16px; border-top:1px solid #f5f5f5; }
-  .task-body.open { display:block; }
-  .task-tip-box { background:#fff8e0; border-left:3px solid #ffb347; border-radius:0 8px 8px 0; padding:8px 12px; font-size:0.8rem; color:#665; margin-bottom:12px; margin-top:12px; line-height:1.6; }
+/* ===== TODAY TAB ===== */
+.today-greeting {
+  background:linear-gradient(135deg,#fff9e6,#fff3cd);
+  border-radius:var(--r); padding:16px 18px;
+  margin-bottom:16px; display:flex; align-items:center; gap:12px;
+  box-shadow:var(--shadow-sm);
+}
+.greeting-char { font-size:2.8rem; }
+.greeting-text h2 { font-size:1rem; font-weight:800; color:#e07800; }
+.greeting-text p  { font-size:0.78rem; color:#888; margin-top:2px; }
 
-  /* 感情カード */
-  .today-cards-label { font-size:0.8rem; color:#999; text-align:center; margin:10px 0 8px; }
-  .emotion-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
-  .emotion-card { border-radius:14px; padding:14px 10px; text-align:center; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; border:3px solid transparent; position:relative; }
-  .emotion-card:active { transform:scale(0.96); }
-  .emotion-card.selected { border-color:white; box-shadow:0 0 0 3px #ff8fab; transform:scale(1.03); }
-  .emotion-card .e-emoji { font-size:2.2rem; display:block; margin-bottom:6px; }
-  .emotion-card .e-name  { font-size:1rem; font-weight:bold; color:#333; }
-  .emotion-card .e-when  { font-size:0.7rem; color:#666; margin-top:3px; line-height:1.3; }
-  .selected-badge { position:absolute; top:-6px; right:-6px; background:#ff8fab; color:white; border-radius:50%; width:22px; height:22px; font-size:0.75rem; display:flex; align-items:center; justify-content:center; }
+.today-stars {
+  background:white; border-radius:var(--r); padding:14px 18px;
+  margin-bottom:16px; box-shadow:var(--shadow-sm);
+}
+.today-stars-label { font-size:0.75rem; color:var(--gray); margin-bottom:10px; font-weight:700; }
+.star-row { display:flex; gap:10px; justify-content:center; }
+.star-item { font-size:2rem; transition:all 0.3s; filter:grayscale(1) opacity(0.3); }
+.star-item.lit { filter:none; animation:starBounce 0.4s ease; }
+@keyframes starBounce { 0%{transform:scale(0.5)}60%{transform:scale(1.3)}100%{transform:scale(1)} }
 
-  /* できた！ボタン */
-  .done-btn { width:100%; padding:12px; border-radius:12px; border:none; font-size:1rem; font-weight:bold; cursor:pointer; transition:all 0.2s; }
-  .done-btn.undone { background:linear-gradient(135deg,#ff8fab,#ffb347); color:white; }
-  .done-btn.undone:active { opacity:0.8; transform:scale(0.98); }
-  .done-btn.already { background:#f0f0f0; color:#bbb; }
+.task-card {
+  background:white; border-radius:var(--r);
+  margin-bottom:12px; box-shadow:var(--shadow-sm);
+  border:2px solid transparent; overflow:hidden; transition:border-color 0.3s;
+}
+.task-card.done { border-color:var(--green); background:var(--green-l); }
 
-  /* ===== シチュエーションカード ===== */
-  .situ-card {
-    background:white; border-radius:20px;
-    box-shadow:0 4px 16px rgba(0,0,0,0.1);
-    overflow:hidden; margin-bottom:12px;
-  }
-  .situ-scene {
-    padding:20px 16px 16px;
-    text-align:center;
-  }
-  .situ-scene-emoji { font-size:3.5rem; display:block; margin-bottom:10px; }
-  .situ-scene-tag {
-    display:inline-block; font-size:0.7rem;
-    background:#fff0f5; color:#ff8fab;
-    border-radius:20px; padding:3px 12px;
-    margin-bottom:10px; font-weight:bold;
-  }
-  .situ-scene-text {
-    font-size:1rem; font-weight:bold; color:#333;
-    line-height:1.6; margin-bottom:6px;
-  }
-  .situ-scene-sub { font-size:0.8rem; color:#888; line-height:1.5; }
+.task-header {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px; cursor:pointer;
+}
+.task-num {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--blue-l); color:var(--blue-d);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.85rem; font-weight:800; flex-shrink:0;
+  transition:all 0.3s;
+}
+.task-card.done .task-num { background:var(--green); color:white; }
+.task-info { flex:1; }
+.task-name { font-size:0.95rem; font-weight:800; color:var(--text); margin-bottom:2px; }
+.task-card.done .task-name { color:#999; text-decoration:line-through; }
+.task-desc { font-size:0.75rem; color:var(--gray); line-height:1.4; }
+.task-card.done .task-desc { color:#bbb; }
+.expand-arrow {
+  font-size:0.8rem; color:var(--blue);
+  background:var(--blue-l); border:none;
+  border-radius:20px; padding:4px 10px;
+  flex-shrink:0; transition:transform 0.25s;
+}
+.expand-arrow.open { transform:rotate(180deg); }
 
-  .situ-choices { padding:0 16px 16px; }
-  .situ-choice-label { font-size:0.75rem; color:#aaa; margin-bottom:8px; text-align:center; }
-  .situ-choice-btn {
-    width:100%; margin-bottom:8px; padding:12px 14px;
-    border-radius:12px; border:2px solid #f0f0f0;
-    background:white; font-size:0.9rem; color:#444;
-    text-align:left; cursor:pointer;
-    transition:all 0.2s; line-height:1.4;
-    display:flex; align-items:center; gap:10px;
-  }
-  .situ-choice-btn:active { transform:scale(0.98); }
-  .situ-choice-btn.best   { border-color:#4caf50; background:#f1f8f1; color:#2e7d32; }
-  .situ-choice-btn.good   { border-color:#ff9800; background:#fff8f0; color:#e65100; }
-  .situ-choice-btn.ng     { border-color:#f44336; background:#fff5f5; color:#c62828; }
-  .situ-choice-btn .c-num { font-weight:bold; font-size:1.1rem; flex-shrink:0; }
-  .situ-feedback {
-    margin:0 16px 16px;
-    border-radius:12px; padding:12px 14px;
-    font-size:0.85rem; line-height:1.6; display:none;
-  }
-  .situ-feedback.show { display:block; }
-  .situ-feedback.best { background:#e8f5e9; color:#2e7d32; border-left:4px solid #4caf50; }
-  .situ-feedback.good { background:#fff3e0; color:#e65100; border-left:4px solid #ff9800; }
-  .situ-feedback.ng   { background:#ffebee; color:#c62828; border-left:4px solid #f44336; }
+.task-body { display:none; padding:0 16px 16px; border-top:2px solid #f0f0f0; }
+.task-body.open { display:block; }
 
-  .situ-nav { display:flex; align-items:center; justify-content:space-between; padding:0 16px 16px; }
-  .situ-nav-btn { background:#fff0f5; color:#ff8fab; border:none; border-radius:20px; padding:8px 16px; cursor:pointer; font-size:0.85rem; font-weight:bold; }
-  .situ-nav-btn:disabled { background:#f5f5f5; color:#ddd; cursor:default; }
-  .situ-counter { font-size:0.8rem; color:#bbb; }
+.tip-box {
+  background:var(--orange-l); border-left:4px solid var(--orange);
+  border-radius:0 var(--r-sm) var(--r-sm) 0;
+  padding:10px 14px; font-size:0.82rem; color:#664;
+  margin:12px 0; line-height:1.6;
+}
 
-  /* カードタブ：トグル */
-  .card-type-toggle { display:flex; background:#f5f5f5; border-radius:12px; padding:4px; margin-bottom:16px; }
-  .card-type-btn { flex:1; padding:8px; border:none; border-radius:8px; font-size:0.85rem; cursor:pointer; color:#999; background:transparent; transition:all 0.2s; font-weight:bold; }
-  .card-type-btn.active { background:white; color:#ff8fab; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+.big-done-btn {
+  width:100%; padding:14px; border-radius:var(--r);
+  border:none; font-size:1rem; font-weight:800;
+  cursor:pointer; transition:all 0.2s; margin-top:4px;
+}
+.big-done-btn.go   { background:linear-gradient(135deg,var(--green),#7de085); color:white; box-shadow:0 4px 12px rgba(86,197,94,0.4); }
+.big-done-btn.go:active { transform:scale(0.97); }
+.big-done-btn.done { background:#f0f0f0; color:#bbb; }
 
-  /* 全完了 */
-  .complete-msg { text-align:center; padding:20px; background:linear-gradient(135deg,#fff0f5,#fff8e0); border-radius:16px; margin-top:16px; display:none; animation:pop 0.4s ease; }
-  @keyframes pop { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
-  .complete-msg .big { font-size:2.5rem; }
-  .complete-msg p { color:#ff8fab; font-weight:bold; margin-top:8px; font-size:1.05rem; }
+/* 感情カードグリッド */
+.emotion-grid-sm { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
+.e-card-sm {
+  border-radius:var(--r-sm); padding:12px 8px; text-align:center;
+  cursor:pointer; border:3px solid transparent;
+  transition:all 0.15s; position:relative;
+}
+.e-card-sm:active { transform:scale(0.95); }
+.e-card-sm.selected { border-color:white; box-shadow:0 0 0 3px var(--pink); transform:scale(1.04); }
+.e-card-sm .ee { font-size:2rem; display:block; margin-bottom:4px; }
+.e-card-sm .en { font-size:0.85rem; font-weight:800; color:#333; }
+.sel-badge { position:absolute; top:-7px; right:-7px; background:var(--pink); color:white; border-radius:50%; width:22px; height:22px; font-size:0.7rem; display:flex; align-items:center; justify-content:center; font-weight:800; }
 
-  /* メモ */
-  .memo-wrap { background:white; border-radius:16px; padding:16px; margin-top:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .memo-wrap h3 { font-size:0.95rem; color:#ff8fab; margin-bottom:10px; }
-  .memo-textarea { width:100%; min-height:100px; border:1.5px solid #ffe0e0; border-radius:10px; padding:10px 12px; font-size:0.9rem; font-family:inherit; color:#444; resize:vertical; outline:none; line-height:1.6; transition:border-color 0.2s; }
-  .memo-textarea:focus { border-color:#ff8fab; }
-  .memo-textarea::placeholder { color:#ccc; }
-  .memo-save-status { font-size:0.75rem; color:#bbb; text-align:right; margin-top:6px; height:16px; }
-  .memo-save-status.saved { color:#88cc88; }
+/* ===== SITUATON CARD GAME ===== */
+.game-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px;
+}
+.mondai-counter {
+  background:white; border-radius:30px; padding:6px 16px;
+  font-size:0.9rem; font-weight:800; color:var(--blue-d);
+  box-shadow:var(--shadow-sm);
+}
+.mondai-stars-earned {
+  background:var(--yellow); border-radius:30px; padding:6px 14px;
+  font-size:0.9rem; font-weight:800; color:#664;
+}
 
-  /* メモ一覧 */
-  .memo-list-wrap { background:white; border-radius:16px; padding:16px; margin-top:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .memo-list-wrap h3 { font-size:0.95rem; color:#ff8fab; margin-bottom:12px; }
-  .memo-entry { border-bottom:1px solid #f5f5f5; padding:12px 0; cursor:pointer; }
-  .memo-entry:last-child { border-bottom:none; padding-bottom:0; }
-  .memo-entry-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-  .memo-entry-date { font-size:0.82rem; font-weight:bold; color:#888; }
-  .memo-entry-badge { font-size:0.7rem; border-radius:20px; padding:2px 10px; font-weight:bold; }
-  .badge-full { background:#fff3e0; color:#e67e22; }
-  .badge-partial { background:#fce4ec; color:#e91e63; }
-  .badge-none { background:#f5f5f5; color:#bbb; }
-  .memo-entry-text { font-size:0.85rem; color:#555; line-height:1.6; white-space:pre-wrap; }
-  .memo-empty { font-size:0.85rem; color:#ccc; text-align:center; padding:20px 0; }
+.situ-big-card {
+  background:white; border-radius:var(--r);
+  box-shadow:var(--shadow); margin-bottom:14px; overflow:hidden;
+}
+.situ-scene-area {
+  padding:20px 18px 16px; text-align:center;
+  background:linear-gradient(180deg,var(--blue-l),white);
+}
+.situ-big-emoji { font-size:4rem; display:block; margin-bottom:8px; }
+.situ-tag-chip {
+  display:inline-block; background:var(--blue); color:white;
+  border-radius:20px; padding:4px 14px; font-size:0.72rem;
+  font-weight:800; margin-bottom:10px;
+}
+.situ-scene-q {
+  font-size:1.05rem; font-weight:800; color:var(--text);
+  line-height:1.6; margin-bottom:6px;
+}
+.situ-dousuru {
+  display:inline-block; background:var(--orange); color:white;
+  border-radius:var(--r-sm); padding:6px 20px;
+  font-size:0.95rem; font-weight:800;
+  margin-top:6px;
+}
 
-  /* マニュアル */
-  .manual-section { background:white; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .manual-section h3 { font-size:1rem; color:#ff8fab; margin-bottom:10px; }
-  .manual-section p, .manual-section li { font-size:0.85rem; color:#555; line-height:1.7; }
-  .manual-section ul { padding-left:16px; }
-  .manual-section .point { background:#fff8e0; border-left:3px solid #ffb347; padding:8px 12px; border-radius:0 8px 8px 0; margin-top:8px; font-size:0.82rem; color:#664; }
+.choice-area { padding:16px; }
+.choice-label { font-size:0.78rem; color:var(--gray); text-align:center; margin-bottom:10px; font-weight:700; }
+.choice-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+.choice-btn {
+  width:100%; padding:14px 16px; border-radius:var(--r-sm);
+  border:2.5px solid #e8e8e8; background:white;
+  font-size:0.92rem; font-weight:700; color:var(--text);
+  text-align:left; cursor:pointer;
+  transition:all 0.2s; display:flex; align-items:center; gap:12px;
+  line-height:1.4; box-shadow:var(--shadow-sm);
+}
+.choice-btn:active { transform:scale(0.97); }
+.choice-btn.result-best { border-color:var(--green);  background:var(--green-l);  color:var(--green-d); }
+.choice-btn.result-good { border-color:var(--orange); background:var(--orange-l); color:var(--orange-d); }
+.choice-btn.result-ng   { border-color:#ff8a80;        background:var(--red-l);    color:#c62828; }
+.choice-num {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--blue-l); color:var(--blue-d);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:0.85rem; flex-shrink:0;
+}
+.choice-btn.result-best .choice-num { background:var(--green);  color:white; }
+.choice-btn.result-good .choice-num { background:var(--orange); color:white; }
+.choice-btn.result-ng   .choice-num { background:#ef9a9a;       color:white; }
+.choice-icon { font-size:1.3rem; flex-shrink:0; }
 
-  /* 感情カード全一覧 */
-  .all-cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
-  .mini-emotion-card { border-radius:12px; padding:10px 6px; text-align:center; }
-  .mini-emotion-card .e-emoji { font-size:1.6rem; display:block; margin-bottom:4px; }
-  .mini-emotion-card .e-name  { font-size:0.78rem; font-weight:bold; color:#333; }
+/* フィードバックカード */
+.feedback-card {
+  margin:0 16px 16px; border-radius:var(--r);
+  padding:16px 18px; display:none; animation:popIn 0.35s ease;
+}
+.feedback-card.show { display:block; }
+.feedback-card.best { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border:2px solid var(--green); }
+.feedback-card.good { background:linear-gradient(135deg,#fff3e0,#ffe0b2); border:2px solid var(--orange); }
+.feedback-card.ng   { background:linear-gradient(135deg,var(--red-l),#ffcdd2); border:2px solid #ef9a9a; }
+@keyframes popIn { 0%{transform:scale(0.85);opacity:0} 100%{transform:scale(1);opacity:1} }
 
-  /* カレンダー */
-  .calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .calendar-header h3 { font-size:1rem; color:#555; }
-  .cal-nav { background:#ff8fab; color:white; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:0.85rem; }
-  .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
-  .cal-day-header { font-size:0.7rem; color:#999; padding:4px 0; }
-  .cal-day { aspect-ratio:1; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#555; cursor:pointer; position:relative; }
-  .cal-day.empty { cursor:default; }
-  .cal-day.today  { font-weight:bold; color:#ff8fab; }
-  .cal-day.full   { background:#ffb347; color:white; }
-  .cal-day.partial{ background:#ffe0a0; color:#664; }
-  .cal-legend { display:flex; gap:12px; margin-top:12px; font-size:0.75rem; color:#888; justify-content:center; }
-  .cal-legend span { display:flex; align-items:center; gap:4px; }
-  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
-  .dot.full    { background:#ffb347; }
-  .dot.partial { background:#ffe0a0; }
-  .stats-wrap { background:white; border-radius:16px; padding:16px; margin-top:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; }
-  .stats-wrap h3 { font-size:0.9rem; color:#888; margin-bottom:12px; }
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .stat-item  { background:#fff8f5; border-radius:12px; padding:12px 8px; }
-  .stat-num   { font-size:1.8rem; font-weight:bold; color:#ff8fab; }
-  .stat-label { font-size:0.75rem; color:#999; margin-top:4px; }
+.fb-top { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.fb-char { font-size:3rem; }
+.fb-title-wrap {}
+.fb-title { font-size:1.05rem; font-weight:800; }
+.feedback-card.best .fb-title { color:var(--green-d); }
+.feedback-card.good .fb-title { color:var(--orange-d); }
+.feedback-card.ng   .fb-title { color:#c62828; }
+.fb-stars { font-size:0.85rem; font-weight:800; margin-top:2px; }
+.fb-text { font-size:0.85rem; line-height:1.6; color:#555; }
 
-  /* モーダル */
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; align-items:center; justify-content:center; padding:20px; }
-  .modal-overlay.open { display:flex; }
-  .modal-box { background:white; border-radius:20px; padding:20px; width:100%; max-width:400px; max-height:80vh; overflow-y:auto; animation:pop 0.25s ease; }
-  .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .modal-header h3 { font-size:1rem; color:#ff8fab; }
-  .modal-close { background:#f5f5f5; border:none; border-radius:50%; width:30px; height:30px; font-size:1rem; cursor:pointer; color:#999; }
-  .modal-task-row { display:flex; align-items:center; gap:8px; padding:7px 0; font-size:0.85rem; color:#555; border-bottom:1px solid #f8f8f8; }
-  .modal-task-row:last-child { border-bottom:none; }
-  .modal-memo-section { margin-top:14px; border-top:1px solid #f0f0f0; padding-top:12px; }
-  .modal-memo-label { font-size:0.78rem; color:#aaa; margin-bottom:8px; }
-  .modal-memo-text { font-size:0.88rem; color:#444; line-height:1.6; white-space:pre-wrap; background:#fff8f5; border-radius:10px; padding:10px 12px; }
-  .modal-no-memo { font-size:0.82rem; color:#ccc; font-style:italic; }
+.next-btn {
+  width:calc(100% - 32px); margin:0 16px 16px;
+  padding:14px; border-radius:var(--r);
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));
+  color:white; border:none; font-size:1rem; font-weight:800;
+  cursor:pointer; display:none; box-shadow:0 4px 12px rgba(91,189,228,0.4);
+  transition:all 0.2s;
+}
+.next-btn:active { transform:scale(0.97); }
+.next-btn.show { display:block; animation:popIn 0.3s ease; }
+
+.situ-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 16px 16px;
+}
+.situ-nav-btn {
+  background:var(--blue-l); color:var(--blue-d); border:none;
+  border-radius:30px; padding:8px 16px; font-size:0.82rem; font-weight:800;
+}
+.situ-nav-btn:disabled { background:#f0f0f0; color:#ccc; }
+.situ-count-label { font-size:0.8rem; color:var(--gray); font-weight:700; }
+
+/* ゲームクリア画面 */
+.game-clear {
+  background:white; border-radius:var(--r);
+  padding:24px; text-align:center;
+  box-shadow:var(--shadow); display:none; animation:popIn 0.4s ease;
+}
+.game-clear.show { display:block; }
+.gc-emoji { font-size:4rem; }
+.gc-title { font-size:1.3rem; font-weight:800; color:var(--orange-d); margin:10px 0 6px; }
+.gc-stars { font-size:1.1rem; font-weight:800; color:#664; background:var(--yellow); border-radius:var(--r-sm); padding:6px 20px; display:inline-block; margin-bottom:14px; }
+.gc-btn { background:linear-gradient(135deg,var(--orange),#ffb347); color:white; border:none; border-radius:var(--r); padding:14px 30px; font-size:1rem; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(255,149,0,0.4); }
+
+/* ===== EMOTION TAB ===== */
+.section-card {
+  background:white; border-radius:var(--r);
+  padding:16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+}
+.section-title { font-size:1rem; font-weight:800; color:var(--blue-d); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+
+.emotion-big-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.e-big-card {
+  border-radius:var(--r); padding:18px 12px; text-align:center;
+  cursor:pointer; border:3px solid transparent; position:relative;
+  transition:all 0.15s; box-shadow:var(--shadow-sm);
+}
+.e-big-card:active { transform:scale(0.96); }
+.e-big-card.selected { border-color:white; box-shadow:0 0 0 3px var(--pink); transform:scale(1.04); }
+.e-big-card .ee { font-size:2.8rem; display:block; margin-bottom:8px; }
+.e-big-card .en { font-size:1rem; font-weight:800; color:#333; }
+.e-big-card .ew { font-size:0.7rem; color:#666; margin-top:4px; line-height:1.4; }
+
+.all-emotion-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.e-mini-card { border-radius:var(--r-sm); padding:8px 4px; text-align:center; }
+.e-mini-card .ee { font-size:1.5rem; display:block; margin-bottom:3px; }
+.e-mini-card .en { font-size:0.68rem; font-weight:700; color:#333; }
+
+/* ===== RECORDS TAB ===== */
+.stat-hero {
+  background:linear-gradient(135deg,var(--blue),#7ecbee);
+  border-radius:var(--r); padding:20px; margin-bottom:14px;
+  text-align:center; color:white; box-shadow:var(--shadow);
+}
+.stat-hero .sh-label { font-size:0.8rem; opacity:0.9; margin-bottom:4px; }
+.stat-hero .sh-num   { font-size:3rem; font-weight:800; line-height:1; }
+.stat-hero .sh-sub   { font-size:0.85rem; opacity:0.85; margin-top:4px; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.stat-box { background:white; border-radius:var(--r); padding:14px 12px; text-align:center; box-shadow:var(--shadow-sm); }
+.stat-box .sb-num   { font-size:1.8rem; font-weight:800; color:var(--orange); }
+.stat-box .sb-label { font-size:0.72rem; color:var(--gray); margin-top:4px; }
+
+/* バッジ */
+.badges-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.badge-item { background:white; border-radius:var(--r-sm); padding:12px 8px; text-align:center; box-shadow:var(--shadow-sm); }
+.badge-item.locked { opacity:0.4; filter:grayscale(1); }
+.badge-item .b-icon { font-size:1.8rem; display:block; margin-bottom:4px; }
+.badge-item .b-name { font-size:0.7rem; font-weight:700; color:#333; }
+.badge-item .b-cond { font-size:0.6rem; color:var(--gray); margin-top:2px; }
+
+/* カレンダー */
+.calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.calendar-header h3 { font-size:1rem; font-weight:800; color:#555; }
+.cal-nav { background:var(--blue); color:white; border:none; border-radius:var(--r-sm); padding:6px 14px; font-size:0.85rem; font-weight:700; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; text-align:center; }
+.cal-dh { font-size:0.68rem; color:var(--gray); padding:4px 0; font-weight:700; }
+.cal-d {
+  aspect-ratio:1; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.78rem; color:#555; cursor:pointer; position:relative;
+}
+.cal-d.today  { font-weight:800; color:var(--blue-d); }
+.cal-d.full   { background:var(--orange); color:white; font-weight:800; }
+.cal-d.partial{ background:#ffe082; color:#664; font-weight:700; }
+.cal-d.empty  { cursor:default; }
+.cal-legend { display:flex; gap:16px; margin-top:10px; justify-content:center; font-size:0.72rem; color:var(--gray); }
+.cal-legend span { display:flex; align-items:center; gap:4px; }
+.ldot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+/* メモ */
+.memo-wrap { background:white; border-radius:var(--r); padding:16px; box-shadow:var(--shadow-sm); }
+.memo-wrap h3 { font-size:0.95rem; font-weight:800; color:var(--blue-d); margin-bottom:10px; }
+.memo-ta {
+  width:100%; min-height:90px; border:2px solid var(--blue-l);
+  border-radius:var(--r-sm); padding:10px 12px;
+  font-size:0.88rem; font-family:inherit; color:#444;
+  resize:vertical; outline:none; line-height:1.6;
+}
+.memo-ta:focus { border-color:var(--blue); }
+.memo-ta::placeholder { color:#ccc; }
+.memo-saved { font-size:0.72rem; text-align:right; margin-top:6px; color:var(--gray); height:14px; }
+.memo-saved.ok { color:var(--green-d); }
+
+/* メモ一覧 */
+.memo-entry { border-bottom:1.5px solid #f5f5f5; padding:12px 0; cursor:pointer; }
+.memo-entry:last-child { border-bottom:none; }
+.memo-entry-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+.memo-entry-date { font-size:0.78rem; font-weight:800; color:#888; }
+.mbadge { font-size:0.68rem; border-radius:20px; padding:2px 10px; font-weight:700; }
+.mbadge.full    { background:var(--orange-l); color:var(--orange-d); }
+.mbadge.partial { background:var(--pink-l);   color:var(--pink); }
+.mbadge.none    { background:#f5f5f5; color:#bbb; }
+.memo-entry-text { font-size:0.82rem; color:#555; line-height:1.5; white-space:pre-wrap; }
+.memo-empty { font-size:0.82rem; color:#ccc; text-align:center; padding:20px 0; }
+
+/* モーダル */
+.modal-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center; padding:20px; }
+.modal-ov.open { display:flex; }
+.modal-box { background:white; border-radius:var(--r); padding:20px; width:100%; max-width:400px; max-height:80vh; overflow-y:auto; animation:popIn 0.25s ease; }
+.modal-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.modal-hd h3 { font-size:1rem; font-weight:800; color:var(--blue-d); }
+.modal-close { background:#f0f0f0; border:none; border-radius:50%; width:30px; height:30px; font-size:1rem; cursor:pointer; color:#888; }
+.modal-task-row { display:flex; align-items:center; gap:8px; padding:7px 0; font-size:0.85rem; color:#555; border-bottom:1px solid #f5f5f5; }
+.modal-task-row:last-child { border-bottom:none; }
+.modal-memo-sec { margin-top:14px; padding-top:12px; border-top:1.5px solid #f0f0f0; }
+.modal-memo-label { font-size:0.75rem; color:#aaa; margin-bottom:7px; font-weight:700; }
+.modal-memo-text { font-size:0.88rem; color:#444; line-height:1.6; white-space:pre-wrap; background:var(--bg); border-radius:var(--r-sm); padding:10px 12px; }
+.modal-no-memo { font-size:0.8rem; color:#ccc; font-style:italic; }
+
+/* スター獲得アニメ */
+.star-pop {
+  position:fixed; pointer-events:none; z-index:200;
+  font-size:1.2rem; font-weight:800; color:var(--orange-d);
+  animation:starFloat 1.2s ease forwards;
+}
+@keyframes starFloat {
+  0%  { transform:translateY(0) scale(1); opacity:1; }
+  100%{ transform:translateY(-80px) scale(1.4); opacity:0; }
+}
+
+/* 共通 */
+@keyframes popIn { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
+.section-divider { height:1px; background:#f0f0f0; margin:16px 0; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🌟 SST毎日チャレンジ 🌟</h1>
-  <p>ソーシャルスキルトレーニング 家庭版</p>
-</header>
+<!-- ヘッダー -->
+<div class="app-header">
+  <div class="header-title">
+    <span class="mascot">🦕</span>
+    <h1>SSTトレーニング<span>きょうもいっしょに かんがえよう！</span></h1>
+  </div>
+  <div class="star-display">
+    <span class="s-icon">⭐</span>
+    <span id="header-stars">0</span>
+  </div>
+</div>
 
+<!-- タブ -->
 <div class="tabs">
-  <button class="tab active" onclick="showPage('checklist',this)">📋 今日</button>
-  <button class="tab" onclick="showPage('cards',this)">🃏 カード</button>
-  <button class="tab" onclick="showPage('manual',this)">📖 ガイド</button>
-  <button class="tab" onclick="showPage('calendar',this)">📅 記録</button>
+  <button class="tab active" onclick="showPage('today',this)"><span class="t-icon">🏠</span>きょう</button>
+  <button class="tab" onclick="showPage('mondai',this)"><span class="t-icon">🎮</span>もんだい</button>
+  <button class="tab" onclick="showPage('kimochi',this)"><span class="t-icon">😊</span>きもち</button>
+  <button class="tab" onclick="showPage('kiroku',this)"><span class="t-icon">🏆</span>きろく</button>
 </div>
 
 <!-- ===== 今日タブ ===== -->
-<div id="page-checklist" class="page active">
-  <p class="date-label" id="today-label"></p>
-  <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
-  <p class="progress-text" id="progress-text">0 / 5 完了</p>
+<div id="page-today" class="page active">
+  <div class="today-greeting">
+    <div class="greeting-char" id="greeting-char">😄</div>
+    <div class="greeting-text">
+      <h2 id="greeting-msg">きょうもがんばろう！</h2>
+      <p id="today-date-label"></p>
+    </div>
+  </div>
+  <div class="today-stars">
+    <div class="today-stars-label">⭐ きょうのしんちょく</div>
+    <div class="star-row" id="today-star-row">
+      <span class="star-item" id="s0">⭐</span>
+      <span class="star-item" id="s1">⭐</span>
+      <span class="star-item" id="s2">⭐</span>
+      <span class="star-item" id="s3">⭐</span>
+      <span class="star-item" id="s4">⭐</span>
+    </div>
+  </div>
   <div id="task-list"></div>
-  <div class="complete-msg" id="complete-msg">
-    <div class="big">🎉✨🎉</div>
-    <p>今日のSST全部クリア！<br>えらい！最高！！</p>
+  <div id="all-done-msg" style="display:none;text-align:center;padding:20px;background:linear-gradient(135deg,#fff9e0,#fff3cd);border-radius:var(--r);margin-top:8px;animation:popIn 0.4s ease;">
+    <div style="font-size:3rem;">🎉🦕🎉</div>
+    <p style="font-weight:800;font-size:1.1rem;color:var(--orange-d);margin-top:8px;">ぜんぶクリア！えらい！さいこう！！</p>
+    <p style="font-size:0.82rem;color:#888;margin-top:4px;">ボーナス ⭐+10 もらったよ！</p>
   </div>
-  <div class="memo-wrap">
-    <h3>📝 今日のメモ</h3>
-    <textarea class="memo-textarea" id="today-memo"
-      placeholder="気になったこと、できたこと、息子くんの様子など&#10;例）「今日は叩かずに言葉で言えた！」&#10;「カードでくやしいを選んでた」"></textarea>
-    <div class="memo-save-status" id="memo-status"></div>
-  </div>
-</div>
-
-<!-- ===== カードタブ ===== -->
-<div id="page-cards" class="page">
-  <div class="card-type-toggle">
-    <button class="card-type-btn active" id="btn-emotion-tab" onclick="switchCardType('emotion')">😊 感情カード</button>
-    <button class="card-type-btn" id="btn-situ-tab" onclick="switchCardType('situ')">🎭 場面カード</button>
-  </div>
-
-  <!-- 感情カードエリア -->
-  <div id="area-emotion">
-    <div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-      <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:8px;">🃏 今日の感情カード</h3>
-      <p style="font-size:0.8rem;color:#888;margin-bottom:12px;">「今どんな気持ち？」子どもに見せて指差ししてもらおう。毎日4枚ローテーションで変わります。</p>
-      <div class="emotion-grid" id="today-cards-big"></div>
-    </div>
-    <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-      <h3 style="font-size:1rem;color:#ff8fab;margin-bottom:12px;">📚 全部のカード（12種類）</h3>
-      <div class="all-cards-grid" id="all-cards-grid"></div>
-    </div>
-  </div>
-
-  <!-- 場面カードエリア -->
-  <div id="area-situ" style="display:none">
-    <div style="background:white;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-      <p style="font-size:0.8rem;color:#888;line-height:1.6;">🎭 <b>場面カード</b>は「こんな時どうする？」を一緒に考えるカードです。<br>3つの選択肢から選んでみよう！全15種ローテーション。</p>
-    </div>
-    <div id="situ-card-area"></div>
+  <div class="memo-wrap" style="margin-top:16px;">
+    <h3>📝 きょうのメモ</h3>
+    <textarea class="memo-ta" id="today-memo"
+      placeholder="きになったこと、できたこと、息子くんのようすなど&#10;例）「きょうはたたかずに言えた！」"></textarea>
+    <div class="memo-saved" id="memo-status"></div>
   </div>
 </div>
 
-<!-- ===== ガイドタブ ===== -->
-<div id="page-manual" class="page">
-  <div class="manual-section">
-    <h3>🧠 SSTってなに？</h3>
-    <p>ソーシャルスキルトレーニングの略。友達との上手な関わり方・気持ちのコントロール方法を<b>練習</b>で学ぶトレーニングです。</p>
-    <div class="point">叩いてしまうのは「悪い子」だからじゃなく、気持ちの伝え方をまだ知らないだけ。練習で必ず変わります！</div>
+<!-- ===== もんだいタブ ===== -->
+<div id="page-mondai" class="page">
+  <div class="game-header">
+    <div class="mondai-counter" id="mondai-counter">もんだい 1 / 15</div>
+    <div class="mondai-stars-earned">⭐ <span id="session-stars">0</span> かくとく</div>
   </div>
-  <div class="manual-section">
-    <h3>😊 感情カードの使い方</h3>
-    <p>12種類の感情カードを見せて「今これ？」と確認します。毎日4枚がローテーション表示されます。</p>
-    <div class="point">💡 自分の感情を言葉にできると、衝動的な行動が減ります</div>
+  <div id="situ-card-wrap"></div>
+  <div id="game-clear-wrap"></div>
+</div>
+
+<!-- ===== きもちタブ ===== -->
+<div id="page-kimochi" class="page">
+  <div class="section-card">
+    <div class="section-title">🃏 きょうの4まい <span style="font-size:0.75rem;font-weight:400;color:var(--gray);">（まいにちかわるよ）</span></div>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:12px;">「いまどんなきもち？」みせてゆびさししてもらおう！</p>
+    <div class="emotion-big-grid" id="today-emotion-cards"></div>
   </div>
-  <div class="manual-section">
-    <h3>🎭 場面カードの使い方</h3>
-    <p>全15種類。「こんな場面になったらどうする？」を3択で考える練習です。正解を押しつけず、一緒に考えることが大切！</p>
-    <div class="point">💡 ベスト・まあいい・NGの3段階でフィードバックが表示されます</div>
-  </div>
-  <div class="manual-section">
-    <h3>① 気持ちに名前をつける練習</h3>
-    <ul><li>毎日「今どんな気持ち？」と聞く</li><li>「むかつく」→「悔しかったんだね」と言葉を広げる</li></ul>
-    <div class="point">💡 感情の言語化ができると、衝動的な行動が減ります</div>
-  </div>
-  <div class="manual-section">
-    <h3>② ロールプレイ練習</h3>
-    <ul><li>お母さんが友達役になる</li><li>場面カードを使いながら練習するのがおすすめ！</li></ul>
-    <div class="point">💡 1回3〜5分でOK！</div>
-  </div>
-  <div class="manual-section">
-    <h3>③ できたら大げさに褒める</h3>
-    <ul><li>言葉で伝えられたら即座に「すごい！言えた！」と褒める</li><li>ハグ・シール・好きな食べ物など小さなご褒美もOK</li></ul>
-    <div class="point">💡 褒めるタイミングは「その場で」が一番効果的！</div>
-  </div>
-  <div class="manual-section">
-    <h3>🌟 続けるコツ</h3>
-    <ul><li>毎日できなくてもOK。週4〜5日でも十分</li><li>完璧を求めない。「今日も頑張ったね」でOK</li><li>お母さん自身も褒めて！本当に大変な作業です</li></ul>
+  <div class="section-card">
+    <div class="section-title">📚 ぜんぶのきもち（12しゅるい）</div>
+    <div class="all-emotion-grid" id="all-emotion-cards"></div>
   </div>
 </div>
 
-<!-- ===== 記録タブ ===== -->
-<div id="page-calendar" class="page">
-  <div class="calendar-header">
-    <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
-    <h3 id="cal-title"></h3>
-    <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+<!-- ===== きろくタブ ===== -->
+<div id="page-kiroku" class="page">
+  <div class="stat-hero">
+    <div class="sh-label">⭐ これまでかくとくしたスター</div>
+    <div class="sh-num" id="total-stars-big">0</div>
+    <div class="sh-sub">🦕 がんばったね！</div>
   </div>
-  <div class="calendar-grid" id="calendar-grid"></div>
-  <div class="cal-legend">
-    <span><span class="dot full"></span>全完了</span>
-    <span><span class="dot partial"></span>一部完了</span>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="sb-num" id="stat-days">0</div><div class="sb-label">チャレンジした日数</div></div>
+    <div class="stat-box"><div class="sb-num" id="stat-full">0</div><div class="sb-label">全完了した日数</div></div>
+    <div class="stat-box"><div class="sb-num" id="stat-tasks">0</div><div class="sb-label">できた項目の合計</div></div>
+    <div class="stat-box"><div class="sb-num" id="stat-streak">0</div><div class="sb-label">れんぞくチャレンジ</div></div>
   </div>
-  <p style="font-size:0.75rem;color:#bbb;text-align:center;margin-top:8px;">📌 日付をタップするとその日の記録が見れます</p>
-  <div class="stats-wrap">
-    <h3>📊 これまでの記録</h3>
-    <div class="stats-grid">
-      <div class="stat-item"><div class="stat-num" id="stat-total-days">0</div><div class="stat-label">チャレンジした日数</div></div>
-      <div class="stat-item"><div class="stat-num" id="stat-full-days">0</div><div class="stat-label">全完了した日数</div></div>
-      <div class="stat-item"><div class="stat-num" id="stat-total-tasks">0</div><div class="stat-label">合計できた項目数</div></div>
-      <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">連続チャレンジ日数</div></div>
+
+  <!-- バッジ -->
+  <div class="section-card">
+    <div class="section-title">🏅 バッジコレクション</div>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+
+  <!-- カレンダー -->
+  <div class="section-card">
+    <div class="calendar-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+      <h3 id="cal-title"></h3>
+      <button class="cal-nav" onclick="changeMonth(1)">▶</button>
     </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><span class="ldot" style="background:var(--orange)"></span>全完了</span>
+      <span><span class="ldot" style="background:#ffe082"></span>一部完了</span>
+    </div>
+    <p style="font-size:0.72rem;color:#ccc;text-align:center;margin-top:8px;">📌 日付をタップするとその日の記録が見れます</p>
   </div>
-  <div class="memo-list-wrap">
-    <h3>📒 最近のメモ一覧</h3>
-    <div id="memo-list-content"></div>
+
+  <!-- メモ一覧 -->
+  <div class="section-card">
+    <div class="section-title">📒 さいきんのメモ</div>
+    <div id="memo-list"></div>
   </div>
 </div>
 
 <!-- モーダル -->
-<div class="modal-overlay" id="day-modal" onclick="closeModal(event)">
+<div class="modal-ov" id="day-modal" onclick="closeDayModal(event)">
   <div class="modal-box">
-    <div class="modal-header">
-      <h3 id="modal-date-title"></h3>
-      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-hd">
+      <h3 id="modal-title"></h3>
+      <button class="modal-close" onclick="closeDayModalDirect()">✕</button>
     </div>
     <div id="modal-tasks"></div>
-    <div class="modal-memo-section">
+    <div class="modal-memo-sec">
       <div class="modal-memo-label">📝 メモ</div>
-      <div id="modal-memo-content"></div>
+      <div id="modal-memo"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ===== 感情カード 12種 =====
-const ALL_EMOTION_CARDS = [
-  {id:'happy',      emoji:'😊',name:'うれしい',  color:'#fff9c4',when:'褒められた時\n好きなことができた時'},
-  {id:'angry',      emoji:'😡',name:'おこってる', color:'#ffcdd2',when:'取られた時\nじゃまされた時'},
-  {id:'sad',        emoji:'😢',name:'かなしい',   color:'#bbdefb',when:'負けた時\n失くした時'},
-  {id:'frustrated', emoji:'😤',name:'くやしい',   color:'#e1bee7',when:'うまくいかない時\n負けそうな時'},
-  {id:'scared',     emoji:'😰',name:'こわい',     color:'#b2ebf2',when:'怒られそうな時\n知らない場所'},
-  {id:'embarrassed',emoji:'😳',name:'はずかしい', color:'#f8bbd0',when:'みんなに見られてる時\n失敗した時'},
-  {id:'lonely',     emoji:'🥺',name:'さびしい',   color:'#cfd8dc',when:'一人の時\n無視された時'},
-  {id:'surprised',  emoji:'😲',name:'びっくり',   color:'#fff3e0',when:'急に大きい音\n予想外のこと'},
-  {id:'relieved',   emoji:'😌',name:'あんしん',   color:'#c8e6c9',when:'助けてもらった時\n終わった時'},
-  {id:'tired',      emoji:'😴',name:'つかれた',   color:'#eeeeee',when:'いっぱい遊んだ後\n眠い時'},
-  {id:'uneasy',     emoji:'😕',name:'もやもや',   color:'#d1c4e9',when:'なんかへんな感じ\n不安な時'},
-  {id:'excited',    emoji:'🤩',name:'わくわく',   color:'#ffe082',when:'楽しいことの前\n好きなものを見た時'},
+// ============================================================
+//  DATA
+// ============================================================
+const EMOTION_CARDS = [
+  {id:'happy',     emoji:'😊',name:'うれしい',  color:'#fff9c4',when:'ほめられた時\nすきなことができた時'},
+  {id:'angry',     emoji:'😡',name:'おこってる', color:'#ffcdd2',when:'とられた時\nじゃまされた時'},
+  {id:'sad',       emoji:'😢',name:'かなしい',   color:'#bbdefb',when:'まけた時\nなくした時'},
+  {id:'frustrated',emoji:'😤',name:'くやしい',   color:'#e1bee7',when:'うまくいかない時\nまけそうな時'},
+  {id:'scared',    emoji:'😰',name:'こわい',     color:'#b2ebf2',when:'おこられそうな時\nしらないばしょ'},
+  {id:'embarrassed',emoji:'😳',name:'はずかしい',color:'#f8bbd0',when:'みんなにみられてる時\nしっぱいした時'},
+  {id:'lonely',    emoji:'🥺',name:'さびしい',   color:'#cfd8dc',when:'ひとりの時\nむしされた時'},
+  {id:'surprised', emoji:'😲',name:'びっくり',   color:'#fff3e0',when:'きゅうにおおきいおと\nよそうがいのこと'},
+  {id:'relieved',  emoji:'😌',name:'あんしん',   color:'#c8e6c9',when:'たすけてもらった時\nおわった時'},
+  {id:'tired',     emoji:'😴',name:'つかれた',   color:'#eeeeee',when:'いっぱいあそんだあと\nねむい時'},
+  {id:'uneasy',    emoji:'😕',name:'もやもや',   color:'#d1c4e9',when:'なんかへんなかんじ\nふあんな時'},
+  {id:'excited',   emoji:'🤩',name:'わくわく',   color:'#ffe082',when:'たのしいことのまえ\nすきなものをみた時'},
 ];
 
-// ===== 場面カード 15種 =====
-// type: 'best'=最善 'good'=まあいい 'ng'=よくない
 const SITU_CARDS = [
-  {
-    id:'s01', emoji:'🧸', tag:'おもちゃ・持ち物', scene:'友達がブロックを黙って取っていった。',
-    sub:'どうすればいいかな？',
-    choices:[
-      {text:'「返して」と言葉で伝える',      type:'best', fb:'✅ グッドチョイス！言葉で伝えるのが一番だよ。勇気を出して言えたらすごい！'},
-      {text:'先生に言う',                    type:'good', fb:'👍 それもOK！自分で言いにくい時は先生に相談しよう。'},
-      {text:'叩いて取り返す',               type:'ng',   fb:'❌ 叩いてしまうと自分が怒られてしまうよ。言葉で伝えてみよう！'},
-    ]
-  },
-  {
-    id:'s02', emoji:'👋', tag:'友達関係', scene:'仲良しの子たちが遊んでいる。入りたいな…。',
-    sub:'何て言う？',
-    choices:[
-      {text:'「いーれーて！」と声をかける',  type:'best', fb:'✅ 上手！「いーれーて」と言えたら、たいていOKしてもらえるよ！'},
-      {text:'じっと見て待つ',               type:'good', fb:'👍 声をかけるのが難しい時はじっと見るのもアリ。でも言えたらもっといいよ！'},
-      {text:'無理やり混ざる',               type:'ng',   fb:'❌ 無理に入ると「やめて」と言われてしまうかも。「入れて」と聞いてみよう！'},
-    ]
-  },
-  {
-    id:'s03', emoji:'😤', tag:'公平さ・順番', scene:'並んでいたら後ろから来た子に順番を抜かされた。',
-    sub:'どうする？',
-    choices:[
-      {text:'「順番だよ」と教えてあげる',    type:'best', fb:'✅ 上手！知らなかっただけかもしれないし、伝えるのが正解！'},
-      {text:'先生に言う',                    type:'good', fb:'👍 先生に言うのも全然OK。自分で言えない時は頼ろう！'},
-      {text:'押しのけて前に出る',            type:'ng',   fb:'❌ 押すと喧嘩になっちゃうよ。言葉で「順番だよ」と伝えてみよう！'},
-    ]
-  },
-  {
-    id:'s04', emoji:'👊', tag:'トラブル・暴力', scene:'遊んでいたら友達に突然叩かれてしまった。',
-    sub:'どうすればいい？',
-    choices:[
-      {text:'「やめて！痛い！」と言う',      type:'best', fb:'✅ 気持ちを言葉にできた！それがとっても大事だよ。'},
-      {text:'先生にすぐ言いに行く',          type:'good', fb:'👍 先生に言うのも正解！自分の安全を守るのが一番だよ。'},
-      {text:'叩き返す',                     type:'ng',   fb:'❌ 叩き返すと両方が悪くなってしまうよ。言葉か先生に頼ろう！'},
-    ]
-  },
-  {
-    id:'s05', emoji:'😢', tag:'思いやり', scene:'近くで友達が泣いている。',
-    sub:'何かしてあげられるかな？',
-    choices:[
-      {text:'「どうしたの？」と声をかける',  type:'best', fb:'✅ やさしい！声をかけてもらうだけで嬉しいんだよ。'},
-      {text:'先生を呼んであげる',            type:'good', fb:'👍 それもとても親切！先生を呼ぶのも立派な行動だよ。'},
-      {text:'気にせず遊び続ける',            type:'ng',   fb:'❌ 困っている人を見て見ぬふりはちょっと悲しいよ。一言声かけてみよう！'},
-    ]
-  },
-  {
-    id:'s06', emoji:'🎮', tag:'勝ち負け', scene:'ゲームで負けてしまった。悔しい！',
-    sub:'どうする？',
-    choices:[
-      {text:'「悔しい！」と言葉で気持ちを言う',type:'best',fb:'✅ 気持ちを言葉にできた！それだけでとっても偉い！'},
-      {text:'「もう一回やろう！」と言う',      type:'good',fb:'👍 前向き！「もう一回やりたい」という気持ちは大切にしていいよ。'},
-      {text:'おもちゃを投げる・泣き叫ぶ',     type:'ng',  fb:'❌ 気持ちはわかるけど、暴れると友達が怖がってしまうよ。「悔しい」と言葉で言おう！'},
-    ]
-  },
-  {
-    id:'s07', emoji:'🙅', tag:'友達関係', scene:'「一緒に遊ばない」と言われてしまった。',
-    sub:'どうする？',
-    choices:[
-      {text:'「なんで？」と聞いてみる',      type:'best', fb:'✅ 理由を聞くのは上手！もしかしたら誤解かもしれないよ。'},
-      {text:'別の友達を探す',               type:'good', fb:'👍 それも賢い！いつもと違う友達と遊んでみると新しい発見があるよ。'},
-      {text:'怒って無理やり遊ぼうとする',    type:'ng',   fb:'❌ 無理に入ると余計に嫌がられてしまうよ。「なんで？」と聞くか、別の子を探してみよう！'},
-    ]
-  },
-  {
-    id:'s08', emoji:'🏃', tag:'感情コントロール', scene:'友達のことがとても腹立たしくて追いかけたくなった。',
-    sub:'どうすればいい？',
-    choices:[
-      {text:'深呼吸して少し待つ',            type:'best', fb:'✅ 素晴らしい！頭が冷えると気持ちが落ち着いてくるよ。'},
-      {text:'先生に気持ちを話す',            type:'good', fb:'👍 先生に話すのも大正解！気持ちを聞いてもらおう。'},
-      {text:'怒鳴りながら追いかける',        type:'ng',   fb:'❌ 追いかけると怖がらせてしまうよ。まず深呼吸！'},
-    ]
-  },
-  {
-    id:'s09', emoji:'🎁', tag:'物・大切なもの', scene:'自分の大事なものを友達が壊してしまった。',
-    sub:'何て言う？',
-    choices:[
-      {text:'「壊れちゃって悲しい」と伝える', type:'best',fb:'✅ 気持ちを言葉で伝えられた！それはとても大切なことだよ。'},
-      {text:'先生に相談する',                type:'good', fb:'👍 先生に入ってもらうのもいい方法！一人で抱え込まなくていいよ。'},
-      {text:'同じように相手のものを壊す',     type:'ng',  fb:'❌ 壊し返すと両方悲しくなるよ。まず「悲しい」と気持ちを伝えよう！'},
-    ]
-  },
-  {
-    id:'s10', emoji:'😳', tag:'恥ずかしい・失敗', scene:'発表で間違えて、みんなに笑われてしまった。',
-    sub:'どうする？',
-    choices:[
-      {text:'「ドンマイ！」と自分に言い聞かせる',type:'best',fb:'✅ 自分を励ませるのはすごい力！失敗しても大丈夫、また挑戦しよう。'},
-      {text:'先生に「悲しかった」と話す',     type:'good', fb:'👍 気持ちを話すのはとても大事。先生はきっと聞いてくれるよ。'},
-      {text:'怒鳴って教室を飛び出す',         type:'ng',   fb:'❌ 気持ちはわかるけど飛び出すと後で大変になるよ。深呼吸してみよう！'},
-    ]
-  },
-  {
-    id:'s11', emoji:'🤝', tag:'意見の違い', scene:'友達と「何して遊ぶか」で意見が違って困っている。',
-    sub:'どうする？',
-    choices:[
-      {text:'「じゃあジャンケンで決めよう！」',type:'best',fb:'✅ ナイスアイデア！ジャンケンは公平だし仲良くできる最高の方法！'},
-      {text:'「どっちもやってみようよ」と提案', type:'good',fb:'👍 両方やるのも素敵な発想！お互いが嬉しくなれるよ。'},
-      {text:'自分の意見を押しつける',          type:'ng',  fb:'❌ 押しつけると友達が嫌な気持ちになるよ。一緒に決める方法を考えてみよう！'},
-    ]
-  },
-  {
-    id:'s12', emoji:'😡', tag:'先生・大人', scene:'先生に怒られた。でも自分は悪くないと思っている。',
-    sub:'どうすればいい？',
-    choices:[
-      {text:'落ち着いてから「話を聞いてほしい」と言う',type:'best',fb:'✅ 素晴らしい！落ち着いてから話すのが一番うまくいくよ。'},
-      {text:'黙って我慢する',               type:'good', fb:'👍 今は我慢するのも一つの方法。でも後で気持ちを話せると◎だよ。'},
-      {text:'その場で大声で口答えする',      type:'ng',   fb:'❌ 口答えすると余計に怒られてしまうよ。まず落ち着いて、後で話そう！'},
-    ]
-  },
-  {
-    id:'s13', emoji:'🙉', tag:'言葉・からかい', scene:'嫌なあだ名を付けられてからかわれた。',
-    sub:'どうする？',
-    choices:[
-      {text:'「そのあだ名は嫌だよ」とはっきり言う',type:'best',fb:'✅ 上手！はっきり「嫌だ」と伝えることが大切！'},
-      {text:'先生に相談する',               type:'good', fb:'👍 先生に話すのも大正解！一人で抱え込まないでね。'},
-      {text:'同じようにあだ名で呼び返す',    type:'ng',   fb:'❌ 言い返すと喧嘩が大きくなってしまうよ。「嫌だ」と言葉で伝えてみよう！'},
-    ]
-  },
-  {
-    id:'s14', emoji:'👀', tag:'思いやり', scene:'友達が重い荷物を持って困っていそうだ。',
-    sub:'どうする？',
-    choices:[
-      {text:'「手伝おうか？」と声をかける',  type:'best', fb:'✅ やさしい！声をかけてもらったら、とっても嬉しいよね。'},
-      {text:'先生に「困ってる人がいるよ」と言う',type:'good',fb:'👍 それも親切！先生に知らせるのも立派な行動だよ。'},
-      {text:'見て見ぬふりをする',            type:'ng',   fb:'❌ 困っているのを知っていて無視するのは悲しいよ。一言「手伝おうか？」と言ってみよう！'},
-    ]
-  },
-  {
-    id:'s15', emoji:'🙋', tag:'自分の気持ち', scene:'嫌なことをされて、すごく怒りたくなった。',
-    sub:'怒りを感じた時、どうする？',
-    choices:[
-      {text:'「やめて！嫌だ！」と言葉で伝える',type:'best',fb:'✅ 言葉で気持ちを伝えられた！それがSSTの目標だよ！すごい！'},
-      {text:'その場を離れて落ち着く',        type:'good', fb:'👍 その場を離れて冷静になるのも立派な対処法だよ！'},
-      {text:'叩いたり物を投げたりする',      type:'ng',   fb:'❌ 気持ちはわかるけど、体や物で表現すると誰かが傷つくよ。言葉か行動で試してみよう！'},
-    ]
-  },
+  {id:'s01',emoji:'🧸',tag:'もちもの',scene:'ともだちがブロックをだまってとっていった。',
+   choices:[
+     {icon:'💬',text:'「かえして」とことばでつたえる',    type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにいう',                   type:'good'},
+     {icon:'👊',text:'たたいてとりかえす',                type:'ng'},
+   ]},
+  {id:'s02',emoji:'👋',tag:'ともだちかんけい',scene:'なかよしの子たちがあそんでいる。はいりたいな…。',
+   choices:[
+     {icon:'🗣️',text:'「いーれーて！」とこえをかける',    type:'best'},
+     {icon:'👀',text:'じっとみてまつ',                    type:'good'},
+     {icon:'😤',text:'むりやりまざる',                    type:'ng'},
+   ]},
+  {id:'s03',emoji:'😤',tag:'じゅんばん',scene:'ならんでいたら、うしろからきた子にじゅんばんをぬかされた。',
+   choices:[
+     {icon:'💬',text:'「じゅんばんだよ」とおしえてあげる', type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにいう',                   type:'good'},
+     {icon:'👊',text:'おしのけてまえにでる',               type:'ng'},
+   ]},
+  {id:'s04',emoji:'👊',tag:'トラブル',scene:'あそんでいたら、ともだちにとつぜんたたかれてしまった。',
+   choices:[
+     {icon:'💬',text:'「やめて！いたい！」とことばでいう', type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにすぐいいにいく',          type:'good'},
+     {icon:'👊',text:'たたきかえす',                      type:'ng'},
+   ]},
+  {id:'s05',emoji:'😢',tag:'おもいやり',scene:'ちかくでともだちがないている。',
+   choices:[
+     {icon:'💬',text:'「どうしたの？」とこえをかける',    type:'best'},
+     {icon:'👨‍🏫',text:'せんせいをよんであげる',           type:'good'},
+     {icon:'🙈',text:'きにせずあそびつづける',            type:'ng'},
+   ]},
+  {id:'s06',emoji:'🎮',tag:'かちまけ',scene:'ゲームでまけてしまった。くやしい！',
+   choices:[
+     {icon:'💬',text:'「くやしい！」とことばでいう',       type:'best'},
+     {icon:'🔄',text:'「もういっかいやろう！」という',    type:'good'},
+     {icon:'💢',text:'おもちゃをなげる・なきさけぶ',      type:'ng'},
+   ]},
+  {id:'s07',emoji:'🙅',tag:'ともだちかんけい',scene:'「いっしょにあそばない」といわれてしまった。',
+   choices:[
+     {icon:'💬',text:'「なんで？」ときいてみる',           type:'best'},
+     {icon:'👀',text:'べつのともだちをさがす',             type:'good'},
+     {icon:'😡',text:'おこってむりやりあそぼうとする',    type:'ng'},
+   ]},
+  {id:'s08',emoji:'🏃',tag:'きもちのコントロール',scene:'ともだちのことがとてもはらだたしくて、おいかけたくなった。',
+   choices:[
+     {icon:'🌬️',text:'ふかいこきゅうをしてすこしまつ',   type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにきもちをはなす',          type:'good'},
+     {icon:'😡',text:'どなりながらおいかける',             type:'ng'},
+   ]},
+  {id:'s09',emoji:'🎁',tag:'もちもの',scene:'じぶんのたいせつなものをともだちがこわしてしまった。',
+   choices:[
+     {icon:'💬',text:'「こわれてかなしい」とつたえる',    type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにそうだんする',           type:'good'},
+     {icon:'👊',text:'おなじようにあいてのものをこわす', type:'ng'},
+   ]},
+  {id:'s10',emoji:'😳',tag:'はずかしい',scene:'はっぴょうでまちがえて、みんなにわらわれてしまった。',
+   choices:[
+     {icon:'💪',text:'「ドンマイ！」とじぶんにいいきかせる',type:'best'},
+     {icon:'👨‍🏫',text:'せんせいに「かなしかった」とはなす',  type:'good'},
+     {icon:'💢',text:'どなってきょうしつをとびだす',         type:'ng'},
+   ]},
+  {id:'s11',emoji:'🤝',tag:'いけんのちがい',scene:'ともだちと「なにしてあそぶか」でいけんがちがってこまっている。',
+   choices:[
+     {icon:'✊',text:'「じゃあジャンケンできめよう！」',   type:'best'},
+     {icon:'💬',text:'「どっちもやってみようよ」とていあん',type:'good'},
+     {icon:'😤',text:'じぶんのいけんをおしつける',         type:'ng'},
+   ]},
+  {id:'s12',emoji:'😡',tag:'せんせい・おとな',scene:'せんせいにおこられた。でもじぶんはわるくないとおもっている。',
+   choices:[
+     {icon:'💬',text:'おちついてから「はなしをきいてほしい」という',type:'best'},
+     {icon:'🤐',text:'だまってがまんする',                            type:'good'},
+     {icon:'💢',text:'そのばでおおごえでくちごたえする',             type:'ng'},
+   ]},
+  {id:'s13',emoji:'🙉',tag:'ことば・からかい',scene:'いやなあだなをつけられてからかわれた。',
+   choices:[
+     {icon:'💬',text:'「そのあだなはいやだよ」とはっきりいう',type:'best'},
+     {icon:'👨‍🏫',text:'せんせいにそうだんする',                  type:'good'},
+     {icon:'💢',text:'おなじようにあだなでよびかえす',          type:'ng'},
+   ]},
+  {id:'s14',emoji:'👀',tag:'おもいやり',scene:'ともだちがおもいにもつをもってこまっていそうだ。',
+   choices:[
+     {icon:'💬',text:'「てつだおうか？」とこえをかける', type:'best'},
+     {icon:'👨‍🏫',text:'せんせいに「こまってるひとがいるよ」という',type:'good'},
+     {icon:'🙈',text:'みてみぬふりをする',               type:'ng'},
+   ]},
+  {id:'s15',emoji:'🙋',tag:'じぶんのきもち',scene:'いやなことをされて、すごくおこりたくなった。',
+   choices:[
+     {icon:'💬',text:'「やめて！いやだ！」とことばでつたえる',type:'best'},
+     {icon:'🚶',text:'そのばをはなれておちつく',               type:'good'},
+     {icon:'👊',text:'たたいたりものをなげたりする',           type:'ng'},
+   ]},
 ];
 
-// 今日の感情カード4枚
-function getTodayEmotionCards() {
-  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
-  const rots = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,2,4,6],[1,3,5,7],[2,4,8,10],[0,3,6,9],[1,5,7,11],[0,4,8,10],[2,5,9,11],[1,4,7,10],[3,6,8,11]];
-  return rots[dayOfYear % rots.length].map(i => ALL_EMOTION_CARDS[i]);
-}
+const FB = {
+  best:{ char:'😄', title:'やったね！いいえらびだよ！', stars:'+10⭐', color:'best', text:'ことばでつたえられた！それがいちばんだいじなことだよ！すごい！！' },
+  good:{ char:'🤔', title:'それもあるね！',             stars:'+5⭐',  color:'good', text:'ほかにも、もっといいほうほうがあるかな？いっしょにかんがえてみよう！' },
+  ng:  { char:'💡', title:'ほかのほうほうを かんがえてみよう！', stars:'+2⭐', color:'ng', text:'きもちはわかるよ！でも、ことばやほかのほうほうでつたえられるとさらにいいよ！' },
+};
 
-// 今日の場面カード（日付で決まる）
-function getTodaySituIdx() {
-  return Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000) % SITU_CARDS.length;
-}
+const BADGES = [
+  {id:'first',  icon:'🐾', name:'はじめのいっぽ', cond:'はじめてタスクをかんりょう'},
+  {id:'perfect',icon:'⭐', name:'かんぺきマスター',cond:'1日ぜんぶかんりょう'},
+  {id:'streak3',icon:'🔥', name:'がんばりやさん',  cond:'3日れんぞくチャレンジ'},
+  {id:'emotion',icon:'💗', name:'きもちはかせ',    cond:'かんじょうカードをえらぶ'},
+  {id:'situ5',  icon:'🎮', name:'ゲームっこ',      cond:'ばめんカード5まいクリア'},
+  {id:'star50', icon:'🏆', name:'スターコレクター', cond:'スター50こかくとく'},
+];
 
 const TASKS = [
-  {id:'emotion',     name:'😊 気持ちに名前をつける',desc:'「今どんな気持ち？」と聞いて言葉を一緒に探す',                 tip:'「むかつく」→「悔しかったんだね」と言い換えてあげよう。感情カードを使って指差しでもOK！',type:'emotion_check'},
-  {id:'roleplay',    name:'🎭 場面カードで練習',    desc:'今日の場面カードを使ってロールプレイしてみよう',              tip:null,type:'roleplay'},
-  {id:'praise',      name:'🌟 できたことを褒める',  desc:'今日うまくできたこと・言葉で伝えられたことを褒める',          tip:'褒めるタイミングは「その場で」が一番効果的！ハグや「すごい！」を惜しまずに。',type:'tip'},
-  {id:'reflect',     name:'🤔 振り返りの声かけ',    desc:'「今日、どうすればよかったと思う？」と一問だけ聞く',        tip:'怒らず落ち着いた時に。説教はNG、一問だけ。子どもが自分で考えた答えが一番脳に入ります。',type:'tip'},
-  {id:'emotion_card',name:'🃏 感情カード確認',      desc:'今日の感情カードを見せて「今これ？」と確認する',             tip:null,type:'cards'},
+  {id:'emotion',     name:'😊 きもちをことばにする',  desc:'「いまどんなきもち？」とといてことばをさがす',  tip:'「むかつく」→「くやしかったんだね」とかえてあげよう。カードをつかっておゆびさしでもOK！',type:'emotion_check'},
+  {id:'roleplay',    name:'🎭 ばめんカードでれんしゅう',desc:'きょうのばめんカードをつかってロールプレイしてみよう',tip:null,type:'roleplay'},
+  {id:'praise',      name:'🌟 できたことをほめる',    desc:'きょうできたこと・ことばでいえたことをほめる',   tip:'ほめるタイミングは「そのばで」がいちばんこうかてき！ハグや「すごい！」をおしまずに。',type:'tip'},
+  {id:'reflect',     name:'🤔 ふりかえりのこえかけ',  desc:'「きょう、どうすればよかったとおもう？」とひとつだけきく',tip:'おこらずおちついた時に。いっもんだけ。こどもがじぶんでかんがえたこたえがいちばんのうにはいります。',type:'tip'},
+  {id:'emotion_card',name:'🃏 かんじょうカードかくにん',desc:'きょうのカードをみせて「いまこれ？」とかくにん',tip:null,type:'cards'},
 ];
 
-const TOTAL = TASKS.length;
+// ============================================================
+//  STATE
+// ============================================================
 const today = new Date();
-const todayKey = dateKey(today);
+const todayKey = dk(today);
 let calYear = today.getFullYear(), calMonth = today.getMonth();
-const todayEmotionCards = getTodayEmotionCards();
 let openTasks = {}, memoTimer = null;
-let currentCardType = 'emotion';
-let situIdx = getTodaySituIdx();
-let situAnswered = {}; // key: cardId, val: choiceIndex
+let situIdx = Math.floor((today - new Date(today.getFullYear(),0,0))/86400000) % SITU_CARDS.length;
+let situAnswered = {};
+let sessionStars = 0;
+let gameDone = false;
 
-function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function loadData()  { return JSON.parse(localStorage.getItem('sst_data')||'{}'); }
-function saveData(d) { localStorage.setItem('sst_data',JSON.stringify(d)); }
-function loadMemos() { return JSON.parse(localStorage.getItem('sst_memos')||'{}'); }
-function saveMemos(m){ localStorage.setItem('sst_memos',JSON.stringify(m)); }
-function getTodayDone(){ return loadData()[todayKey]||[]; }
+function dk(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function ld(k)  { return JSON.parse(localStorage.getItem(k)||'null'); }
+function sv(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function loadData()  { return ld('sst_data')||{}; }
+function saveData(d) { sv('sst_data',d); }
+function loadMemos() { return ld('sst_memos')||{}; }
+function saveMemos(m){ sv('sst_memos',m); }
+function getTodayDone(){ return (loadData()[todayKey])||[]; }
+function getTotalStars(){ return ld('sst_stars')||0; }
+function addStars(n){
+  const s = getTotalStars()+n;
+  sv('sst_stars',s);
+  document.getElementById('header-stars').textContent = s;
+  checkBadges();
+  return s;
+}
+function loadBadges(){ return ld('sst_badges')||[]; }
+function earnBadge(id){
+  const b=loadBadges();
+  if(!b.includes(id)){ b.push(id); sv('sst_badges',b); }
+}
+function checkBadges(){
+  const done=getTodayDone(), data=loadData(), stars=getTotalStars();
+  const badges=loadBadges();
+  const allKeys=Object.keys(data);
+  const fullDays=allKeys.filter(k=>(data[k]||[]).length===TASKS.length).length;
+  if(done.length>0) earnBadge('first');
+  if(done.length===TASKS.length) earnBadge('perfect');
+  let streak=0,cd=new Date(today);
+  while(true){const k=dk(cd);if((data[k]||[]).length>0){streak++;cd.setDate(cd.getDate()-1);}else break;if(streak>365)break;}
+  if(streak>=3) earnBadge('streak3');
+  if(stars>=50) earnBadge('star50');
+}
 
-function toggleTask(id){
+// 今日のEmotionCards
+function getTodayEmotionCards(){
+  const day=Math.floor((today-new Date(today.getFullYear(),0,0))/86400000);
+  const R=[[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,2,4,6],[1,3,5,7],[2,4,8,10],[0,3,6,9],[1,5,7,11],[0,4,8,10],[2,5,9,11],[1,4,7,10],[3,6,8,11]];
+  return R[day%R.length].map(i=>EMOTION_CARDS[i]);
+}
+const todayEmCards = getTodayEmotionCards();
+
+// ============================================================
+//  STAR POP ANIMATION
+// ============================================================
+function showStarPop(n, el){
+  const pop=document.createElement('div');
+  pop.className='star-pop';
+  pop.textContent=`⭐+${n}`;
+  const r=el ? el.getBoundingClientRect() : {left:window.innerWidth/2,top:window.innerHeight/2};
+  pop.style.left=(r.left+r.width/2-20)+'px';
+  pop.style.top=(r.top+window.scrollY-10)+'px';
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),1300);
+}
+
+// ============================================================
+//  TODAY TAB
+// ============================================================
+function renderToday(){
+  const done=getTodayDone(), count=done.length;
+  // greeting
+  const hour=today.getHours();
+  const chars=['😴','🌅','😊','😄','😊','🌙'];
+  const msgs=['おはよう！','おはよう！きょうもがんばろう！','こんにちは！','よるもがんばってるね！','おつかれさま！','おやすみまえにチェック！'];
+  const hi=hour<6?0:hour<10?1:hour<14?2:hour<18?3:hour<21?4:5;
+  document.getElementById('greeting-char').textContent=chars[hi];
+  document.getElementById('greeting-msg').textContent=msgs[hi];
+  document.getElementById('today-date-label').textContent=today.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+
+  // star row
+  for(let i=0;i<5;i++){
+    const el=document.getElementById('s'+i);
+    if(i<count){ el.classList.add('lit'); } else { el.classList.remove('lit'); }
+  }
+
+  // task list
+  const list=document.getElementById('task-list'); list.innerHTML='';
+  const selE=JSON.parse(localStorage.getItem('sst_emotion_'+todayKey)||'{}');
+  const sitCard=SITU_CARDS[Math.floor((today-new Date(today.getFullYear(),0,0))/86400000)%SITU_CARDS.length];
+
+  TASKS.forEach((task,idx)=>{
+    const isDone=done.includes(task.id), isOpen=!!openTasks[task.id];
+    const wrap=document.createElement('div');
+    wrap.className='task-card'+(isDone?' done':'');
+
+    let bodyHTML='';
+    if(task.type==='emotion_check'||task.type==='cards'){
+      const ch=todayEmCards.map(c=>{
+        const sel=selE[task.id]===c.id;
+        return `<div class="e-card-sm ${sel?'selected':''}" style="background:${c.color}" onclick="selEmotion('${c.id}','${task.id}')">
+          ${sel?'<span class="sel-badge">✓</span>':''}
+          <span class="ee">${c.emoji}</span><div class="en">${c.name}</div></div>`;
+      }).join('');
+      bodyHTML=`<div class="tip-box">💡 カードをみせて「いまどれ？」とゆびさししてもらおう！</div>
+        <p style="font-size:0.75rem;color:var(--gray);text-align:center;margin:8px 0;">📅 きょうの4まい（まいにちかわるよ）</p>
+        <div class="emotion-grid-sm">${ch}</div>
+        <button class="big-done-btn ${isDone?'done':'go'}" onclick="toggleTask('${task.id}',this)">${isDone?'✓ かんりょう！':'✓ できた！'}</button>`;
+    } else if(task.type==='roleplay'){
+      const sitAns=situAnswered['today_'+sitCard.id];
+      const chHTML=sitCard.choices.map((c,i)=>{
+        let cls='choice-btn'; if(sitAns!==undefined) cls+=' result-'+c.type;
+        return `<button class="${cls}" onclick="answerSituToday('${sitCard.id}',${i})" ${sitAns!==undefined?'disabled':''}>
+          <span class="choice-num">${['①','②','③'][i]}</span>
+          <span class="choice-icon">${c.icon}</span>
+          <span>${c.text}</span></button>`;
+      }).join('');
+      const fbHTML=sitAns!==undefined?`<div class="feedback-card ${sitCard.choices[sitAns].type} show">
+        <div class="fb-top"><span class="fb-char">${FB[sitCard.choices[sitAns].type].char}</span>
+        <div><div class="fb-title">${FB[sitCard.choices[sitAns].type].title}</div>
+        <div class="fb-stars">${FB[sitCard.choices[sitAns].type].stars}</div></div></div>
+        <div class="fb-text">${FB[sitCard.choices[sitAns].type].text}</div></div>`:'';
+      bodyHTML=`<div style="margin-top:12px;background:var(--blue-l);border-radius:var(--r);padding:14px;margin-bottom:10px;">
+        <div style="text-align:center;">
+          <span style="font-size:3rem;">${sitCard.emoji}</span>
+          <span style="display:inline-block;background:var(--blue);color:white;border-radius:20px;padding:3px 12px;font-size:0.7rem;font-weight:800;margin:6px 0;">${sitCard.tag}</span>
+          <p style="font-size:0.95rem;font-weight:800;color:var(--text);line-height:1.6;">${sitCard.scene}</p>
+        </div>
+        <div class="choice-grid" style="margin-top:10px;">${chHTML}</div>
+        ${fbHTML}
+      </div>
+      <div class="tip-box">💡 おかあさんがともだちやくになって、じっさいにこえにだしてやってみよう！</div>
+      <button class="big-done-btn ${isDone?'done':'go'}" onclick="toggleTask('${task.id}',this)">${isDone?'✓ かんりょう！':'✓ できた！'}</button>`;
+    } else {
+      bodyHTML=`<div class="tip-box">💡 ${task.tip}</div>
+        <button class="big-done-btn ${isDone?'done':'go'}" onclick="toggleTask('${task.id}',this)">${isDone?'✓ かんりょう！':'✓ できた！'}</button>`;
+    }
+
+    wrap.innerHTML=`<div class="task-header" onclick="toggleExpand('${task.id}')">
+      <div class="task-num">${isDone?'✓':(idx+1)}</div>
+      <div class="task-info"><div class="task-name">${task.name}</div><div class="task-desc">${task.desc}</div></div>
+      <button class="expand-arrow ${isOpen?'open':''}">▼</button>
+    </div>
+    <div class="task-body ${isOpen?'open':''}">${bodyHTML}</div>`;
+    list.appendChild(wrap);
+  });
+
+  const allDoneMsg=document.getElementById('all-done-msg');
+  allDoneMsg.style.display=count===TASKS.length?'block':'none';
+
+  const ta=document.getElementById('today-memo');
+  if(ta&&ta!==document.activeElement) ta.value=loadMemos()[todayKey]||'';
+}
+
+function toggleTask(id, btn){
   const data=loadData(); if(!data[todayKey])data[todayKey]=[];
   const i=data[todayKey].indexOf(id);
-  if(i>=0)data[todayKey].splice(i,1); else data[todayKey].push(id);
-  saveData(data); renderChecklist();
+  const wasNotDone=i<0;
+  if(i>=0) data[todayKey].splice(i,1); else data[todayKey].push(id);
+  saveData(data);
+  if(wasNotDone){
+    showStarPop(3, btn);
+    addStars(3);
+    if(data[todayKey].length===TASKS.length){ setTimeout(()=>{ addStars(10); },300); }
+  }
+  checkBadges();
+  renderToday();
 }
-function selectEmotion(cid,tid){
+
+function selEmotion(cid,tid){
   const key='sst_emotion_'+todayKey;
   const s=JSON.parse(localStorage.getItem(key)||'{}');
   s[tid]=s[tid]===cid?null:cid;
-  localStorage.setItem(key,JSON.stringify(s)); renderChecklist();
-}
-function getSelEmotions(){ return JSON.parse(localStorage.getItem('sst_emotion_'+todayKey)||'{}'); }
-function toggleExpand(id){ openTasks[id]=!openTasks[id]; renderChecklist(); }
-
-// ===== チェックリスト =====
-function renderChecklist(){
-  const done=getTodayDone(), count=done.length;
-  document.getElementById('progress-bar').style.width=Math.round(count/TOTAL*100)+'%';
-  document.getElementById('progress-text').textContent=`${count} / ${TOTAL} 完了`;
-  document.getElementById('today-label').textContent=today.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-  const list=document.getElementById('task-list'); list.innerHTML='';
-  const selE=getSelEmotions();
-  const sitCard=SITU_CARDS[getTodaySituIdx()];
-
-  TASKS.forEach(task=>{
-    const isDone=done.includes(task.id), isOpen=!!openTasks[task.id];
-    const card=document.createElement('div');
-    card.className='task-card'+(isDone?' done':'');
-    let bodyHTML='';
-
-    if(task.type==='cards'||task.type==='emotion_check'){
-      const ch=todayEmotionCards.map(c=>{
-        const sel=selE[task.id]===c.id;
-        return `<div class="emotion-card ${sel?'selected':''}" style="background:${c.color}" onclick="selectEmotion('${c.id}','${task.id}')">
-          ${sel?'<span class="selected-badge">✓</span>':''}
-          <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div>
-          <div class="e-when">${c.when.replace('\n','<br>')}</div></div>`;
-      }).join('');
-      bodyHTML=`<div class="task-tip-box">💡 カードを見せて「今どれ？」と指差ししてもらおう！</div>
-        <div class="today-cards-label">📅 今日の4枚（毎日ローテーション）</div>
-        <div class="emotion-grid">${ch}</div>
-        <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
-
-    } else if(task.type==='roleplay'){
-      // 場面カードを使ったロールプレイ
-      const ans=situAnswered['task_'+sitCard.id];
-      const choicesHTML=sitCard.choices.map((c,i)=>{
-        let cls='situ-choice-btn';
-        if(ans!==undefined) cls+=' '+c.type;
-        return `<button class="situ-choice-btn${ans!==undefined?' '+c.type:''}" onclick="answerSituInTask('${sitCard.id}',${i})">
-          <span class="c-num">${['①','②','③'][i]}</span><span>${c.text}</span></button>`;
-      }).join('');
-      const fbHTML=ans!==undefined?`<div class="situ-feedback ${sitCard.choices[ans].type} show">${sitCard.choices[ans].fb}</div>`:'';
-      bodyHTML=`<div style="margin-top:12px">
-        <div class="situ-card">
-          <div class="situ-scene">
-            <span class="situ-scene-emoji">${sitCard.emoji}</span>
-            <span class="situ-scene-tag">${sitCard.tag}</span>
-            <div class="situ-scene-text">${sitCard.scene}</div>
-            <div class="situ-scene-sub">${sitCard.sub}</div>
-          </div>
-          <div class="situ-choices">
-            <div class="situ-choice-label">どれがいいと思う？一緒に考えてみよう👇</div>
-            ${choicesHTML}
-          </div>
-          ${fbHTML}
-        </div>
-      </div>
-      <div class="task-tip-box">💡 お母さんが友達役になって実際に声に出してやってみよう！正解を押しつけず、一緒に考えてね。</div>
-      <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
-
-    } else {
-      bodyHTML=`<div class="task-tip-box">💡 ${task.tip}</div>
-        <button class="done-btn ${isDone?'already':'undone'}" onclick="toggleTask('${task.id}')">${isDone?'✓ 完了済み！':'✓ できた！'}</button>`;
-    }
-
-    card.innerHTML=`<div class="task-header" onclick="toggleExpand('${task.id}')">
-        <div class="check-circle" onclick="event.stopPropagation();toggleTask('${task.id}')">${isDone?'✓':''}</div>
-        <div class="task-info"><div class="task-name">${task.name}</div><div class="task-desc">${task.desc}</div></div>
-        <button class="expand-btn ${isOpen?'open':''}">▼</button>
-      </div>
-      <div class="task-body ${isOpen?'open':''}">${bodyHTML}</div>`;
-    list.appendChild(card);
-  });
-  document.getElementById('complete-msg').style.display=count===TOTAL?'block':'none';
-  const ta=document.getElementById('today-memo');
-  if(ta&&ta!==document.activeElement){ ta.value=loadMemos()[todayKey]||''; }
+  localStorage.setItem(key,JSON.stringify(s));
+  earnBadge('emotion');
+  renderToday();
 }
 
-function answerSituInTask(cardId, choiceIdx){
-  situAnswered['task_'+cardId]=choiceIdx;
-  renderChecklist();
+function answerSituToday(cardId, ci){
+  situAnswered['today_'+cardId]=ci;
+  renderToday();
 }
 
-// ===== メモ =====
+function toggleExpand(id){ openTasks[id]=!openTasks[id]; renderToday(); }
+
+// メモ
 function onMemoInput(){
   const st=document.getElementById('memo-status');
-  st.textContent='入力中...'; st.className='memo-save-status';
+  st.textContent='にゅうりょく中…'; st.className='memo-saved';
   clearTimeout(memoTimer);
   memoTimer=setTimeout(()=>{
-    const val=document.getElementById('today-memo').value;
-    const m=loadMemos();
-    if(val.trim())m[todayKey]=val; else delete m[todayKey];
+    const v=document.getElementById('today-memo').value;
+    const m=loadMemos(); if(v.trim())m[todayKey]=v; else delete m[todayKey];
     saveMemos(m);
-    st.textContent='✓ 保存しました'; st.className='memo-save-status saved';
-    setTimeout(()=>{st.textContent='';st.className='memo-save-status';},2000);
+    st.textContent='✓ ほぞんしました'; st.className='memo-saved ok';
+    setTimeout(()=>{st.textContent='';st.className='memo-saved';},2000);
   },800);
 }
 
-// ===== カードタブ =====
-function switchCardType(type){
-  currentCardType=type;
-  document.getElementById('area-emotion').style.display=type==='emotion'?'block':'none';
-  document.getElementById('area-situ').style.display=type==='situ'?'block':'none';
-  document.getElementById('btn-emotion-tab').className='card-type-btn'+(type==='emotion'?' active':'');
-  document.getElementById('btn-situ-tab').className='card-type-btn'+(type==='situ'?' active':'');
-  if(type==='situ') renderSituCards();
-}
+// ============================================================
+//  MONDAI TAB
+// ============================================================
+function renderMondai(){
+  const wrap=document.getElementById('situ-card-wrap');
+  const clearWrap=document.getElementById('game-clear-wrap');
+  document.getElementById('mondai-counter').textContent=`もんだい ${situIdx+1} / ${SITU_CARDS.length}`;
+  document.getElementById('session-stars').textContent=sessionStars;
 
-function renderCardsPage(){
-  // 感情カード
-  const big=document.getElementById('today-cards-big');
-  if(big) big.innerHTML=todayEmotionCards.map(c=>`<div class="emotion-card" style="background:${c.color};cursor:default">
-    <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div>
-    <div class="e-when">${c.when.replace('\n','<br>')}</div></div>`).join('');
-  const all=document.getElementById('all-cards-grid');
-  if(all) all.innerHTML=ALL_EMOTION_CARDS.map(c=>`<div class="mini-emotion-card" style="background:${c.color}">
-    <span class="e-emoji">${c.emoji}</span><div class="e-name">${c.name}</div></div>`).join('');
-}
+  if(gameDone){
+    wrap.innerHTML='';
+    clearWrap.innerHTML=`<div class="game-clear show">
+      <div class="gc-emoji">🎉🦕🎉</div>
+      <div class="gc-title">ぜんぶのもんだいクリア！</div>
+      <div class="gc-stars">⭐ ${sessionStars} こかくとく！</div>
+      <p style="font-size:0.85rem;color:#888;margin-bottom:16px;">すごい！よくかんがえられたね！</p>
+      <button class="gc-btn" onclick="resetGame()">もういちどあそぶ！</button>
+    </div>`;
+    return;
+  }
+  clearWrap.innerHTML='';
 
-function renderSituCards(){
-  const area=document.getElementById('situ-card-area');
-  if(!area)return;
   const c=SITU_CARDS[situIdx];
   const ans=situAnswered[c.id];
-  const choicesHTML=c.choices.map((ch,i)=>{
-    const sel=ans===i;
-    let cls='situ-choice-btn';
-    if(ans!==undefined) cls+=' '+ch.type;
+  const chHTML=c.choices.map((ch,i)=>{
+    let cls='choice-btn'; if(ans!==undefined) cls+=' result-'+ch.type;
     return `<button class="${cls}" onclick="answerSitu(${i})" ${ans!==undefined?'disabled':''}>
-      <span class="c-num">${['①','②','③'][i]}</span><span>${ch.text}</span></button>`;
+      <span class="choice-num">${['①','②','③'][i]}</span>
+      <span class="choice-icon">${ch.icon}</span>
+      <span>${ch.text}</span></button>`;
   }).join('');
-  const fbHTML=ans!==undefined?`<div class="situ-feedback ${c.choices[ans].type} show">${c.choices[ans].fb}</div>`:'';
-  area.innerHTML=`<div class="situ-card">
-    <div class="situ-scene">
-      <span class="situ-scene-emoji">${c.emoji}</span>
-      <span class="situ-scene-tag">${c.tag}</span>
-      <div class="situ-scene-text">${c.scene}</div>
-      <div class="situ-scene-sub">${c.sub}</div>
+  const fb=ans!==undefined?FB[c.choices[ans].type]:null;
+  const fbHTML=fb?`<div class="feedback-card ${fb.color} show" id="fb-card">
+    <div class="fb-top">
+      <span class="fb-char">${fb.char}</span>
+      <div><div class="fb-title">${fb.title}</div><div class="fb-stars">${fb.stars}</div></div>
     </div>
-    <div class="situ-choices">
-      <div class="situ-choice-label">どれがいいと思う？一緒に考えてみよう👇</div>
-      ${choicesHTML}
+    <div class="fb-text">${fb.text}</div>
+  </div>`:'<div class="feedback-card" id="fb-card"></div>';
+
+  wrap.innerHTML=`<div class="situ-big-card">
+    <div class="situ-scene-area">
+      <span class="situ-big-emoji">${c.emoji}</span>
+      <span class="situ-tag-chip">${c.tag}</span>
+      <div class="situ-scene-q">${c.scene}</div>
+      <span class="situ-dousuru">どうする？</span>
+    </div>
+    <div class="choice-area">
+      <div class="choice-label">👇 3つのなかからえらんでみよう！</div>
+      <div class="choice-grid">${chHTML}</div>
     </div>
     ${fbHTML}
-    <div class="situ-nav">
-      <button class="situ-nav-btn" onclick="moveSitu(-1)" ${situIdx===0?'disabled':''}>◀ 前の場面</button>
-      <span class="situ-counter">${situIdx+1} / ${SITU_CARDS.length}</span>
-      <button class="situ-nav-btn" onclick="moveSitu(1)" ${situIdx===SITU_CARDS.length-1?'disabled':''}>次の場面 ▶</button>
+    <button class="next-btn ${ans!==undefined?'show':''}" id="next-btn" onclick="nextSitu()">
+      ${situIdx<SITU_CARDS.length-1?'つぎのもんだいへ ▶':'けっかをみる 🏆'}
+    </button>
+    <div class="situ-footer">
+      <button class="situ-nav-btn" onclick="moveSitu(-1)" ${situIdx===0?'disabled':''}>◀ まえ</button>
+      <span class="situ-count-label">${situIdx+1} / ${SITU_CARDS.length}</span>
+      <button class="situ-nav-btn" onclick="moveSitu(1)" ${situIdx===SITU_CARDS.length-1?'disabled':''}>つぎ ▶</button>
     </div>
   </div>`;
 }
 
-function answerSitu(i){
+function answerSitu(ci){
   const c=SITU_CARDS[situIdx];
-  situAnswered[c.id]=i;
-  renderSituCards();
-}
-function moveSitu(dir){
-  situIdx=Math.max(0,Math.min(SITU_CARDS.length-1,situIdx+dir));
-  renderSituCards();
+  if(situAnswered[c.id]!==undefined) return;
+  situAnswered[c.id]=ci;
+  const type=c.choices[ci].type;
+  const pts=type==='best'?10:type==='good'?5:2;
+  sessionStars+=pts;
+  addStars(pts);
+  const btn=document.querySelector('.choice-grid .choice-btn:nth-child('+(ci+1)+')');
+  showStarPop(pts, btn);
+  if(type==='best') earnBadge('situ5');
+  // count answered
+  const answered=Object.keys(situAnswered).length;
+  if(answered>=5) earnBadge('situ5');
+  renderMondai();
 }
 
-// ===== カレンダー =====
-function renderCalendar(){
-  const data=loadData(), memos=loadMemos();
-  document.getElementById('cal-title').textContent=`${calYear}年${calMonth+1}月`;
-  const grid=document.getElementById('calendar-grid'); grid.innerHTML='';
-  ['日','月','火','水','木','金','土'].forEach(d=>{ const el=document.createElement('div'); el.className='cal-day-header'; el.textContent=d; grid.appendChild(el); });
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const dim=new Date(calYear,calMonth+1,0).getDate();
-  for(let i=0;i<firstDay;i++){ const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
+function nextSitu(){
+  if(situIdx>=SITU_CARDS.length-1){ gameDone=true; }
+  else { situIdx++; }
+  renderMondai();
+}
+
+function moveSitu(dir){
+  situIdx=Math.max(0,Math.min(SITU_CARDS.length-1,situIdx+dir));
+  renderMondai();
+}
+
+function resetGame(){
+  situAnswered={}; sessionStars=0; gameDone=false;
+  situIdx=Math.floor((today-new Date(today.getFullYear(),0,0))/86400000)%SITU_CARDS.length;
+  renderMondai();
+}
+
+// ============================================================
+//  KIMOCHI TAB
+// ============================================================
+function renderKimochi(){
+  const todayE=document.getElementById('today-emotion-cards');
+  const selE=JSON.parse(localStorage.getItem('sst_emotion_'+todayKey)||'{}');
+  todayE.innerHTML=todayEmCards.map(c=>{
+    const selKey=Object.values(selE).includes(c.id);
+    return `<div class="e-big-card ${selKey?'selected':''}" style="background:${c.color}" onclick="selEmotionKimochi('${c.id}')">
+      ${selKey?'<span class="sel-badge">✓</span>':''}
+      <span class="ee">${c.emoji}</span>
+      <div class="en">${c.name}</div>
+      <div class="ew">${c.when.replace('\n','<br>')}</div>
+    </div>`;
+  }).join('');
+
+  const allE=document.getElementById('all-emotion-cards');
+  allE.innerHTML=EMOTION_CARDS.map(c=>`<div class="e-mini-card" style="background:${c.color}">
+    <span class="ee">${c.emoji}</span><div class="en">${c.name}</div></div>`).join('');
+}
+
+function selEmotionKimochi(cid){
+  const key='sst_emotion_'+todayKey;
+  const s=JSON.parse(localStorage.getItem(key)||'{}');
+  s['kimochi']=s['kimochi']===cid?null:cid;
+  localStorage.setItem(key,JSON.stringify(s));
+  earnBadge('emotion');
+  renderKimochi();
+}
+
+// ============================================================
+//  KIROKU TAB
+// ============================================================
+let calYear2=today.getFullYear(), calMonth2=today.getMonth();
+function changeMonth(dir){ calMonth2+=dir; if(calMonth2<0){calMonth2=11;calYear2--;}if(calMonth2>11){calMonth2=0;calYear2++;}renderKiroku(); }
+
+function renderKiroku(){
+  const data=loadData(), memos=loadMemos(), stars=getTotalStars();
+  document.getElementById('total-stars-big').textContent=stars;
+  document.getElementById('header-stars').textContent=stars;
+  const allK=Object.keys(data);
+  const td=allK.filter(k=>(data[k]||[]).length>0).length;
+  const fd=allK.filter(k=>(data[k]||[]).length===TASKS.length).length;
+  const tt=allK.reduce((s,k)=>s+(data[k]||[]).length,0);
+  let streak=0,cd=new Date(today);
+  while(true){const k=dk(cd);if((data[k]||[]).length>0){streak++;cd.setDate(cd.getDate()-1);}else break;if(streak>365)break;}
+  document.getElementById('stat-days').textContent=td;
+  document.getElementById('stat-full').textContent=fd;
+  document.getElementById('stat-tasks').textContent=tt;
+  document.getElementById('stat-streak').textContent=streak;
+
+  // バッジ
+  const earned=loadBadges();
+  document.getElementById('badges-grid').innerHTML=BADGES.map(b=>`
+    <div class="badge-item ${earned.includes(b.id)?'':'locked'}">
+      <span class="b-icon">${b.icon}</span>
+      <div class="b-name">${b.name}</div>
+      <div class="b-cond">${b.cond}</div>
+    </div>`).join('');
+
+  // カレンダー
+  document.getElementById('cal-title').textContent=`${calYear2}年${calMonth2+1}月`;
+  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
+  ['日','月','火','水','木','金','土'].forEach(d=>{const e=document.createElement('div');e.className='cal-dh';e.textContent=d;grid.appendChild(e);});
+  const fd2=new Date(calYear2,calMonth2,1).getDay();
+  const dim=new Date(calYear2,calMonth2+1,0).getDate();
+  for(let i=0;i<fd2;i++){const e=document.createElement('div');e.className='cal-d empty';grid.appendChild(e);}
   for(let d=1;d<=dim;d++){
-    const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const key=`${calYear2}-${String(calMonth2+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dc=(data[key]||[]).length;
     const el=document.createElement('div'); el.textContent=d;
-    let cls='cal-day'; if(key===todayKey)cls+=' today'; if(dc===TOTAL)cls+=' full'; else if(dc>0)cls+=' partial';
+    let cls='cal-d'; if(key===todayKey)cls+=' today'; if(dc===TASKS.length)cls+=' full'; else if(dc>0)cls+=' partial';
     el.className=cls; el.onclick=()=>openDayModal(key);
     if(memos[key]&&memos[key].trim()){
-      el.style.position='relative';
       const dot=document.createElement('span');
-      dot.style.cssText='position:absolute;top:1px;right:1px;width:5px;height:5px;background:#ff8fab;border-radius:50%;';
-      el.appendChild(dot);
+      dot.style.cssText='position:absolute;top:1px;right:1px;width:5px;height:5px;background:var(--pink);border-radius:50%;';
+      el.style.position='relative'; el.style.overflow='visible'; el.appendChild(dot);
     }
     grid.appendChild(el);
   }
-  const allK=Object.keys(data);
-  const td=allK.filter(k=>(data[k]||[]).length>0).length;
-  const fd=allK.filter(k=>(data[k]||[]).length===TOTAL).length;
-  const tt=allK.reduce((s,k)=>s+(data[k]||[]).length,0);
-  let streak=0,cd=new Date(today);
-  while(true){ const k=dateKey(cd); if((data[k]||[]).length>0){streak++;cd.setDate(cd.getDate()-1);}else break; if(streak>365)break; }
-  document.getElementById('stat-total-days').textContent=td;
-  document.getElementById('stat-full-days').textContent=fd;
-  document.getElementById('stat-total-tasks').textContent=tt;
-  document.getElementById('stat-streak').textContent=streak;
-  renderMemoList(memos,data);
-}
 
-function renderMemoList(memos,data){
-  const el=document.getElementById('memo-list-content'); if(!el)return;
+  // メモ一覧
+  const memoEl=document.getElementById('memo-list');
   const keys=Object.keys(memos).filter(k=>memos[k]&&memos[k].trim()).sort((a,b)=>b.localeCompare(a)).slice(0,20);
-  if(!keys.length){ el.innerHTML='<div class="memo-empty">まだメモがありません。<br>今日タブからメモを書いてみよう！</div>'; return; }
-  el.innerHTML=keys.map(k=>{
+  if(!keys.length){ memoEl.innerHTML='<div class="memo-empty">まだメモがありません。<br>きょうタブからメモをかいてみよう！</div>'; }
+  else memoEl.innerHTML=keys.map(k=>{
     const dc=(data[k]||[]).length;
-    const d=new Date(k);
-    const label=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-    const badge=dc===TOTAL?'<span class="memo-entry-badge badge-full">✓ 全完了</span>':dc>0?`<span class="memo-entry-badge badge-partial">${dc}/${TOTAL}</span>`:'<span class="memo-entry-badge badge-none">記録なし</span>';
+    const d=new Date(k); const label=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+    const badge=dc===TASKS.length?`<span class="mbadge full">✓ぜんかんりょう</span>`:dc>0?`<span class="mbadge partial">${dc}/${TASKS.length}</span>`:`<span class="mbadge none">きろくなし</span>`;
     const text=memos[k].length>80?memos[k].slice(0,80)+'…':memos[k];
     return `<div class="memo-entry" onclick="openDayModal('${k}')">
-      <div class="memo-entry-header"><span class="memo-entry-date">${label}</span>${badge}</div>
+      <div class="memo-entry-hd"><span class="memo-entry-date">${label}</span>${badge}</div>
       <div class="memo-entry-text">${text}</div></div>`;
   }).join('');
 }
 
-function changeMonth(dir){ calMonth+=dir; if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCalendar(); }
-
+// モーダル
 function openDayModal(key){
   const data=loadData(),memos=loadMemos(),done=data[key]||[];
   const d=new Date(key);
-  document.getElementById('modal-date-title').textContent=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  document.getElementById('modal-title').textContent=d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
   document.getElementById('modal-tasks').innerHTML=TASKS.map(t=>`<div class="modal-task-row"><span>${done.includes(t.id)?'✅':'⬜'}</span><span>${t.name}</span></div>`).join('');
   const memo=memos[key];
-  document.getElementById('modal-memo-content').innerHTML=memo&&memo.trim()?`<div class="modal-memo-text">${memo}</div>`:'<div class="modal-no-memo">メモなし</div>';
+  document.getElementById('modal-memo').innerHTML=memo&&memo.trim()?`<div class="modal-memo-text">${memo}</div>`:'<div class="modal-no-memo">メモなし</div>';
   document.getElementById('day-modal').classList.add('open');
 }
-function closeModal(e){ if(e.target.id==='day-modal')closeModalDirect(); }
-function closeModalDirect(){ document.getElementById('day-modal').classList.remove('open'); }
+function closeDayModal(e){ if(e.target.id==='day-modal')closeDayModalDirect(); }
+function closeDayModalDirect(){ document.getElementById('day-modal').classList.remove('open'); }
 
-function showPage(name,btn){
+// ============================================================
+//  PAGE SWITCHING
+// ============================================================
+function showPage(name, btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='calendar')renderCalendar();
-  if(name==='cards')renderCardsPage();
+  if(btn) btn.classList.add('active');
+  if(name==='mondai'){ renderMondai(); }
+  if(name==='kimochi'){ renderKimochi(); }
+  if(name==='kiroku'){ renderKiroku(); }
 }
 
-// 初期化
-renderChecklist();
-renderCardsPage();
+// ============================================================
+//  INIT
+// ============================================================
+document.getElementById('header-stars').textContent=getTotalStars();
+renderToday();
+
 const ta=document.getElementById('today-memo');
 if(ta){ ta.value=loadMemos()[todayKey]||''; ta.addEventListener('input',onMemoInput); }
 </script>
