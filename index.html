@@ -3,37 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
 <title>SSTトレーニング 🦕</title>
 <style>
 /* =============================================
-   CSS変数 - 色はここで一括管理
+   CSS変数
    ============================================= */
 :root {
-  --sky:    #5bbde4;
-  --sky-l:  #e3f4fc;
-  --sky-d:  #3a9bbf;
-  --orange: #ff9500;
-  --org-l:  #fff3e0;
-  --org-d:  #d97500;
-  --green:  #4caf50;
-  --grn-l:  #e8f5e9;
-  --grn-d:  #2e7d32;
-  --pink:   #ff6b9d;
-  --pnk-l:  #fde8f0;
-  --yellow: #ffd43b;
-  --ylw-l:  #fffbde;
-  --purple: #9c5de8;
-  --ppl-l:  #f3e8ff;
+  --sky:    #5bbde4; --sky-l:  #e3f4fc; --sky-d:  #3a9bbf;
+  --orange: #ff9500; --org-l:  #fff3e0; --org-d:  #d97500;
+  --green:  #4caf50; --grn-l:  #e8f5e9; --grn-d:  #2e7d32;
+  --pink:   #ff6b9d; --pnk-l:  #fde8f0;
+  --yellow: #ffd43b; --ylw-l:  #fffbde;
+  --purple: #9c5de8; --ppl-l:  #f3e8ff;
   --red-l:  #ffe5e5;
-  --bg:     #f0f9ff;
-  --card:   #ffffff;
-  --text:   #2d3748;
-  --gray:   #718096;
-  --gray-l: #e2e8f0;
-  --r:      20px;
-  --r-sm:   12px;
-  --r-xs:   8px;
+  --bg:     #f0f9ff; --card:   #ffffff;
+  --text:   #2d3748; --gray:   #718096; --gray-l: #e2e8f0;
+  --r: 20px; --r-sm: 12px; --r-xs: 8px;
   --shadow: 0 4px 20px rgba(0,0,0,0.09);
   --shadow-sm: 0 2px 10px rgba(0,0,0,0.07);
 }
@@ -59,23 +45,17 @@ img { max-width: 100%; }
    ============================================= */
 .app-header {
   background: linear-gradient(135deg, #5bbde4 0%, #7ecbee 100%);
-  padding: 10px 16px 10px;
-  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 30;
   box-shadow: 0 3px 12px rgba(91,189,228,0.4);
 }
 .hd-left { display: flex; align-items: center; gap: 10px; }
-.hd-mascot {
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
-}
-/* 画像があればimg、なければ絵文字 */
+.hd-mascot { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
 .hd-mascot img { width: 40px; height: 40px; object-fit: contain; }
 .hd-title h1 { font-size: 1rem; font-weight: 800; color: white; line-height: 1.2; }
 .hd-title p  { font-size: 0.68rem; color: rgba(255,255,255,0.88); margin-top: 1px; }
 .hd-stars {
-  background: rgba(255,255,255,0.22);
-  border: 2px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.22); border: 2px solid rgba(255,255,255,0.35);
   border-radius: 30px; padding: 6px 14px;
   display: flex; align-items: center; gap: 5px;
   font-size: 1.05rem; font-weight: 800; color: white;
@@ -94,9 +74,8 @@ img { max-width: 100%; }
 .tab {
   flex: 1; padding: 10px 4px;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
-  font-size: 0.72rem; font-weight: 700;
-  color: #aaa; border: none; background: none;
-  cursor: pointer; transition: all 0.2s;
+  font-size: 0.72rem; font-weight: 700; color: #aaa;
+  border: none; background: none; cursor: pointer; transition: all 0.2s;
   border-bottom: 3px solid transparent; margin-bottom: -3px;
 }
 .tab .ti { font-size: 1.3rem; }
@@ -107,26 +86,16 @@ img { max-width: 100%; }
    ============================================= */
 .page { display: none; padding: 14px 14px 40px; }
 .page.active { display: block; }
-
-/* セクションカード */
-.s-card {
-  background: var(--card); border-radius: var(--r);
-  padding: 16px; margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-.s-title {
-  font-size: 0.95rem; font-weight: 800; color: var(--sky-d);
-  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-}
+.s-card { background: var(--card); border-radius: var(--r); padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+.s-title { font-size: 0.95rem; font-weight: 800; color: var(--sky-d); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 
 /* =============================================
    きょうタブ
    ============================================= */
-/* あいさつ */
 .greet-card {
   background: linear-gradient(135deg, #fff9e6, #fff3cd);
-  border-radius: var(--r); padding: 16px 18px;
-  margin-bottom: 14px; display: flex; align-items: center; gap: 14px;
+  border-radius: var(--r); padding: 16px 18px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
   box-shadow: var(--shadow-sm); border: 2px solid #ffe082;
 }
 .greet-char { font-size: 3rem; flex-shrink: 0; }
@@ -134,11 +103,9 @@ img { max-width: 100%; }
 .greet-msg h2 { font-size: 1rem; font-weight: 800; color: var(--org-d); }
 .greet-msg p  { font-size: 0.75rem; color: var(--gray); margin-top: 3px; }
 
-/* 星プログレス */
 .star-progress {
-  background: var(--card); border-radius: var(--r);
-  padding: 14px 16px; margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
+  background: var(--card); border-radius: var(--r); padding: 14px 16px;
+  margin-bottom: 14px; box-shadow: var(--shadow-sm);
   display: flex; align-items: center; gap: 10px;
 }
 .sp-label { font-size: 0.75rem; font-weight: 700; color: var(--gray); white-space: nowrap; }
@@ -147,18 +114,12 @@ img { max-width: 100%; }
 .sp-star.lit { filter: none; animation: starBounce 0.4s ease; }
 @keyframes starBounce { 0%{transform:scale(0.4)} 60%{transform:scale(1.3)} 100%{transform:scale(1)} }
 
-/* ミッションカード */
 .mission-card {
-  background: var(--card); border-radius: var(--r);
-  margin-bottom: 10px; box-shadow: var(--shadow-sm);
-  border: 2.5px solid transparent; overflow: hidden; transition: border-color 0.3s;
+  background: var(--card); border-radius: var(--r); margin-bottom: 10px;
+  box-shadow: var(--shadow-sm); border: 2.5px solid transparent; overflow: hidden; transition: border-color 0.3s;
 }
 .mission-card.done { border-color: var(--green); background: var(--grn-l); }
-
-.mission-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 16px; cursor: pointer;
-}
+.mission-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
 .mission-num {
   width: 34px; height: 34px; border-radius: 50%;
   background: var(--sky-l); color: var(--sky-d);
@@ -177,164 +138,60 @@ img { max-width: 100%; }
   flex-shrink: 0; transition: transform 0.25s;
 }
 .expand-btn.open { transform: rotate(180deg); }
-
-.mission-body {
-  display: none; padding: 0 16px 16px;
-  border-top: 2px solid rgba(0,0,0,0.04);
-}
+.mission-body { display: none; padding: 0 16px 16px; border-top: 2px solid rgba(0,0,0,0.04); }
 .mission-body.open { display: block; }
 
-/* ヒントボックス */
 .hint-box {
   background: var(--ylw-l); border-left: 4px solid var(--yellow);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
   padding: 10px 14px; font-size: 0.82rem; color: #5a4a00;
   margin: 12px 0; line-height: 1.6;
 }
-
-/* かんりょうボタン */
 .clear-btn {
   width: 100%; padding: 15px; border-radius: var(--r);
-  border: none; font-size: 1rem; font-weight: 800;
-  cursor: pointer; transition: all 0.18s; margin-top: 6px;
+  border: none; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.18s; margin-top: 6px;
 }
-.clear-btn.go {
-  background: linear-gradient(135deg, #4caf50, #66bb6a);
-  color: white; box-shadow: 0 4px 14px rgba(76,175,80,0.4);
-}
+.clear-btn.go { background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; box-shadow: 0 4px 14px rgba(76,175,80,0.4); }
 .clear-btn.go:active { transform: scale(0.97); opacity: 0.9; }
 .clear-btn.done-state { background: var(--gray-l); color: #aaa; }
 
-/* 全完了バナー */
 .all-clear-banner {
   display: none; text-align: center; padding: 22px 16px;
   background: linear-gradient(135deg, #fff9e0, #fff3cd);
-  border-radius: var(--r); margin-top: 10px;
-  border: 2px solid var(--yellow);
+  border-radius: var(--r); margin-top: 10px; border: 2px solid var(--yellow);
   animation: popIn 0.4s ease;
 }
 .acb-emoji { font-size: 3rem; }
 .acb-title { font-size: 1.15rem; font-weight: 800; color: var(--org-d); margin-top: 8px; }
 .acb-sub   { font-size: 0.82rem; color: var(--gray); margin-top: 4px; }
 
-/* =============================================
-   ゲームタブ（もんだい）
-   ============================================= */
-/* ゲームヘッダー */
-.game-hd {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
-}
-.gm-counter {
-  background: white; border-radius: 30px; padding: 7px 16px;
-  font-size: 0.9rem; font-weight: 800; color: var(--sky-d);
-  box-shadow: var(--shadow-sm);
-}
-.gm-session-stars {
-  background: var(--ylw-l); border: 2px solid var(--yellow);
-  border-radius: 30px; padding: 7px 14px;
-  font-size: 0.9rem; font-weight: 800; color: #664;
-}
-
-/* プログレスバー */
-.game-progress {
-  height: 8px; background: var(--gray-l);
-  border-radius: 10px; margin-bottom: 16px; overflow: hidden;
-}
-.game-progress-fill {
-  height: 100%; border-radius: 10px;
-  background: linear-gradient(90deg, var(--sky), var(--orange));
-  transition: width 0.5s ease;
-}
-
-/* 場面カード */
-.scene-card {
-  background: white; border-radius: var(--r);
-  box-shadow: var(--shadow); margin-bottom: 14px; overflow: hidden;
-}
-
-/* 場面イラストエリア */
-.scene-illust {
-  position: relative; overflow: hidden;
-  background: linear-gradient(180deg, var(--sky-l) 0%, white 100%);
-  padding: 20px 16px 16px; text-align: center; min-height: 140px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-/* 場面画像（差し替え対応） */
-.scene-img {
-  max-height: 120px; max-width: 280px; object-fit: contain;
-  border-radius: var(--r-sm);
-}
-/* 画像なし時のフォールバック */
-.scene-emoji-fb { font-size: 4.5rem; line-height: 1; }
-.scene-tag {
-  display: inline-block; background: var(--sky); color: white;
-  border-radius: 20px; padding: 4px 14px;
-  font-size: 0.72rem; font-weight: 800; margin-top: 10px;
-}
-.scene-text {
-  padding: 14px 18px 10px; font-size: 1.05rem; font-weight: 800;
-  color: var(--text); line-height: 1.65; text-align: center;
-}
-.scene-subtext {
-  padding: 0 18px 14px; font-size: 0.8rem; color: var(--gray); text-align: center;
-}
-
-/* ステップ1：きもちえらび */
-.step-block {
-  padding: 14px 16px;
-  border-top: 2px solid var(--gray-l);
-}
-.step-label {
-  font-size: 0.85rem; font-weight: 800; color: var(--text);
-  margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
-}
-.step-num {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--sky); color: white;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
-}
-.step-num.done-step { background: var(--green); }
-
-/* 感情グリッド（6つ） */
-.emotion-picker {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-}
+/* 今日タブの感情ピッカー（小） */
+.emotion-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .em-btn {
   border-radius: var(--r-sm); border: 2.5px solid var(--gray-l);
   background: #fafafa; padding: 10px 6px;
   display: flex; flex-direction: column; align-items: center; gap: 5px;
-  cursor: pointer; transition: all 0.2s;
+  cursor: pointer; transition: all 0.2s; position: relative;
 }
 .em-btn:active { transform: scale(0.94); }
-.em-btn.selected {
-  border-color: var(--pink); background: var(--pnk-l);
-  transform: scale(1.06); box-shadow: 0 0 0 2px var(--pink);
-}
-/* 感情画像（差し替え対応） */
+.em-btn.selected { border-color: var(--pink); background: var(--pnk-l); transform: scale(1.06); box-shadow: 0 0 0 2px var(--pink); }
 .em-img { width: 48px; height: 48px; object-fit: contain; }
 .em-emoji { font-size: 2.2rem; line-height: 1; }
 .em-name { font-size: 0.72rem; font-weight: 800; color: var(--text); }
-
-/* 感情選択後のメッセージ */
+.em-sel-badge {
+  position: absolute; top: -8px; right: -8px;
+  background: var(--pink); color: white; border-radius: 50%;
+  width: 22px; height: 22px; font-size: 0.75rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
 .emotion-ack {
   background: var(--pnk-l); border-radius: var(--r-sm);
   padding: 10px 14px; font-size: 0.82rem; color: #c0386a;
   font-weight: 700; margin-top: 10px; display: none; animation: fadeSlide 0.3s ease;
 }
 .emotion-ack.show { display: block; }
-@keyframes fadeSlide { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-/* ステップ2：どうする？ */
-.action-step {
-  display: none; padding: 14px 16px;
-  border-top: 2px solid var(--gray-l);
-  animation: fadeSlide 0.35s ease;
-}
-.action-step.show { display: block; }
-
-/* 選択肢ボタン */
+/* 今日タブの選択肢 */
 .choices { display: flex; flex-direction: column; gap: 10px; }
 .choice-btn {
   width: 100%; padding: 15px 16px; border-radius: var(--r-sm);
@@ -345,7 +202,6 @@ img { max-width: 100%; }
   box-shadow: 0 2px 8px rgba(0,0,0,0.05); line-height: 1.45;
 }
 .choice-btn:active { transform: scale(0.97); }
-/* 回答後の色 */
 .choice-btn.res-best { border-color: var(--green);  background: var(--grn-l); color: var(--grn-d); }
 .choice-btn.res-good { border-color: var(--orange); background: var(--org-l); color: var(--org-d); }
 .choice-btn.res-ng   { border-color: #ef9a9a;       background: var(--red-l); color: #b71c1c; }
@@ -360,61 +216,242 @@ img { max-width: 100%; }
 .choice-btn.res-ng   .choice-num { background: #e57373;       color: white; }
 .choice-icon { font-size: 1.3rem; flex-shrink: 0; }
 
-/* フィードバック */
-.feedback-wrap {
-  padding: 14px 16px; border-top: 2px solid var(--gray-l);
-  display: none; animation: popIn 0.35s ease;
-}
+/* 今日タブのフィードバック */
+.feedback-wrap { padding: 14px 16px; border-top: 2px solid var(--gray-l); display: none; animation: popIn 0.35s ease; }
 .feedback-wrap.show { display: block; }
-
-.feedback-card {
-  border-radius: var(--r); padding: 18px 16px;
-  display: flex; flex-direction: column; gap: 12px;
-}
+.feedback-card { border-radius: var(--r); padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
 .feedback-card.best { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 2px solid var(--green); }
 .feedback-card.good { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 2px solid var(--orange); }
 .feedback-card.ng   { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 2px solid #f48fb1; }
-
 .fb-top { display: flex; align-items: center; gap: 14px; }
-/* キャラ画像（差し替え対応） */
 .fb-char-wrap { font-size: 3.5rem; flex-shrink: 0; }
 .fb-char-wrap img { width: 70px; height: 70px; object-fit: contain; }
-.fb-texts {}
 .fb-title { font-size: 1.1rem; font-weight: 800; }
 .feedback-card.best .fb-title { color: var(--grn-d); }
 .feedback-card.good .fb-title { color: var(--org-d); }
 .feedback-card.ng   .fb-title { color: #ad1457; }
 .fb-stars { font-size: 0.9rem; font-weight: 800; margin-top: 3px; color: #664; }
 .fb-body { font-size: 0.85rem; line-height: 1.7; color: #555; }
-.fb-next { font-size: 0.8rem; font-weight: 700; color: var(--sky-d); margin-top: 2px; }
 
-.next-btn {
-  width: 100%; padding: 15px; border-radius: var(--r);
+/* =============================================
+   ゲームタブ共通
+   ============================================= */
+.game-hd {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+.gm-counter {
+  background: white; border-radius: 30px; padding: 7px 16px;
+  font-size: 0.9rem; font-weight: 800; color: var(--sky-d); box-shadow: var(--shadow-sm);
+}
+.gm-session-stars {
+  background: var(--ylw-l); border: 2px solid var(--yellow);
+  border-radius: 30px; padding: 7px 14px;
+  font-size: 0.9rem; font-weight: 800; color: #664;
+}
+.game-progress { height: 8px; background: var(--gray-l); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+.game-progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--sky), var(--orange)); transition: width 0.5s ease; }
+
+/* =============================================
+   マイルストーンバー
+   ============================================= */
+.ms-bar {
+  background: white; border-radius: 20px; padding: 12px 14px;
+  margin-bottom: 14px; box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; gap: 12px;
+}
+.ms-dino { flex-shrink: 0; }
+.ms-dino img { width: 44px; height: 44px; object-fit: contain; display: block; }
+.ms-dino-fb { font-size: 2.2rem; line-height: 1; }
+.ms-info { flex: 1; min-width: 0; }
+.ms-speech { font-size: 0.68rem; font-weight: 700; color: #666; margin-bottom: 8px; line-height: 1.4; }
+.ms-stars { display: flex; justify-content: space-between; }
+.ms-star-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ms-star-icon { font-size: 1.4rem; filter: grayscale(1) opacity(0.28); transition: all 0.4s; }
+.ms-star-icon.lit { filter: none; animation: starBounce 0.4s ease; }
+.ms-star-label { font-size: 0.6rem; font-weight: 700; color: #ccc; }
+.ms-star-label.lit { color: var(--org-d); font-weight: 800; }
+
+/* =============================================
+   ゲームカード新デザイン（参考画像準拠）
+   ============================================= */
+
+/* カード本体 */
+.sc {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* カード上部（タイトルエリア） */
+.sc-top {
+  background: var(--cb, #EBF5FD);
+  padding: 16px 16px 14px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.sc-num {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--ca, #4299E1);
+  color: white; font-size: 1.5rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+}
+.sc-text { flex: 1; }
+.sc-tag-badge {
+  display: inline-block;
+  background: rgba(0,0,0,0.1);
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 0.66rem; font-weight: 800; color: rgba(0,0,0,0.45);
+  margin-bottom: 5px;
+}
+.sc-scene {
+  font-size: 1.05rem; font-weight: 800;
+  color: var(--ca, #4299E1);
+  line-height: 1.55;
+}
+
+/* イラストエリア */
+.sc-illust {
+  background: var(--cl, #DBEAFE);
+  min-height: 155px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px 20px;
+}
+.sc-card-img { max-height: 130px; max-width: 260px; object-fit: contain; border-radius: 14px; }
+.sc-emoji-big { font-size: 5.5rem; line-height: 1; }
+
+/* セクションバー */
+.sc-bar {
+  background: var(--ca, #4299E1);
+  color: white; font-size: 1rem; font-weight: 800;
+  padding: 10px 16px; text-align: center;
+  letter-spacing: 0.07em;
+}
+
+/* =============================================
+   感情サークルエリア
+   ============================================= */
+.sc-em-row {
+  display: flex; justify-content: center; gap: 14px;
+  padding: 16px 10px 14px; background: white; flex-wrap: wrap;
+}
+.sc-em-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; position: relative; transition: transform 0.18s;
+}
+.sc-em-item:active { transform: scale(0.88); }
+.sc-em-circle {
+  width: 62px; height: 62px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.14);
+  transition: all 0.22s; border: 3px solid transparent;
+}
+.sc-em-item.selected .sc-em-circle {
+  border-color: rgba(0,0,0,0.5);
+  transform: scale(1.12);
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.15);
+}
+.sc-em-img { width: 42px; height: 42px; object-fit: contain; display: block; }
+.sc-em-emoji { font-size: 2.1rem; line-height: 1; }
+.sc-em-name { font-size: 0.72rem; font-weight: 800; color: #333; line-height: 1; }
+.sc-em-check {
+  position: absolute; top: -2px; right: -2px;
+  width: 19px; height: 19px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); color: white;
+  font-size: 0.62rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 感情選択後メッセージ */
+.sc-em-ack {
+  background: #FFFDE7; padding: 10px 16px;
+  font-size: 0.82rem; font-weight: 700; color: #5D4037;
+  text-align: center;
+  border-top: 2px dashed #FFC107;
+  animation: fadeSlide 0.3s ease;
+}
+
+/* =============================================
+   アクションサークルエリア
+   ============================================= */
+.sc-act-section { display: none; }
+.sc-act-section.show { display: block; }
+
+.sc-act-row {
+  display: flex; justify-content: center; gap: 12px;
+  padding: 16px 10px 14px; background: white; flex-wrap: wrap;
+}
+.sc-act-item {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  cursor: pointer; max-width: 78px;
+  transition: transform 0.18s;
+}
+.sc-act-item:active { transform: scale(0.88); }
+.sc-act-item.answered { pointer-events: none; }
+.sc-act-circle {
+  width: 68px; height: 68px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; line-height: 1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+  transition: all 0.3s; border: 4px solid transparent;
+}
+.sc-act-circle.res-best { border-color: var(--green);  box-shadow: 0 0 0 5px rgba(76,175,80,0.3); }
+.sc-act-circle.res-good { border-color: var(--orange); box-shadow: 0 0 0 5px rgba(255,149,0,0.3); }
+.sc-act-circle.res-ng   { border-color: #EF5350;       box-shadow: 0 0 0 5px rgba(239,83,80,0.3); }
+.sc-act-name {
+  font-size: 0.69rem; font-weight: 800; color: #333;
+  text-align: center; line-height: 1.45; max-width: 74px;
+}
+
+/* =============================================
+   フィードバック（新カードデザイン）
+   ============================================= */
+.sc-fb-wrap { display: none; padding: 14px 16px; animation: popIn 0.35s ease; }
+.sc-fb-wrap.show { display: block; }
+.sc-fb-card { border-radius: 18px; padding: 16px; }
+.sc-fb-card.best { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border: 2.5px solid var(--green); }
+.sc-fb-card.good { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border: 2.5px solid var(--orange); }
+.sc-fb-card.ng   { background: linear-gradient(135deg, #FCE4EC, #F8BBD0); border: 2.5px solid #F48FB1; }
+.sc-fb-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sc-fb-char { font-size: 3rem; flex-shrink: 0; }
+.sc-fb-char img { width: 64px; height: 64px; object-fit: contain; }
+.sc-fb-title { font-size: 1.1rem; font-weight: 900; }
+.sc-fb-card.best .sc-fb-title { color: var(--grn-d); }
+.sc-fb-card.good .sc-fb-title { color: var(--org-d); }
+.sc-fb-card.ng   .sc-fb-title { color: #AD1457; }
+.sc-fb-stars { font-size: 0.88rem; font-weight: 800; color: #664; margin-top: 3px; }
+.sc-fb-body { font-size: 0.83rem; line-height: 1.7; color: #555; }
+.sc-next-btn {
+  width: 100%; padding: 16px; border-radius: 18px;
   border: none; font-size: 1rem; font-weight: 800; color: white;
-  background: linear-gradient(135deg, var(--sky), var(--sky-d));
-  box-shadow: 0 4px 14px rgba(91,189,228,0.45);
+  background: var(--ca, #4299E1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   cursor: pointer; margin-top: 12px; transition: all 0.2s;
 }
-.next-btn:active { transform: scale(0.97); }
+.sc-next-btn:active { transform: scale(0.97); opacity: 0.9; }
 
-/* ナビゲーション */
-.scene-nav {
+/* =============================================
+   ナビゲーション（カード下部）
+   ============================================= */
+.sc-nav {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px 14px;
+  padding: 12px 16px; background: var(--cb, #EBF5FD);
 }
-.nav-btn {
-  background: var(--sky-l); color: var(--sky-d); border: none;
-  border-radius: 30px; padding: 8px 16px; font-size: 0.82rem; font-weight: 800;
-  transition: all 0.2s;
+.sc-nav-btn {
+  background: white; color: var(--ca, var(--sky-d));
+  border: 2.5px solid var(--ca, var(--sky));
+  border-radius: 30px; padding: 8px 18px;
+  font-size: 0.82rem; font-weight: 800; transition: all 0.2s;
 }
-.nav-btn:disabled { background: var(--gray-l); color: #ccc; cursor: default; }
-.nav-count { font-size: 0.8rem; color: var(--gray); font-weight: 700; }
+.sc-nav-btn:disabled { border-color: #ddd; color: #ddd; background: #fafafa; }
+.sc-nav-count { font-size: 0.85rem; color: #666; font-weight: 800; }
 
 /* ゲームクリア */
 .game-clear {
   background: white; border-radius: var(--r); padding: 28px 20px;
-  text-align: center; box-shadow: var(--shadow);
-  display: none; animation: popIn 0.4s ease;
+  text-align: center; box-shadow: var(--shadow); display: none; animation: popIn 0.4s ease;
 }
 .game-clear.show { display: block; }
 .gc-emoji { font-size: 4.5rem; }
@@ -431,7 +468,6 @@ img { max-width: 100%; }
 /* =============================================
    きもちタブ
    ============================================= */
-/* 今日の大きいカード */
 .today-em-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .em-big-card {
   border-radius: var(--r); padding: 18px 12px; text-align: center;
@@ -445,14 +481,12 @@ img { max-width: 100%; }
 .em-big-emoji { font-size: 3rem; line-height: 1; }
 .em-big-name  { font-size: 1rem; font-weight: 800; color: var(--text); }
 .em-big-when  { font-size: 0.68rem; color: var(--gray); line-height: 1.4; }
-.em-sel-badge {
+.em-big-card .em-sel-badge {
   position: absolute; top: -8px; right: -8px;
   background: var(--pink); color: white; border-radius: 50%;
   width: 24px; height: 24px; font-size: 0.8rem; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
 }
-
-/* 全カードグリッド（4列） */
 .all-em-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .em-mini { border-radius: var(--r-sm); padding: 10px 4px; text-align: center; }
 .em-mini img { width: 40px; height: 40px; object-fit: contain; display: block; margin: 0 auto 4px; }
@@ -465,13 +499,9 @@ img { max-width: 100%; }
 .star-hero {
   background: linear-gradient(135deg, #5bbde4, #7ecbee);
   border-radius: var(--r); padding: 22px; text-align: center;
-  color: white; box-shadow: var(--shadow); margin-bottom: 14px;
-  position: relative; overflow: hidden;
+  color: white; box-shadow: var(--shadow); margin-bottom: 14px; position: relative; overflow: hidden;
 }
-.star-hero::before {
-  content: '⭐'; font-size: 8rem; position: absolute;
-  right: -20px; top: -20px; opacity: 0.12;
-}
+.star-hero::before { content: '⭐'; font-size: 8rem; position: absolute; right: -20px; top: -20px; opacity: 0.12; }
 .sh-label { font-size: 0.8rem; opacity: 0.9; }
 .sh-num   { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin: 4px 0; }
 .sh-rank  { font-size: 0.85rem; background: rgba(255,255,255,0.22); border-radius: 20px; display: inline-block; padding: 4px 16px; }
@@ -481,13 +511,8 @@ img { max-width: 100%; }
 .stat-num   { font-size: 2rem; font-weight: 800; color: var(--orange); }
 .stat-label { font-size: 0.72rem; color: var(--gray); margin-top: 4px; }
 
-/* バッジグリッド */
 .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.badge-item {
-  background: white; border-radius: var(--r-sm); padding: 14px 8px;
-  text-align: center; box-shadow: var(--shadow-sm);
-  transition: all 0.2s;
-}
+.badge-item { background: white; border-radius: var(--r-sm); padding: 14px 8px; text-align: center; box-shadow: var(--shadow-sm); transition: all 0.2s; }
 .badge-item.locked { opacity: 0.35; filter: grayscale(1); }
 .badge-item.earned { border: 2.5px solid var(--yellow); background: var(--ylw-l); }
 .badge-img { width: 52px; height: 52px; object-fit: contain; display: block; margin: 0 auto 6px; }
@@ -495,21 +520,12 @@ img { max-width: 100%; }
 .badge-name { font-size: 0.72rem; font-weight: 800; color: var(--text); }
 .badge-cond { font-size: 0.6rem; color: var(--gray); margin-top: 3px; line-height: 1.3; }
 
-/* カレンダー */
 .cal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .cal-hd h3 { font-size: 1rem; font-weight: 800; color: #555; }
-.cal-nav-btn {
-  background: var(--sky); color: white; border: none;
-  border-radius: var(--r-xs); padding: 7px 14px; font-size: 0.82rem; font-weight: 700;
-}
+.cal-nav-btn { background: var(--sky); color: white; border: none; border-radius: var(--r-xs); padding: 7px 14px; font-size: 0.82rem; font-weight: 700; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
 .cal-dh { font-size: 0.68rem; color: var(--gray); padding: 4px 0; font-weight: 700; }
-.cal-d {
-  aspect-ratio: 1; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.78rem; color: #555; cursor: pointer; position: relative;
-  font-weight: 600; transition: all 0.15s;
-}
+.cal-d { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; color: #555; cursor: pointer; position: relative; font-weight: 600; transition: all 0.15s; }
 .cal-d.empty   { cursor: default; }
 .cal-d.today   { font-weight: 800; color: var(--sky-d); }
 .cal-d.full    { background: var(--orange); color: white; font-weight: 800; }
@@ -519,15 +535,13 @@ img { max-width: 100%; }
 .cal-legend span { display: flex; align-items: center; gap: 4px; }
 .ldot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-/* メモ */
 .memo-area { background: white; border-radius: var(--r); padding: 16px; box-shadow: var(--shadow-sm); }
 .memo-area h3 { font-size: 0.95rem; font-weight: 800; color: var(--sky-d); margin-bottom: 10px; }
 .memo-ta {
   width: 100%; min-height: 90px; border: 2px solid var(--sky-l);
   border-radius: var(--r-sm); padding: 10px 12px;
   font-size: 0.88rem; font-family: inherit; color: #444;
-  resize: vertical; outline: none; line-height: 1.6;
-  transition: border-color 0.2s;
+  resize: vertical; outline: none; line-height: 1.6; transition: border-color 0.2s;
 }
 .memo-ta:focus { border-color: var(--sky); }
 .memo-ta::placeholder { color: #ccc; }
@@ -548,17 +562,9 @@ img { max-width: 100%; }
 /* =============================================
    モーダル
    ============================================= */
-.modal-ov {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5); z-index: 100;
-  align-items: center; justify-content: center; padding: 20px;
-}
+.modal-ov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
 .modal-ov.open { display: flex; }
-.modal-box {
-  background: white; border-radius: var(--r); padding: 20px;
-  width: 100%; max-width: 400px; max-height: 82vh; overflow-y: auto;
-  animation: popIn 0.25s ease;
-}
+.modal-box { background: white; border-radius: var(--r); padding: 20px; width: 100%; max-width: 400px; max-height: 82vh; overflow-y: auto; animation: popIn 0.25s ease; }
 .modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .modal-hd h3 { font-size: 1rem; font-weight: 800; color: var(--sky-d); }
 .modal-close { background: var(--gray-l); border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 1rem; cursor: pointer; color: var(--gray); }
@@ -587,11 +593,12 @@ img { max-width: 100%; }
 /* =============================================
    共通アニメ
    ============================================= */
-@keyframes popIn {
-  0%  { transform: scale(0.82); opacity: 0; }
-  100%{ transform: scale(1); opacity: 1; }
-}
+@keyframes popIn { 0%{transform:scale(0.82);opacity:0} 100%{transform:scale(1);opacity:1} }
+@keyframes fadeSlide { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .divider { height: 1px; background: var(--gray-l); margin: 14px 0; }
+.img-fb { font-size: 2.2rem; line-height: 1; }
+.sc-em-circle .img-fb { font-size: 2.1rem; }
+.sc-fb-char .img-fb  { font-size: 3rem; }
 </style>
 </head>
 <body>
@@ -616,35 +623,24 @@ img { max-width: 100%; }
 
 <!-- ===== タブ ===== -->
 <div class="tabs">
-  <button class="tab active" onclick="showPage('today',this)">
-    <span class="ti">🏠</span>きょう
-  </button>
-  <button class="tab" onclick="showPage('game',this)">
-    <span class="ti">🎮</span>もんだい
-  </button>
-  <button class="tab" onclick="showPage('kimochi',this)">
-    <span class="ti">😊</span>きもち
-  </button>
-  <button class="tab" onclick="showPage('kiroku',this)">
-    <span class="ti">🏆</span>きろく
-  </button>
+  <button class="tab active" onclick="showPage('today',this)"><span class="ti">🏠</span>きょう</button>
+  <button class="tab" onclick="showPage('game',this)"><span class="ti">🎮</span>もんだい</button>
+  <button class="tab" onclick="showPage('kimochi',this)"><span class="ti">😊</span>きもち</button>
+  <button class="tab" onclick="showPage('kiroku',this)"><span class="ti">🏆</span>きろく</button>
 </div>
 
 <!-- ===== きょうタブ ===== -->
 <div id="page-today" class="page active">
-  <!-- あいさつ -->
   <div class="greet-card">
     <div class="greet-char">
       <img src="images/chars/boy_happy.png" alt=""
-        onerror="this.outerHTML='<span style=font-size:3rem id=greet-emoji>😄</span>'">
+        onerror="this.outerHTML='<span style=font-size:3rem>😄</span>'">
     </div>
     <div class="greet-msg">
       <h2 id="greet-text">きょうもがんばろう！</h2>
       <p id="greet-date"></p>
     </div>
   </div>
-
-  <!-- 星プログレス -->
   <div class="star-progress">
     <span class="sp-label">きょうの<br>しんちょく</span>
     <div class="sp-stars">
@@ -655,18 +651,12 @@ img { max-width: 100%; }
       <span class="sp-star" id="sp4">⭐</span>
     </div>
   </div>
-
-  <!-- ミッションリスト -->
   <div id="mission-list"></div>
-
-  <!-- 全完了バナー -->
   <div class="all-clear-banner" id="all-clear">
     <div class="acb-emoji">🎉🦕🎉</div>
     <div class="acb-title">ぜんぶクリア！えらい！さいこう！！</div>
     <div class="acb-sub">ボーナス ⭐+10 もらったよ！</div>
   </div>
-
-  <!-- メモ -->
   <div class="memo-area" style="margin-top:14px;">
     <h3>📝 きょうのメモ</h3>
     <textarea class="memo-ta" id="today-memo"
@@ -684,6 +674,25 @@ img { max-width: 100%; }
   <div class="game-progress">
     <div class="game-progress-fill" id="gm-prog" style="width:0%"></div>
   </div>
+
+  <!-- マイルストーンバー -->
+  <div class="ms-bar">
+    <div class="ms-dino">
+      <img src="images/chars/dino_happy.png" alt=""
+        onerror="this.outerHTML='<span class=ms-dino-fb>🦕</span>'">
+    </div>
+    <div class="ms-info">
+      <div class="ms-speech">きょうのできた！をおうえんするよ！</div>
+      <div class="ms-stars">
+        <div class="ms-star-item"><span class="ms-star-icon" id="ms-icon-0">⭐</span><span class="ms-star-label" id="ms-label-0">1もん</span></div>
+        <div class="ms-star-item"><span class="ms-star-icon" id="ms-icon-1">⭐</span><span class="ms-star-label" id="ms-label-1">5もん</span></div>
+        <div class="ms-star-item"><span class="ms-star-icon" id="ms-icon-2">🌟</span><span class="ms-star-label" id="ms-label-2">10もん</span></div>
+        <div class="ms-star-item"><span class="ms-star-icon" id="ms-icon-3">🌟</span><span class="ms-star-label" id="ms-label-3">12もん</span></div>
+        <div class="ms-star-item"><span class="ms-star-icon" id="ms-icon-4">🏆</span><span class="ms-star-label" id="ms-label-4">ぜんもん</span></div>
+      </div>
+    </div>
+  </div>
+
   <div id="game-area"></div>
   <div class="game-clear" id="game-clear">
     <div>
@@ -700,13 +709,8 @@ img { max-width: 100%; }
 <!-- ===== きもちタブ ===== -->
 <div id="page-kimochi" class="page">
   <div class="s-card">
-    <div class="s-title">
-      🃏 きょうの4まい
-      <span style="font-size:0.72rem;font-weight:400;color:var(--gray);">（まいにちかわるよ）</span>
-    </div>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:12px;">
-      「いまどんなきもち？」みせてゆびさししてもらおう！
-    </p>
+    <div class="s-title">🃏 きょうの4まい<span style="font-size:0.72rem;font-weight:400;color:var(--gray);">（まいにちかわるよ）</span></div>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:12px;">「いまどんなきもち？」みせてゆびさししてもらおう！</p>
     <div class="today-em-grid" id="today-em-grid"></div>
   </div>
   <div class="s-card">
@@ -717,28 +721,21 @@ img { max-width: 100%; }
 
 <!-- ===== きろくタブ ===== -->
 <div id="page-kiroku" class="page">
-  <!-- スターヒーロー -->
   <div class="star-hero">
     <div class="sh-label">⭐ これまでかくとくしたスター</div>
     <div class="sh-num" id="total-stars">0</div>
     <div class="sh-rank" id="rank-label">🦕 これからのチャレンジャー</div>
   </div>
-
-  <!-- 統計 -->
   <div class="stats-grid">
     <div class="stat-box"><div class="stat-num" id="st-days">0</div><div class="stat-label">チャレンジした日数</div></div>
     <div class="stat-box"><div class="stat-num" id="st-full">0</div><div class="stat-label">全完了した日数</div></div>
     <div class="stat-box"><div class="stat-num" id="st-tasks">0</div><div class="stat-label">できた項目の合計</div></div>
     <div class="stat-box"><div class="stat-num" id="st-streak">0</div><div class="stat-label">連続チャレンジ日数</div></div>
   </div>
-
-  <!-- バッジ -->
   <div class="s-card">
     <div class="s-title">🏅 バッジコレクション</div>
     <div class="badge-grid" id="badge-grid"></div>
   </div>
-
-  <!-- カレンダー -->
   <div class="s-card">
     <div class="cal-hd">
       <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
@@ -752,8 +749,6 @@ img { max-width: 100%; }
     </div>
     <p style="font-size:0.7rem;color:#ccc;text-align:center;margin-top:8px;">📌 日付をタップするとその日の記録を見れます</p>
   </div>
-
-  <!-- メモ一覧 -->
   <div class="s-card">
     <div class="s-title">📒 さいきんのメモ</div>
     <div id="memo-list"></div>
@@ -778,7 +773,10 @@ img { max-width: 100%; }
 <script>
 /* ============================================================
    画像パス設定
-   ここのパスを変えるだけで全箇所の画像が差し替わります！
+   /images/cards/   … 場面カード画像（s01.png〜s15.png）
+   /images/emotions/ … 感情アイコン画像
+   /images/badges/   … バッジ画像
+   /images/chars/    … キャラクター画像
    ============================================================ */
 const IMG = {
   chars: {
@@ -810,154 +808,175 @@ const IMG = {
     game:    'images/badges/badge_game.png',
     star50:  'images/badges/badge_star.png',
   },
-  situations: id => `images/situations/${id}.png`,
+  cards:      id => `images/cards/${id}.png`,
+  situations: id => `images/cards/${id}.png`, // 後方互換
 };
 
-/* 画像 or 絵文字フォールバック */
-function imgFb(src, fb, cls='') {
+/* 画像フォールバック（fbCls省略時は img-fb クラス） */
+function imgFb(src, fb, cls='', fbCls='img-fb') {
   return `<img src="${src}" class="${cls}" alt=""
-    onerror="this.outerHTML='<span class=\\"img-fb\\">${fb}</span>'">`;
+    onerror="this.outerHTML='<span class=\\"${fbCls}\\">${fb}</span>'">`;
 }
 
 /* ============================================================
-   データ定義
+   カードテーマ（6色ローテーション）
    ============================================================ */
-const EMOTIONS = [
-  {id:'happy',      emoji:'😊', name:'うれしい',   color:'#fff9c4', when:'ほめられた時\nすきなことができた時'},
-  {id:'angry',      emoji:'😡', name:'おこってる',  color:'#ffcdd2', when:'とられた時\nじゃまされた時'},
-  {id:'sad',        emoji:'😢', name:'かなしい',    color:'#bbdefb', when:'まけた時\nなくした時'},
-  {id:'frustrated', emoji:'😤', name:'くやしい',    color:'#e1bee7', when:'うまくいかない時\nまけそうな時'},
-  {id:'scared',     emoji:'😰', name:'こわい',      color:'#b2ebf2', when:'おこられそうな時\nしらないばしょ'},
-  {id:'embarrassed',emoji:'😳', name:'はずかしい',  color:'#f8bbd0', when:'みんなにみられてる\nしっぱいした時'},
-  {id:'lonely',     emoji:'🥺', name:'さびしい',    color:'#cfd8dc', when:'ひとりの時\nむしされた時'},
-  {id:'surprised',  emoji:'😲', name:'びっくり',    color:'#fff3e0', when:'きゅうにおおきいおと\nよそうがいのこと'},
-  {id:'relieved',   emoji:'😌', name:'あんしん',    color:'#c8e6c9', when:'たすけてもらった時\nおわった時'},
-  {id:'tired',      emoji:'😴', name:'つかれた',    color:'#eeeeee', when:'いっぱいあそんだあと\nねむい時'},
-  {id:'uneasy',     emoji:'😕', name:'もやもや',    color:'#d1c4e9', when:'なんかへんなかんじ\nふあんな時'},
-  {id:'excited',    emoji:'🤩', name:'わくわく',    color:'#ffe082', when:'たのしいことのまえ\nすきなものをみた時'},
+const CARD_THEMES = [
+  {bg:'#EBF5FD', accent:'#4299E1', light:'#DBEAFE'}, // ブルー
+  {bg:'#EBF8F0', accent:'#48BB78', light:'#D1FAE5'}, // グリーン
+  {bg:'#FFFBEB', accent:'#F6AD55', light:'#FEF3C7'}, // オレンジ
+  {bg:'#FFF5F7', accent:'#F687B3', light:'#FCE7F3'}, // ピンク
+  {bg:'#E6FFFA', accent:'#38B2AC', light:'#CCFBF1'}, // ティール
+  {bg:'#FAF5FF', accent:'#9F7AEA', light:'#EDE9FE'}, // パープル
 ];
 
-/* 場面カード */
+/* アクションボタンカラー（位置ごとに固定色、タイプとは無関係） */
+const AC_CLR = ['#FFAB91','#80DEEA','#A5D6A7','#CE93D8'];
+
+/* マイルストーン（答えた問題数） */
+const MILESTONES = [1, 5, 10, 12, 15];
+
+/* ============================================================
+   感情データ
+   ============================================================ */
+const EMOTIONS = [
+  {id:'happy',      emoji:'😊', name:'うれしい',   color:'#FFF9C4', when:'ほめられた時\nすきなことができた時'},
+  {id:'angry',      emoji:'😡', name:'おこってる',  color:'#FFCDD2', when:'とられた時\nじゃまされた時'},
+  {id:'sad',        emoji:'😢', name:'かなしい',    color:'#BBDEFB', when:'まけた時\nなくした時'},
+  {id:'frustrated', emoji:'😤', name:'くやしい',    color:'#F8BBD0', when:'うまくいかない時\nまけそうな時'},
+  {id:'scared',     emoji:'😰', name:'こわい',      color:'#B2DFDB', when:'おこられそうな時\nしらないばしょ'},
+  {id:'embarrassed',emoji:'😳', name:'はずかしい',  color:'#FCE4EC', when:'みんなにみられてる\nしっぱいした時'},
+  {id:'lonely',     emoji:'🥺', name:'さびしい',    color:'#CFD8DC', when:'ひとりの時\nむしされた時'},
+  {id:'surprised',  emoji:'😲', name:'びっくり',    color:'#DCEDC8', when:'きゅうにおおきいおと\nよそうがいのこと'},
+  {id:'relieved',   emoji:'😌', name:'あんしん',    color:'#C8E6C9', when:'たすけてもらった時\nおわった時'},
+  {id:'tired',      emoji:'😴', name:'つかれた',    color:'#EEEEEE', when:'いっぱいあそんだあと\nねむい時'},
+  {id:'uneasy',     emoji:'😕', name:'もやもや',    color:'#D1C4E9', when:'なんかへんなかんじ\nふあんな時'},
+  {id:'excited',    emoji:'🤩', name:'わくわく',    color:'#FFE082', when:'たのしいことのまえ\nすきなものをみた時'},
+];
+
+/* ============================================================
+   場面カードデータ（感情4種・アクション3種）
+   ============================================================ */
 const SITUATIONS = [
-  {id:'s01',emoji:'🧸',tag:'もちもの',
-   scene:'ともだちがブロックをだまってとっていった。',
-   emotions:['angry','frustrated','sad'],
+  {id:'s01', emoji:'🧸', tag:'もちもの',
+   scene:'ともだちがおもちゃをだまってとっていった！',
+   emotions:['angry','frustrated','sad','scared'],
    choices:[
-     {icon:'💬',text:'「かえして」とことばでつたえる',     type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにそうだんする',            type:'good'},
-     {icon:'👊',text:'たたいてとりかえす',                 type:'ng'},
+     {icon:'💬', text:'「かえして」とことばでつたえる',  type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにそうだんする',          type:'good'},
+     {icon:'👊', text:'たたいてとりかえす',               type:'ng'},
    ]},
-  {id:'s02',emoji:'👋',tag:'ともだちかんけい',
-   scene:'なかよしの子たちがあそんでいる。はいりたいな…。',
-   emotions:['uneasy','excited','lonely'],
+  {id:'s02', emoji:'👋', tag:'ともだち',
+   scene:'なかよしの子たちがあそんでいる。はいりたいな…',
+   emotions:['uneasy','excited','lonely','sad'],
    choices:[
-     {icon:'🗣️',text:'「いーれーて！」とこえをかける',     type:'best'},
-     {icon:'👀',text:'じっとみてまつ',                     type:'good'},
-     {icon:'😤',text:'むりやりまざる',                     type:'ng'},
+     {icon:'🗣️', text:'「いーれーて！」とこえをかける',  type:'best'},
+     {icon:'👀', text:'じっとみてまつ',                   type:'good'},
+     {icon:'😤', text:'むりやりまざる',                   type:'ng'},
    ]},
-  {id:'s03',emoji:'😤',tag:'じゅんばん',
-   scene:'ならんでいたら、うしろからきた子にじゅんばんをぬかされた。',
-   emotions:['angry','frustrated'],
+  {id:'s03', emoji:'😤', tag:'じゅんばん',
+   scene:'ならんでいたら、うしろからきた子にじゅんばんをぬかされた！',
+   emotions:['angry','frustrated','uneasy','sad'],
    choices:[
-     {icon:'💬',text:'「じゅんばんだよ」とおしえてあげる',  type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにいう',                    type:'good'},
-     {icon:'👊',text:'おしのけてまえにでる',                type:'ng'},
+     {icon:'💬', text:'「じゅんばんだよ」とおしえる',    type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにいう',                  type:'good'},
+     {icon:'👊', text:'おしのけてまえにでる',             type:'ng'},
    ]},
-  {id:'s04',emoji:'👊',tag:'トラブル',
-   scene:'あそんでいたら、ともだちにとつぜんたたかれてしまった。',
-   emotions:['scared','angry','surprised'],
+  {id:'s04', emoji:'👊', tag:'トラブル',
+   scene:'あそんでいたら、ともだちにとつぜんたたかれてしまった！',
+   emotions:['scared','angry','surprised','frustrated'],
    choices:[
-     {icon:'💬',text:'「やめて！いたい！」とことばでいう',  type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにすぐいいにいく',           type:'good'},
-     {icon:'👊',text:'たたきかえす',                        type:'ng'},
+     {icon:'💬', text:'「やめて！いたい！」とことばでいう', type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにすぐいいにいく',           type:'good'},
+     {icon:'👊', text:'たたきかえす',                        type:'ng'},
    ]},
-  {id:'s05',emoji:'😢',tag:'おもいやり',
-   scene:'ちかくでともだちがないている。',
-   emotions:['sad','uneasy'],
+  {id:'s05', emoji:'😢', tag:'おもいやり',
+   scene:'ちかくでともだちがなきはじめた。どうしたんだろう…',
+   emotions:['sad','uneasy','lonely','scared'],
    choices:[
-     {icon:'💬',text:'「どうしたの？」とこえをかける',      type:'best'},
-     {icon:'👨‍🏫',text:'せんせいをよんであげる',             type:'good'},
-     {icon:'🙈',text:'きにせずあそびつづける',              type:'ng'},
+     {icon:'💬', text:'「どうしたの？」とこえをかける',  type:'best'},
+     {icon:'👨‍🏫', text:'せんせいをよんであげる',           type:'good'},
+     {icon:'🙈', text:'きにせずあそびつづける',           type:'ng'},
    ]},
-  {id:'s06',emoji:'🎮',tag:'かちまけ',
-   scene:'ゲームでまけてしまった。くやしい！',
-   emotions:['frustrated','angry','sad'],
+  {id:'s06', emoji:'🎮', tag:'かちまけ',
+   scene:'ゲームでまけてしまった。くやしい！むかつく！',
+   emotions:['frustrated','angry','sad','uneasy'],
    choices:[
-     {icon:'💬',text:'「くやしい！」とことばでいう',         type:'best'},
-     {icon:'🔄',text:'「もういっかいやろう！」という',       type:'good'},
-     {icon:'💢',text:'おもちゃをなげる・なきさけぶ',         type:'ng'},
+     {icon:'💬', text:'「くやしい！」とことばでいう',   type:'best'},
+     {icon:'🔄', text:'「もういっかいやろう！」という', type:'good'},
+     {icon:'💢', text:'おもちゃをなげる・さけぶ',        type:'ng'},
    ]},
-  {id:'s07',emoji:'🙅',tag:'ことわられた',
-   scene:'「いっしょにあそばない」といわれてしまった。',
-   emotions:['sad','lonely','uneasy'],
+  {id:'s07', emoji:'🙅', tag:'ことわられた',
+   scene:'「いっしょにあそばない」といわれてしまった…',
+   emotions:['sad','lonely','uneasy','scared'],
    choices:[
-     {icon:'💬',text:'「なんで？」ときいてみる',              type:'best'},
-     {icon:'👀',text:'べつのともだちをさがす',               type:'good'},
-     {icon:'😡',text:'おこってむりやりはいろうとする',        type:'ng'},
+     {icon:'💬', text:'「なんで？」ときいてみる',        type:'best'},
+     {icon:'👀', text:'べつのともだちをさがす',           type:'good'},
+     {icon:'😡', text:'おこってむりやりはいろうとする', type:'ng'},
    ]},
-  {id:'s08',emoji:'🏃',tag:'きもちコントロール',
-   scene:'ともだちのことがとてもはらだたしくて、おいかけたくなった。',
-   emotions:['angry','frustrated'],
+  {id:'s08', emoji:'🏃', tag:'きもちコントロール',
+   scene:'ともだちのことがとてもはらだたしくて、おいかけたくなった！',
+   emotions:['angry','frustrated','scared','uneasy'],
    choices:[
-     {icon:'🌬️',text:'ふかいこきゅうをしてすこしまつ',      type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにきもちをはなす',            type:'good'},
-     {icon:'😡',text:'どなりながらおいかける',               type:'ng'},
+     {icon:'🌬️', text:'ふかいこきゅうをしてすこしまつ',  type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにきもちをはなす',          type:'good'},
+     {icon:'😡', text:'どなりながらおいかける',            type:'ng'},
    ]},
-  {id:'s09',emoji:'🎁',tag:'もちもの',
-   scene:'じぶんのたいせつなものをともだちがこわしてしまった。',
-   emotions:['sad','angry','frustrated'],
+  {id:'s09', emoji:'🎁', tag:'もちもの',
+   scene:'じぶんのたいせつなものをともだちがこわしてしまった！',
+   emotions:['sad','angry','frustrated','uneasy'],
    choices:[
-     {icon:'💬',text:'「こわれてかなしい」とつたえる',        type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにそうだんする',              type:'good'},
-     {icon:'👊',text:'おなじようにものをこわしかえす',        type:'ng'},
+     {icon:'💬', text:'「こわれてかなしい」とつたえる', type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにそうだんする',          type:'good'},
+     {icon:'👊', text:'おなじようにものをこわしかえす', type:'ng'},
    ]},
-  {id:'s10',emoji:'😳',tag:'はずかしい',
-   scene:'はっぴょうでまちがえて、みんなにわらわれてしまった。',
-   emotions:['embarrassed','sad','frustrated'],
+  {id:'s10', emoji:'😳', tag:'はずかしい',
+   scene:'はっぴょうでまちがえて、みんなにわらわれてしまった…',
+   emotions:['embarrassed','sad','frustrated','scared'],
    choices:[
-     {icon:'💪',text:'「ドンマイ！」とじぶんにいいきかせる',  type:'best'},
-     {icon:'👨‍🏫',text:'せんせいに「かなしかった」とはなす',  type:'good'},
-     {icon:'💢',text:'どなってきょうしつをとびだす',           type:'ng'},
+     {icon:'💪', text:'「ドンマイ！」とじぶんにいいきかせる',  type:'best'},
+     {icon:'👨‍🏫', text:'せんせいに「かなしかった」とはなす',  type:'good'},
+     {icon:'💢', text:'どなってきょうしつをとびだす',           type:'ng'},
    ]},
-  {id:'s11',emoji:'🤝',tag:'いけんのちがい',
-   scene:'ともだちと「なにしてあそぶか」でいけんがちがってこまっている。',
-   emotions:['uneasy','frustrated'],
+  {id:'s11', emoji:'🤝', tag:'いけんのちがい',
+   scene:'ともだちと「なにしてあそぶか」でいけんがちがってこまっている！',
+   emotions:['uneasy','frustrated','angry','sad'],
    choices:[
-     {icon:'✊',text:'「じゃあジャンケンできめよう！」',        type:'best'},
-     {icon:'💬',text:'「どっちもやってみようよ」とていあんする',type:'good'},
-     {icon:'😤',text:'じぶんのいけんをおしつける',             type:'ng'},
+     {icon:'✊', text:'「ジャンケンできめよう！」という',           type:'best'},
+     {icon:'💬', text:'「どっちもやってみようよ」とていあんする', type:'good'},
+     {icon:'😤', text:'じぶんのいけんをおしつける',               type:'ng'},
    ]},
-  {id:'s12',emoji:'😡',tag:'せんせい',
-   scene:'せんせいにおこられた。でもじぶんはわるくないとおもっている。',
-   emotions:['angry','uneasy','frustrated'],
+  {id:'s12', emoji:'😡', tag:'せんせい',
+   scene:'せんせいにおこられた。でもじぶんはわるくないとおもっている…',
+   emotions:['angry','uneasy','frustrated','sad'],
    choices:[
-     {icon:'💬',text:'おちついてから「はなしをきいてほしい」という',type:'best'},
-     {icon:'🤐',text:'だまってがまんする',                          type:'good'},
-     {icon:'💢',text:'そのばでおおごえでくちごたえする',             type:'ng'},
+     {icon:'💬', text:'おちついてから「はなしをきいてほしい」という', type:'best'},
+     {icon:'🤐', text:'だまってがまんする',                            type:'good'},
+     {icon:'💢', text:'そのばでおおごえでくちごたえする',              type:'ng'},
    ]},
-  {id:'s13',emoji:'🙉',tag:'ことば',
-   scene:'いやなあだなをつけられてからかわれた。',
-   emotions:['angry','sad','embarrassed'],
+  {id:'s13', emoji:'🙉', tag:'ことば',
+   scene:'いやなあだなをつけられてずっとからかわれた！',
+   emotions:['angry','sad','embarrassed','frustrated'],
    choices:[
-     {icon:'💬',text:'「そのあだなはいやだよ」とはっきりいう',  type:'best'},
-     {icon:'👨‍🏫',text:'せんせいにそうだんする',                 type:'good'},
-     {icon:'💢',text:'おなじようにあだなでよびかえす',           type:'ng'},
+     {icon:'💬', text:'「そのあだなはいやだよ」とはっきりいう', type:'best'},
+     {icon:'👨‍🏫', text:'せんせいにそうだんする',                 type:'good'},
+     {icon:'💢', text:'おなじようにあだなでよびかえす',           type:'ng'},
    ]},
-  {id:'s14',emoji:'👀',tag:'おもいやり',
+  {id:'s14', emoji:'👀', tag:'おもいやり',
    scene:'ともだちがおもいにもつをもってこまっていそうだ。',
-   emotions:['uneasy','relieved'],
+   emotions:['uneasy','sad','surprised','relieved'],
    choices:[
-     {icon:'💬',text:'「てつだおうか？」とこえをかける',          type:'best'},
-     {icon:'👨‍🏫',text:'せんせいに「こまってるひとがいるよ」という',type:'good'},
-     {icon:'🙈',text:'みてみぬふりをする',                       type:'ng'},
+     {icon:'💬', text:'「てつだおうか？」とこえをかける',           type:'best'},
+     {icon:'👨‍🏫', text:'せんせいに「こまってるひとがいるよ」という', type:'good'},
+     {icon:'🙈', text:'みてみぬふりをする',                         type:'ng'},
    ]},
-  {id:'s15',emoji:'🙋',tag:'じぶんのきもち',
-   scene:'いやなことをされて、すごくおこりたくなった。',
-   emotions:['angry','frustrated'],
+  {id:'s15', emoji:'🙋', tag:'じぶんのきもち',
+   scene:'いやなことをされて、すごくおこりたくなった！',
+   emotions:['angry','frustrated','scared','sad'],
    choices:[
-     {icon:'💬',text:'「やめて！いやだ！」とことばでつたえる',    type:'best'},
-     {icon:'🚶',text:'そのばをはなれておちつく',                  type:'good'},
-     {icon:'👊',text:'たたいたりものをなげたりする',              type:'ng'},
+     {icon:'💬', text:'「やめて！いやだ！」とことばでつたえる', type:'best'},
+     {icon:'🚶', text:'そのばをはなれておちつく',               type:'good'},
+     {icon:'👊', text:'たたいたりものをなげたりする',            type:'ng'},
    ]},
 ];
 
@@ -966,7 +985,6 @@ const FB = {
   best: {
     charImg: IMG.chars.boy_great, charFb: '😄',
     title: 'いいかんがえだね！',
-    subtitles: ['ことばでつたえられるとすごい！', 'それが一番だいじ！', 'よくかんがえたね！'],
     bodies: [
       'ことばで「やめて」「かえして」といえると、ともだちにもきもちがつたわるよ！これからもことばでつたえてみよう！',
       'じぶんのきもちをことばにできた！それだけでとってもえらいよ！',
@@ -977,7 +995,6 @@ const FB = {
   good: {
     charImg: IMG.chars.boy_good, charFb: '🙂',
     title: 'それもあるね！',
-    subtitles: ['ほかにもいいほうほうがあるかな？', 'よくかんがえてるね！', 'もうひとつかんがえてみよう！'],
     bodies: [
       'それもひとつのほうほうだよ！「ことばで○○○」もできたらもっとよかったかも。いっしょにかんがえよう！',
       'いいかんがえだよ！つぎはことばでつたえることもためしてみてね！',
@@ -988,7 +1005,6 @@ const FB = {
   ng: {
     charImg: IMG.chars.boy_think, charFb: '🤔',
     title: 'ほかのほうほうをかんがえてみよう！',
-    subtitles: ['きもちはよくわかるよ！', 'つぎはどうできそう？', 'いっしょにかんがえよう！'],
     bodies: [
       'そのきもちはよくわかるよ！でも、ことばやほかのほうほうでつたえられると、もっとよくなるかもしれないよ！',
       'おこるきもちはあって当然！でも、ことばで「やめて」っていえると、ともだちもわかってくれるよ。',
@@ -1032,19 +1048,18 @@ const RANKS = [
 /* ============================================================
    状態変数
    ============================================================ */
-const TODAY      = new Date();
-const TODAY_KEY  = dk(TODAY);
-let calYear      = TODAY.getFullYear();
-let calMonth     = TODAY.getMonth();
+const TODAY     = new Date();
+const TODAY_KEY = dk(TODAY);
+let calYear     = TODAY.getFullYear();
+let calMonth    = TODAY.getMonth();
 let openMissions = {};
-let memoTimer    = null;
+let memoTimer   = null;
 
-// ゲーム状態
-let gSituIdx     = dayOfYear(TODAY) % SITUATIONS.length;
-let gAnswered    = {};  // situId → choiceIndex
-let gEmotion     = {};  // situId → emotionId
-let gSessStars   = 0;
-let gDone        = false;
+let gSituIdx   = dayOfYear(TODAY) % SITUATIONS.length;
+let gAnswered  = {};
+let gEmotion   = {};
+let gSessStars = 0;
+let gDone      = false;
 
 /* ============================================================
    ユーティリティ
@@ -1061,9 +1076,9 @@ function loadData()   { return ld('sst_data')  || {}; }
 function saveData(d)  { sv('sst_data', d); }
 function loadMemos()  { return ld('sst_memos') || {}; }
 function saveMemos(m) { sv('sst_memos', m); }
-function getTodayDone() { return (loadData()[TODAY_KEY]) || []; }
-function getTotalStars()  { return ld('sst_stars') || 0; }
-function loadBadges()     { return ld('sst_badges') || []; }
+function getTodayDone()  { return (loadData()[TODAY_KEY]) || []; }
+function getTotalStars() { return ld('sst_stars') || 0; }
+function loadBadges()    { return ld('sst_badges') || []; }
 
 function addStars(n, el) {
   const s = getTotalStars() + n;
@@ -1081,7 +1096,6 @@ function checkBadges() {
   const done  = getTodayDone();
   const data  = loadData();
   const stars = getTotalStars();
-  const allK  = Object.keys(data);
   if (done.length > 0) earnBadge('first');
   if (done.length === TASKS.length) earnBadge('perfect');
   let streak = 0, cd = new Date(TODAY);
@@ -1092,11 +1106,9 @@ function checkBadges() {
   }
   if (streak >= 3) earnBadge('streak');
   if (stars >= 50) earnBadge('star50');
-  const answeredCnt = Object.keys(gAnswered).length;
-  if (answeredCnt >= 5) earnBadge('game');
+  if (Object.keys(gAnswered).length >= 5) earnBadge('game');
 }
 
-/* 感情カード（今日の4枚） */
 function getTodayEmotions() {
   const R = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,2,4,6],[1,3,5,7],[2,4,8,10],
              [0,3,6,9],[1,5,7,11],[0,4,8,10],[2,5,9,11],[1,4,7,10],[3,6,8,11]];
@@ -1104,7 +1116,6 @@ function getTodayEmotions() {
 }
 const TODAY_EMOTIONS = getTodayEmotions();
 
-/* スターポップアニメ */
 function showStarPop(n, el) {
   const pop = document.createElement('div');
   pop.className = 'star-pop';
@@ -1116,7 +1127,6 @@ function showStarPop(n, el) {
   setTimeout(() => pop.remove(), 1400);
 }
 
-/* ランクラベル */
 function getRank(stars) {
   let rank = RANKS[0];
   for (const r of RANKS) { if (stars >= r.min) rank = r; }
@@ -1131,29 +1141,26 @@ function renderToday() {
   const count = done.length;
   const hour  = TODAY.getHours();
 
-  /* あいさつ */
   const GREETS = [
-    {h: 5,  msg:'おはよう！きょうもがんばろう！', e:'😄'},
-    {h: 10, msg:'こんにちは！きょうもいっしょに！', e:'😊'},
-    {h: 14, msg:'ひるのトレーニング、えらいね！', e:'🌟'},
-    {h: 18, msg:'よるのチェック！もうすこし！', e:'😌'},
-    {h: 21, msg:'おつかれさま！きょうもよくがんばったね！', e:'🌙'},
+    {h:5,  msg:'おはよう！きょうもがんばろう！', e:'😄'},
+    {h:10, msg:'こんにちは！きょうもいっしょに！', e:'😊'},
+    {h:14, msg:'ひるのトレーニング、えらいね！', e:'🌟'},
+    {h:18, msg:'よるのチェック！もうすこし！', e:'😌'},
+    {h:21, msg:'おつかれさま！よくがんばったね！', e:'🌙'},
   ];
   const g = GREETS.filter(r => hour >= r.h).pop() || GREETS[0];
   document.getElementById('greet-text').textContent = g.msg;
   document.getElementById('greet-date').textContent =
     TODAY.toLocaleDateString('ja-JP', {year:'numeric', month:'long', day:'numeric', weekday:'short'});
 
-  /* 星プログレス */
   for (let i = 0; i < 5; i++) {
     const el = document.getElementById('sp' + i);
     if (i < count) el.classList.add('lit'); else el.classList.remove('lit');
   }
 
-  /* ミッションリスト */
   const list = document.getElementById('mission-list');
   list.innerHTML = '';
-  const selE = JSON.parse(localStorage.getItem('sst_emotion_' + TODAY_KEY) || '{}');
+  const selE   = JSON.parse(localStorage.getItem('sst_emotion_' + TODAY_KEY) || '{}');
   const sitCard = SITUATIONS[dayOfYear(TODAY) % SITUATIONS.length];
 
   TASKS.forEach((task, idx) => {
@@ -1169,7 +1176,7 @@ function renderToday() {
         return `<div class="em-btn ${sel?'selected':''}" style="background:${c.color}"
             onclick="selEmotion('${c.id}','${task.id}')">
           ${sel ? '<span class="em-sel-badge">✓</span>' : ''}
-          ${imgFb(IMG.emotions[c.id], c.emoji, 'em-img')}
+          ${imgFb(IMG.emotions[c.id], c.emoji, 'em-img', 'em-emoji')}
           <div class="em-name">${c.name}</div>
         </div>`;
       }).join('');
@@ -1179,9 +1186,8 @@ function renderToday() {
         <button class="clear-btn ${isDone?'done-state':'go'}" onclick="toggleTask('${task.id}',this)">
           ${isDone ? '✓ かんりょう！' : '✓ できた！ ⭐+3'}
         </button>`;
-
     } else if (task.type === 'roleplay') {
-      const ans = gAnswered['today_' + sitCard.id];
+      const ans   = gAnswered['today_' + sitCard.id];
       const chHTML = sitCard.choices.map((c, i) => {
         let cls = 'choice-btn';
         if (ans !== undefined) cls += ' res-' + c.type;
@@ -1195,27 +1201,22 @@ function renderToday() {
       const fbHTML = fb ? `<div class="feedback-card ${fb.color}" style="margin-top:12px;">
         <div class="fb-top">
           <div class="fb-char-wrap">${imgFb(fb.charImg, fb.charFb, 'gc-dino')}</div>
-          <div>
-            <div class="fb-title">${fb.title}</div>
-            <div class="fb-stars">⭐+${fb.stars}</div>
-          </div>
+          <div><div class="fb-title">${fb.title}</div><div class="fb-stars">⭐+${fb.stars}</div></div>
         </div>
         <div class="fb-body">${fb.bodies[0]}</div>
       </div>` : '';
       bodyHTML = `<div style="background:var(--sky-l);border-radius:var(--r);padding:14px;margin-bottom:10px;text-align:center;">
-        ${imgFb(IMG.situations(sitCard.id), sitCard.emoji, 'scene-img')}
-        <div class="scene-emoji-fb" style="display:none">${sitCard.emoji}</div>
+        ${imgFb(IMG.cards(sitCard.id), sitCard.emoji, 'scene-img')}
         <span style="display:inline-block;background:var(--sky);color:white;border-radius:20px;padding:3px 12px;font-size:0.7rem;font-weight:800;margin:8px 0;">${sitCard.tag}</span>
         <p style="font-size:0.95rem;font-weight:800;line-height:1.6;">${sitCard.scene}</p>
       </div>
-      <div class="step-label" style="margin-bottom:8px;"><span class="step-num">❓</span>どうする？</div>
+      <div style="font-size:0.85rem;font-weight:800;color:var(--text);margin-bottom:8px;">❓ どうする？</div>
       <div class="choices">${chHTML}</div>
       ${fbHTML}
       <div class="hint-box" style="margin-top:12px;">💡 おかあさんがともだちやくになって、じっさいにこえにだしてやってみよう！</div>
       <button class="clear-btn ${isDone?'done-state':'go'}" onclick="toggleTask('${task.id}',this)">
         ${isDone ? '✓ かんりょう！' : '✓ できた！ ⭐+3'}
       </button>`;
-
     } else {
       bodyHTML = `<div class="hint-box">💡 ${task.tip}</div>
         <button class="clear-btn ${isDone?'done-state':'go'}" onclick="toggleTask('${task.id}',this)">
@@ -1236,11 +1237,8 @@ function renderToday() {
     list.appendChild(wrap);
   });
 
-  /* 全完了バナー */
-  const banner = document.getElementById('all-clear');
-  banner.style.display = count === TASKS.length ? 'block' : 'none';
+  document.getElementById('all-clear').style.display = count === TASKS.length ? 'block' : 'none';
 
-  /* メモ */
   const ta = document.getElementById('today-memo');
   if (ta && ta !== document.activeElement) ta.value = loadMemos()[TODAY_KEY] || '';
 }
@@ -1267,8 +1265,7 @@ function selEmotion(cid, tid) {
   const s = JSON.parse(localStorage.getItem(key) || '{}');
   s[tid] = s[tid] === cid ? null : cid;
   localStorage.setItem(key, JSON.stringify(s));
-  earnBadge('emotion');
-  addStars(1, null);
+  earnBadge('emotion'); addStars(1, null);
   renderToday();
 }
 
@@ -1282,7 +1279,6 @@ function toggleMission(id) {
   renderToday();
 }
 
-/* メモ */
 function onMemoInput() {
   const st = document.getElementById('memo-status');
   st.textContent = 'にゅうりょく中…'; st.className = 'memo-saved';
@@ -1298,7 +1294,21 @@ function onMemoInput() {
 }
 
 /* ============================================================
-   ゲームタブ（2ステップフロー）
+   マイルストーン更新
+   ============================================================ */
+function updateMilestones() {
+  const answered = Object.keys(gAnswered).length;
+  MILESTONES.forEach((m, i) => {
+    const icon  = document.getElementById(`ms-icon-${i}`);
+    const label = document.getElementById(`ms-label-${i}`);
+    if (!icon || !label) return;
+    if (answered >= m) { icon.classList.add('lit'); label.classList.add('lit'); }
+    else               { icon.classList.remove('lit'); label.classList.remove('lit'); }
+  });
+}
+
+/* ============================================================
+   ゲームタブ（新カードデザイン）
    ============================================================ */
 function renderGame() {
   if (gDone) { showGameClear(); return; }
@@ -1308,109 +1318,119 @@ function renderGame() {
 
   const card  = SITUATIONS[gSituIdx];
   const total = SITUATIONS.length;
+  const theme = CARD_THEMES[gSituIdx % CARD_THEMES.length];
+
   document.getElementById('gm-counter').textContent = `もんだい ${gSituIdx+1} / ${total}`;
   document.getElementById('sess-stars').textContent  = gSessStars;
   document.getElementById('gm-prog').style.width = Math.round((gSituIdx / total) * 100) + '%';
 
-  const ans       = gAnswered[card.id];
-  const selEm     = gEmotion[card.id];
-  const showAction = selEm !== undefined || ans !== undefined;
+  updateMilestones();
 
-  /* 感情ピッカー（6種） */
-  const pickerEmotions = EMOTIONS.filter((_, i) => i < 6); // 最初の6種
-  const emHTML = pickerEmotions.map(e => {
+  const ans      = gAnswered[card.id];
+  const selEm    = gEmotion[card.id];
+  const showAct  = selEm !== undefined || ans !== undefined;
+
+  /* ---- 感情サークル ---- */
+  const emHTML = card.emotions.map(eid => {
+    const e = EMOTIONS.find(em => em.id === eid);
+    if (!e) return '';
     const sel = selEm === e.id;
-    return `<div class="em-btn ${sel?'selected':''}" style="background:${e.color}"
-        onclick="selectGameEmotion('${card.id}','${e.id}')">
-      ${sel ? '<span class="em-sel-badge">✓</span>' : ''}
-      ${imgFb(IMG.emotions[e.id], e.emoji, 'em-img')}
-      <div class="em-name">${e.name}</div>
+    return `<div class="sc-em-item${sel?' selected':''}" onclick="selectGameEmotion('${card.id}','${e.id}')">
+      <div class="sc-em-circle" style="background:${e.color}">
+        ${imgFb(IMG.emotions[e.id], e.emoji, 'sc-em-img', 'sc-em-emoji')}
+      </div>
+      <div class="sc-em-name">${e.name}</div>
+      ${sel ? '<div class="sc-em-check">✓</div>' : ''}
     </div>`;
   }).join('');
 
   /* 感情選択後の一言 */
-  const emAck = selEm
-    ? `<div class="emotion-ack show">
-        ${EMOTIONS.find(e=>e.id===selEm)?.emoji || ''}
-        「${EMOTIONS.find(e=>e.id===selEm)?.name}」なきもちになるよね。よくわかったね！
-       </div>` : '';
+  const emAck = selEm ? (() => {
+    const e = EMOTIONS.find(em => em.id === selEm);
+    return `<div class="sc-em-ack">${e?.emoji || ''} 「${e?.name}」なきもちになるよね。よくわかったね！💛</div>`;
+  })() : '';
 
-  /* 選択肢 */
-  const chHTML = card.choices.map((c, i) => {
-    let cls = 'choice-btn';
-    if (ans !== undefined) cls += ' res-' + c.type;
-    return `<button class="${cls}" onclick="answerGame(${i})" ${ans!==undefined?'disabled':''}>
-      <span class="choice-num">${['①','②','③'][i]}</span>
-      <span class="choice-icon">${c.icon}</span>
-      <span>${c.text}</span>
-    </button>`;
+  /* ---- アクションサークル ---- */
+  const actHTML = card.choices.map((c, i) => {
+    const resCls = ans !== undefined ? 'res-' + c.type : '';
+    return `<div class="sc-act-item${ans!==undefined?' answered':''}" onclick="answerGame(${i})">
+      <div class="sc-act-circle ${resCls}" style="background:${AC_CLR[i % AC_CLR.length]}">
+        ${c.icon}
+      </div>
+      <div class="sc-act-name">${c.text}</div>
+    </div>`;
   }).join('');
 
-  /* フィードバック */
+  /* ---- フィードバック ---- */
   let fbHTML = '';
   if (ans !== undefined) {
     const fb = FB[card.choices[ans].type];
     const si = Math.floor(Math.random() * fb.bodies.length);
-    fbHTML = `
-      <div class="feedback-wrap show">
-        <div class="feedback-card ${fb.color}">
-          <div class="fb-top">
-            <div class="fb-char-wrap">
-              ${imgFb(fb.charImg, fb.charFb, 'gc-dino')}
-            </div>
-            <div class="fb-texts">
-              <div class="fb-title">${fb.title}</div>
-              <div class="fb-stars">⭐ +${fb.stars} かくとく！</div>
-              <div class="fb-next">つぎはどうできそう？いっしょにかんがえよう！</div>
-            </div>
+    fbHTML = `<div class="sc-fb-wrap show">
+      <div class="sc-fb-card ${fb.color}">
+        <div class="sc-fb-top">
+          <div class="sc-fb-char">
+            ${imgFb(fb.charImg, fb.charFb, 'sc-fb-char-img', 'img-fb')}
           </div>
-          <div class="fb-body">${fb.bodies[si]}</div>
+          <div>
+            <div class="sc-fb-title">${fb.title}</div>
+            <div class="sc-fb-stars">⭐ +${fb.stars} かくとく！</div>
+          </div>
         </div>
-        <button class="next-btn" onclick="nextGameCard()">
-          ${gSituIdx < SITUATIONS.length - 1 ? 'つぎのもんだいへ ▶' : 'けっかをみる 🏆'}
-        </button>
-      </div>`;
+        <div class="sc-fb-body">${fb.bodies[si]}</div>
+      </div>
+      <button class="sc-next-btn" style="background:${theme.accent}" onclick="nextGameCard()">
+        ${gSituIdx < SITUATIONS.length - 1 ? 'つぎのもんだいへ ▶' : 'けっかをみる 🏆'}
+      </button>
+    </div>`;
   }
 
+  /* ---- カードHTML組み立て ---- */
   area.innerHTML = `
-    <div class="scene-card">
-      <!-- 場面イラスト -->
-      <div class="scene-illust">
-        <img src="${IMG.situations(card.id)}" class="scene-img" alt=""
-          onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-        <div class="scene-emoji-fb" style="display:none">${card.emoji}</div>
-        <span class="scene-tag">${card.tag}</span>
-      </div>
-      <div class="scene-text">${card.scene}</div>
+    <div class="sc" style="--cb:${theme.bg}; --ca:${theme.accent}; --cl:${theme.light}">
 
-      <!-- STEP 1: きもちをえらぼう -->
-      <div class="step-block">
-        <div class="step-label">
-          <span class="step-num ${selEm?'done-step':''}">1</span>
-          どんなきもちになる？（じぶんのきもちをおしえて）
+      <!-- カード上部：番号 + シーンタイトル -->
+      <div class="sc-top">
+        <div class="sc-num">${gSituIdx + 1}</div>
+        <div class="sc-text">
+          <span class="sc-tag-badge">${card.tag}</span>
+          <div class="sc-scene">${card.scene}</div>
         </div>
-        <div class="emotion-picker">${emHTML}</div>
-        ${emAck}
       </div>
 
-      <!-- STEP 2: どうする？ -->
-      <div class="action-step ${showAction?'show':''}">
-        <div class="step-label">
-          <span class="step-num ${ans!==undefined?'done-step':''}">2</span>
-          どうする？ えらんでみよう！
-        </div>
-        <div class="choices">${chHTML}</div>
+      <!-- イラストエリア -->
+      <div class="sc-illust" style="background:${theme.light}">
+        <img src="${IMG.cards(card.id)}" class="sc-card-img" alt=""
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="sc-emoji-big" style="display:none">${card.emoji}</div>
       </div>
 
-      ${fbHTML}
+      <!-- どんなきもち？ -->
+      <div class="sc-bar" style="background:${theme.accent}">どんなきもち？</div>
+      <div class="sc-em-row">${emHTML}</div>
+      ${emAck}
+
+      <!-- どうする？（感情選択後に表示） -->
+      <div class="sc-act-section${showAct?' show':''}">
+        <div class="sc-bar" style="background:${theme.accent}">どうする？</div>
+        <div class="sc-act-row">${actHTML}</div>
+        ${fbHTML}
+      </div>
 
       <!-- ナビゲーション -->
-      <div class="scene-nav">
-        <button class="nav-btn" onclick="moveGame(-1)" ${gSituIdx===0?'disabled':''}>◀ まえ</button>
-        <span class="nav-count">${gSituIdx+1} / ${SITUATIONS.length}</span>
-        <button class="nav-btn" onclick="moveGame(1)"  ${gSituIdx===SITUATIONS.length-1?'disabled':''}>つぎ ▶</button>
+      <div class="sc-nav" style="background:${theme.bg}">
+        <button class="sc-nav-btn" style="color:${theme.accent};border-color:${theme.accent}"
+          onclick="moveGame(-1)" ${gSituIdx===0?'disabled':''}>◀ まえ</button>
+        <span class="sc-nav-count">${gSituIdx+1} / ${SITUATIONS.length}</span>
+        <button class="sc-nav-btn" style="color:${theme.accent};border-color:${theme.accent}"
+          onclick="moveGame(1)"  ${gSituIdx===SITUATIONS.length-1?'disabled':''}>つぎ ▶</button>
       </div>
     </div>`;
+
+  /* 障害者配慮：disabled時のstyle上書き防止 */
+  area.querySelectorAll('.sc-nav-btn:disabled').forEach(b => {
+    b.style.color = '#ccc'; b.style.borderColor = '#ddd';
+  });
 }
 
 function selectGameEmotion(cardId, eid) {
@@ -1427,7 +1447,6 @@ function answerGame(ci) {
   const pts  = FB[type].stars;
   gSessStars += pts;
   addStars(pts, document.getElementById('game-area'));
-  if (Object.keys(gAnswered).length >= 5) earnBadge('game');
   checkBadges();
   renderGame();
 }
@@ -1447,6 +1466,7 @@ function showGameClear() {
   const gc = document.getElementById('game-clear');
   gc.style.display = 'block'; gc.classList.add('show');
   document.getElementById('gc-stars-txt').textContent = `⭐ ${gSessStars} こかくとく！`;
+  updateMilestones();
 }
 
 function resetGame() {
@@ -1462,22 +1482,20 @@ function renderKimochi() {
   const selKey = 'sst_emotion_' + TODAY_KEY;
   const sel    = JSON.parse(localStorage.getItem(selKey) || '{}');
 
-  /* 今日の4枚 */
   document.getElementById('today-em-grid').innerHTML = TODAY_EMOTIONS.map(c => {
     const isSelected = Object.values(sel).includes(c.id);
-    return `<div class="em-big-card ${isSelected?'selected':''}" style="background:${c.color}"
+    return `<div class="em-big-card${isSelected?' selected':''}" style="background:${c.color}"
         onclick="selEmotionKimochi('${c.id}')">
       ${isSelected ? '<span class="em-sel-badge">✓</span>' : ''}
-      ${imgFb(IMG.emotions[c.id], c.emoji, 'em-big-img')}
+      ${imgFb(IMG.emotions[c.id], c.emoji, 'em-big-img', 'em-big-emoji')}
       <div class="em-big-name">${c.name}</div>
       <div class="em-big-when">${c.when.replace('\n','<br>')}</div>
     </div>`;
   }).join('');
 
-  /* 全カード */
   document.getElementById('all-em-grid').innerHTML = EMOTIONS.map(c =>
     `<div class="em-mini" style="background:${c.color}">
-      ${imgFb(IMG.emotions[c.id], c.emoji, 'em-img')}
+      ${imgFb(IMG.emotions[c.id], c.emoji, 'em-img', 'e-fb')}
       <div class="e-name">${c.name}</div>
     </div>`
   ).join('');
@@ -1501,12 +1519,10 @@ function renderKiroku() {
   const stars = getTotalStars();
   const allK  = Object.keys(data);
 
-  /* ヒーロー */
   document.getElementById('total-stars').textContent = stars;
   document.getElementById('hd-star-num').textContent = stars;
   document.getElementById('rank-label').textContent  = getRank(stars);
 
-  /* 統計 */
   const td = allK.filter(k => (data[k]||[]).length > 0).length;
   const fd = allK.filter(k => (data[k]||[]).length === TASKS.length).length;
   const tt = allK.reduce((s, k) => s + (data[k]||[]).length, 0);
@@ -1521,18 +1537,16 @@ function renderKiroku() {
   document.getElementById('st-tasks').textContent  = tt;
   document.getElementById('st-streak').textContent = streak;
 
-  /* バッジ */
   const earned = loadBadges();
   document.getElementById('badge-grid').innerHTML = BADGES.map(b => {
     const isEarned = earned.includes(b.id);
-    return `<div class="badge-item ${isEarned?'earned':'locked'}">
-      ${imgFb(IMG.badges[b.id], b.emoji, 'badge-img')}
+    return `<div class="badge-item${isEarned?' earned':' locked'}">
+      ${imgFb(IMG.badges[b.id], b.emoji, 'badge-img', 'badge-emoji')}
       <div class="badge-name">${b.name}</div>
       <div class="badge-cond">${b.cond}</div>
     </div>`;
   }).join('');
 
-  /* カレンダー */
   document.getElementById('cal-title').textContent = `${calYear}年${calMonth+1}月`;
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
@@ -1555,7 +1569,7 @@ function renderKiroku() {
     if (dc === TASKS.length) cls += ' full'; else if (dc > 0) cls += ' partial';
     el.className = cls; el.onclick = () => openDayModal(key);
     if (memos[key] && memos[key].trim()) {
-      el.style.position = 'relative'; el.style.overflow = 'visible';
+      el.style.position = 'relative';
       const dot = document.createElement('span');
       dot.style.cssText = 'position:absolute;top:0;right:0;width:5px;height:5px;background:var(--pink);border-radius:50%;';
       el.appendChild(dot);
@@ -1563,7 +1577,6 @@ function renderKiroku() {
     grid.appendChild(el);
   }
 
-  /* メモ一覧 */
   const memoEl = document.getElementById('memo-list');
   const keys   = Object.keys(memos).filter(k => memos[k]?.trim()).sort((a,b) => b.localeCompare(a)).slice(0,20);
   if (!keys.length) {
